@@ -23,6 +23,8 @@ function getButtons(): Array<AddButtonRequest> {
 
 export function AddSwitchForm(props: AddSwitchFormProps) {
   const form = useFormContext()
-  form.setValue(props.name, getButtons())
+  useEffect(() => {
+    form.setValue(props.name, getButtons())
+  }, [])
   return (<></>)
 }

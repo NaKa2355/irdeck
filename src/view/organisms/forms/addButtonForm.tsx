@@ -18,6 +18,8 @@ function getButtons(): Array<AddButtonRequest> {
 
 export function AddButtonForm(props: AddButtonFormProps) {
   const form = useFormContext()
-  form.setValue(props.name, getButtons)
+  useEffect(() => {
+    form.setValue(props.name, getButtons)
+  }, [])
   return (<></>)
 }
