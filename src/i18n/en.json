@@ -1,0 +1,44 @@
+{
+    "header": {
+        "remotes": "Remotes",
+        "add_remote": "Add Remote",
+        "edit": "Edit",
+        "receive_ir": "Receive IR"
+    },
+    
+    "remote_types": {
+        "custom": "Custom",
+        "toggle": "Toggle",
+        "button": "Button",
+        "thermostat": "Thermostat"
+    },
+
+    "button": {
+        "done": "Done",
+        "add": "Add",
+        "delete": "Delete",
+        "edit": "Edit",
+        "cancel": "Cancel",
+        "send": "Send",
+        "receive": "Receive",
+        "retry": "Retry",
+        "receiving_test": "Test",
+        "push": "Push",
+        "on": "ON",
+        "off": "OFF"
+    },
+
+    "label": {
+        "name": "Name",
+        "type": "Type",
+        "ir_sending_device": "IR Sending Device",
+        "ir_receiving_device": "IR Receiving Device",
+        "scale": "Scale",
+        "receiving": "Receiving...",
+        "timeout": "Timeout",
+        "success": "Success!",
+        "no_remotes": "There are no remotes",
+        "no_buttons": "There are no buttons",
+        "confirm_delete": "Are you sure to delete?"
+    }
+}

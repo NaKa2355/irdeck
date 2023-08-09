@@ -1,0 +1,46 @@
+{
+    "header": {
+        "remotes": "リモコン一覧",
+        "add_remote": "リモコンを追加",
+        "edit": "編集",
+        "receive_ir": "赤外線を受信"
+    },
+    
+    "remote_types": {
+        "custom": "カスタム",
+        "toggle": "トグルスイッチ",
+        "button": "ボタン",
+        "thermostat": "エアコン"
+    },
+
+    "button": {
+        "done": "完了",
+        "add": "追加",
+        "delete": "削除",
+        "edit": "編集",
+        "cancel": "キャンセル",
+        "send": "送信",
+        "receive": "受信",
+        "retry": "もう一度試す",
+        "receiving_test": "テスト送信",
+        "push": "ボタン",
+        "on": "オン",
+        "off": "オフ"
+    },
+
+    "label": {
+        "name": "名前",
+        "type": "タイプ",
+        "ir_sending_device": "赤外線送信デバイス",
+        "ir_receiving_device": "赤外線受信デバイス",
+        "scale": "スケール",
+        "cool": "冷房",
+        "heat": "暖房",
+        "receiving": "受信中...",
+        "timeout": "タイムアウト",
+        "success": "成功!",
+        "no_remotes": "リモコンが追加されていません",
+        "no_buttons": "コマンドが追加されていません",
+        "confirm_delete": "本当に削除しますか?"
+    }
+}
