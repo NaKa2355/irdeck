@@ -1,4 +1,4 @@
-import { Card, CardActionArea, CardContent, CardHeader, IconButton, Typography } from "@mui/material";
+import { Box, Card, CardActionArea, CardContent, CardHeader, Grid, IconButton, Typography } from "@mui/material";
 import { IconDots } from "@tabler/icons-react";
 import React from "react"
 
@@ -36,17 +36,23 @@ export function AvatarTextCard(props: AvatarTextCardProps) {
           />
 
           <CardContent>
-            <Typography
-              variant="body1"
-              sx={{
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                fontWeight: "bold",
-                textOverflow: "ellipsis",
-              }}
-            >
-              {props.title}
-            </Typography>
+            <Grid 
+            container 
+            direction="column"
+            justifyContent="flex-end"
+            alignItems="flex-start"
+            height="2.5em"
+            maxHeight="3em">
+              <Typography
+                sx={{
+                  fontSize: "1em",
+                  fontWeight: "bold",
+                  overflowWrap: "revert",
+                }}
+              >
+                {props.title}
+              </Typography>
+            </Grid>
           </CardContent>
         </CardActionArea>
       </Card>

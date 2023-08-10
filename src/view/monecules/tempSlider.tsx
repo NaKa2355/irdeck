@@ -32,7 +32,7 @@ export function TempSlider(props: TempSliderProps) {
       />
       <Grid container alignItems='center' justifyContent='center' direction="row">
         <Grid item>
-          <Typography color={props.color}>{tempRange[0]}℃ - {tempRange[1]}℃</Typography>
+          <Typography>{tempRange[0]}℃ - {tempRange[1]}℃</Typography>
         </Grid>
       </Grid>
     </Box>
