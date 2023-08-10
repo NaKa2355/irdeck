@@ -7,17 +7,15 @@ import { RpcError, StatusCode } from "grpc-web";
 import { IrData } from "../../../type/irdata.type";
 import { useIrSender } from "../../../hooks/useIrSender";
 import { useTranslation } from "react-i18next";
-import { Select, Box, Button, FormControl, FormLabel, Grid, MenuItem, Stack, Typography, SelectChangeEvent, DialogContent, DialogTitle, CircularProgress, Dialog } from "@mui/material";
+import { Select, Box, Button, FormControl, FormLabel, Grid, MenuItem, Stack, Typography, SelectChangeEvent, DialogContent, DialogTitle, CircularProgress, Dialog, Container } from "@mui/material";
 
 interface ReceiveIrErrorViewProps {
-  visible?: boolean
   onCancel: () => void
   onRetry: () => void
 }
 
 function ReceiveIrErrorView(props: ReceiveIrErrorViewProps) {
   const { t } = useTranslation();
-  if (!props.visible) return null
 
   return (
     <Stack spacing={2}>
@@ -40,27 +38,24 @@ function ReceiveIrErrorView(props: ReceiveIrErrorViewProps) {
 }
 
 interface ReceivingIrViewProps {
-  visible?: boolean
   onLoad?: () => void,
   onCancel: () => void
 }
 
-
 function ReceivingIrView(props: ReceivingIrViewProps) {
   const { t } = useTranslation();
-  if (!props.visible) return null
   return (
     <Grid container
       direction="column"
-      justifyContent="space-evenly"
+      justifyContent="space-between"
       alignItems="stretch"
+      sx={{ height: "100%" }}
     >
+      <Grid item />
       <Grid item>
-        <Stack spacing={2} mt="20" mb="20">
-          <Grid container direction="row" justifyContent="center" alignItems="center">
-            <Grid item>
-              <CircularProgress />
-            </Grid>
+        <Stack spacing={2}>
+          <Grid item container direction="row" justifyContent="center" alignItems="center">
+            <CircularProgress />
           </Grid>
           <Typography align="center" fontWeight="bold">{t("label.receiving")}</Typography>
         </Stack>
@@ -77,7 +72,6 @@ function ReceivingIrView(props: ReceivingIrViewProps) {
 }
 
 interface ReceiveIRSuccessfulViewProps {
-  visible?: boolean
   onTest: () => Promise<void>,
   onRetry: () => void,
   onDone: () => void
@@ -86,8 +80,6 @@ interface ReceiveIRSuccessfulViewProps {
 function ReceiveIRSuccessfulView(props: ReceiveIRSuccessfulViewProps) {
   const { t } = useTranslation();
   const [sending, setSending] = useState(false)
-
-  if (!props.visible) return null
 
   const send = () => {
     setSending(true)
@@ -98,76 +90,97 @@ function ReceiveIRSuccessfulView(props: ReceiveIRSuccessfulViewProps) {
   }
 
   return (
-    <Stack spacing={2}>
-      <Grid container direction="row" justifyContent="center" alignItems="center" >
-        <Grid item>
-          <Typography color="green">
-            <IconCheck size={100} stroke={"1px"} />
-          </Typography>
-        </Grid>
+    <Grid
+      container
+      direction="column"
+      justifyContent="space-between"
+      alignItems="stretch"
+      sx={{ height: "100%" }}
+    >
+      <Grid item />
+
+      <Grid item>
+        <Stack>
+          <Grid container direction="row" justifyContent="center" alignItems="center" >
+            <Grid item>
+              <Typography color="green">
+                <IconCheck size={100} stroke={"1px"} />
+              </Typography>
+            </Grid>
+          </Grid>
+          <Typography align="center" fontWeight="bold">{t("label.success")}</Typography>
+        </Stack>
       </Grid>
 
-      <Typography align="center" fontWeight="bold">{t("label.success")}</Typography>
-      <Stack direction="row" spacing={2}>
-        <Button
-          variant="outlined"
-          onClick={send}
-          fullWidth
-        >
-          {t("button.receiving_test")}
-        </Button>
-        <Button
-          variant="outlined"
-          onClick={props.onRetry}
-          fullWidth
-        >
-          {t("button.retry")}
-        </Button>
-      </Stack>
-      <Button variant="contained" onClick={props.onDone}>
-        {t("button.done")}
-      </Button>
-    </Stack>
+      <Grid item>
+        <Stack spacing={2}>
+
+          <Button
+            variant="outlined"
+            onClick={send}
+          >
+            {t("button.receiving_test")}
+          </Button>
+
+          <Button
+            variant="outlined"
+            onClick={props.onRetry}
+          >
+            {t("button.retry")}
+          </Button>
+
+          <Button variant="contained" onClick={props.onDone}>
+            {t("button.done")}
+          </Button>
+        </Stack>
+      </Grid>
+    </Grid>
   )
 }
 
 interface ReceiveIrTimeOutViewProps {
-  visible?: boolean
   onCancel: () => void,
   onRetry: () => void
 }
 
 function ReceiveIrTimeOutView(props: ReceiveIrTimeOutViewProps) {
   const { t } = useTranslation();
-  if (!props.visible) return null
-
 
   return (
-    <Stack spacing={2}>
-      <Grid container direction="row" justifyContent="center" alignItems="center" >
-        <Grid item>
-          <Stack>
-            <Typography color="text.secondary">
-              <IconHourglassLow size={100} stroke={"1px"} />
-            </Typography>
-            <Typography align="center" fontWeight="bold">{t("label.timeout")}</Typography>
-          </Stack>
+    <Grid
+      container
+      direction="column"
+      justifyContent="space-between"
+      alignItems="stretch"
+      sx={{ height: "100%" }}>
+      <Grid item />
+      <Grid item>
+        <Grid container direction="row" justifyContent="center" alignItems="center" >
+          <Grid item>
+            <Stack>
+              <Typography color="text.secondary">
+                <IconHourglassLow size={100} stroke={"1px"} />
+              </Typography>
+              <Typography align="center" fontWeight="bold">{t("label.timeout")}</Typography>
+            </Stack>
+          </Grid>
         </Grid>
       </Grid>
-
-
-      <Button variant="outlined" onClick={props.onCancel}>
-        {t("button.cancel")}
-      </Button>
-      <Button variant="contained" onClick={props.onRetry}>
-        {t("button.retry")}
-      </Button>
-    </Stack>
+      <Grid item>
+        <Stack spacing={2}>
+          <Button variant="outlined" onClick={props.onCancel}>
+            {t("button.cancel")}
+          </Button>
+          <Button variant="contained" onClick={props.onRetry}>
+            {t("button.retry")}
+          </Button>
+        </Stack>
+      </Grid>
+    </Grid>
   )
 }
 
 interface ReceiveIrViewProps {
-  visible?: boolean
   devices: Map<string, Device>
   onCancel: () => void,
   onReceive: (deviceId: string) => void
@@ -187,8 +200,6 @@ function ReceiveIrView(props: ReceiveIrViewProps) {
     }
   }
 
-  if (!props.visible) return null
-
   const onDeviceSelected = (e: SelectChangeEvent) => {
     const deviceId = e.target.value as string;
     setDeviceId(deviceId);
@@ -201,9 +212,9 @@ function ReceiveIrView(props: ReceiveIrViewProps) {
   return (
     <Grid container
       direction="column"
-      justifyContent="space-evenly"
+      justifyContent="space-between"
       alignItems="stretch"
-      sx={{ height: 1 }}
+      sx={{ height: "100%" }}
     >
       <Grid item />
       <Grid item>
@@ -335,35 +346,42 @@ export function ReceiveIrModal(props: ReceiveIrModalProps) {
   }
 
   return (
-    <Box>
-      <ReceiveIrView
-        visible={state.value === "standby"}
-        devices={props.devices}
-        onCancel={cancel}
-        onReceive={(deviceId) => send({ type: "RECEIVE", deviceId: deviceId })} />
+    <Container sx={{ height: "100%" }}>
+      {state.value === "standby" && (
+        <ReceiveIrView
+          devices={props.devices}
+          onCancel={cancel}
+          onReceive={(deviceId) => send({ type: "RECEIVE", deviceId: deviceId })}
+        />
+      )}
 
-      <ReceivingIrView
-        visible={state.value === "receiving"}
-        onCancel={cancel}
-      />
+      {state.value === "receiving" && (
+        <ReceivingIrView
+          onCancel={cancel}
+        />
+      )}
 
-      <ReceiveIRSuccessfulView
-        visible={state.value === 'successful'}
-        onDone={done}
-        onRetry={() => { send("RETRY") }}
-        onTest={test} />
+      {state.value === "successful" && (
+        <ReceiveIRSuccessfulView
+          onDone={done}
+          onRetry={() => { send("RETRY") }}
+          onTest={test} />
+      )}
 
-      <ReceiveIrErrorView
-        visible={state.value === "failed"}
-        onCancel={cancel}
-        onRetry={() => { send("RETRY") }}
-      />
+      {state.value === "failed" && (
+        <ReceiveIrErrorView
+          onCancel={cancel}
+          onRetry={() => { send("RETRY") }}
+        />
 
-      <ReceiveIrTimeOutView
-        visible={state.value === "timeouted"}
-        onCancel={cancel}
-        onRetry={() => { send("RETRY") }}
-      />
-    </Box>
+      )}
+
+      {state.value === "timeouted" && (
+        <ReceiveIrTimeOutView
+          onCancel={cancel}
+          onRetry={() => { send("RETRY") }}
+        />
+      )}
+    </Container>
   )
 }

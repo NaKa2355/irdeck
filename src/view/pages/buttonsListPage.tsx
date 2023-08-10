@@ -12,8 +12,6 @@ import { useTranslation } from "react-i18next";
 import { ButtonsGrid } from "../organisms/lists/buttonsGrid";
 import { Box, Dialog, DialogContent, DialogTitle } from "@mui/material";
 import { RemoteType } from "../../type/remote";
-import { ClassNames } from "@emotion/react";
-
 
 export function ButtonsListPage() {
   const button = useButton()
@@ -54,7 +52,10 @@ export function ButtonsListPage() {
 
   return (
     <Box>
-      <Dialog open={opened} onClose={closeReceiveIrModal}  fullWidth>
+      <Dialog
+        open={opened}
+        onClose={closeReceiveIrModal}
+        fullWidth PaperProps={{ sx: { height: '500px' } }}>
         <DialogTitle>{t("header.receive_ir")}</DialogTitle>
         <DialogContent>
           <ReceiveIrModal
