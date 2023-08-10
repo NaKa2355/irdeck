@@ -7,7 +7,7 @@ import { RpcError, StatusCode } from "grpc-web";
 import { IrData } from "../../../type/irdata.type";
 import { useIrSender } from "../../../hooks/useIrSender";
 import { useTranslation } from "react-i18next";
-import { Select, Box, Button, FormControl, FormLabel, Grid, MenuItem, Stack, Typography, SelectChangeEvent, DialogContent, DialogTitle, CircularProgress, Dialog, Container } from "@mui/material";
+import { Select, Button, FormControl, FormLabel, Grid, MenuItem, Stack, Typography, SelectChangeEvent, CircularProgress, Container } from "@mui/material";
 
 interface ReceiveIrErrorViewProps {
   onCancel: () => void
@@ -18,22 +18,33 @@ function ReceiveIrErrorView(props: ReceiveIrErrorViewProps) {
   const { t } = useTranslation();
 
   return (
-    <Stack spacing={2}>
-      <Grid container direction="row" justifyContent="center" alignItems="center">
-        <Grid item>
-          <Typography color="red">
+    <Grid container
+      direction="column"
+      justifyContent="space-between"
+      alignItems="stretch"
+      sx={{ height: "100%" }}
+    >
+      <Grid item />
+      <Grid item>
+        <Stack>
+          <Typography color="error.light" align="center">
             <IconAlertCircle size={100} stroke={"1px"} />
           </Typography>
-        </Grid>
+          <Typography align="center" fontWeight="bold">Receive Faild</Typography>
+        </Stack>
       </Grid>
-      <Typography align="center" fontWeight="bold">Receive Faild</Typography>
-      <Button variant="outlined" onClick={props.onCancel}>
-        {t("button.cancel")}
-      </Button>
-      <Button variant="contained" onClick={props.onRetry}>
-        {t("button.retry")}
-      </Button>
-    </Stack>
+
+      <Grid item>
+        <Stack spacing={2}>
+          <Button variant="outlined" onClick={props.onCancel}>
+            {t("button.cancel")}
+          </Button>
+          <Button variant="contained" onClick={props.onRetry}>
+            {t("button.retry")}
+          </Button>
+        </Stack>
+      </Grid>
+    </Grid>
   )
 }
 
@@ -103,7 +114,7 @@ function ReceiveIRSuccessfulView(props: ReceiveIRSuccessfulViewProps) {
         <Stack>
           <Grid container direction="row" justifyContent="center" alignItems="center" >
             <Grid item>
-              <Typography color="green">
+              <Typography color="success.light">
                 <IconCheck size={100} stroke={"1px"} />
               </Typography>
             </Grid>
@@ -266,7 +277,6 @@ interface ReceiveIrModalProps {
 export function ReceiveIrModal(props: ReceiveIrModalProps) {
   const [sendIr] = useIrSender();
   const [receiveIr] = useIrReceiver();
-  const tr = useTranslation();
 
   const [state, send] = useStateMachine({
     schema: {

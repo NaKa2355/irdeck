@@ -40,5 +40,12 @@
         "no_remotes": "There are no remotes",
         "no_buttons": "There are no buttons",
         "confirm_delete": "Are you sure to delete?"
+    },
+
+    "error": {
+        "remote_name_required": "remote name is required.",
+        "remote_name_already_exists": "same name remote is already exists.",
+        "remote_name_length": "length of remote name must be less than 15 charactors.",
+        "unknown": "unknown error occored!"
     }
 }

@@ -4,7 +4,6 @@ import { useFormContext } from "react-hook-form";
 import { FormControl, FormLabel, MenuItem, Stack, TextField } from "@mui/material";
 import { Select } from "../../atom/select";
 
-
 type RemoteFormProps = {
   devices: Array<Device>
 }
@@ -17,12 +16,24 @@ export function RemoteForm(props: RemoteFormProps) {
       <MenuItem value={device.id}>{device.name}</MenuItem>
     )
   })
-
+  
   return (
     <Stack spacing={2}>
       <FormControl>
         <FormLabel>{t("label.name")}</FormLabel>
-        <TextField placeholder={t("label.name") ?? ""} {...form.register("name")} />
+        <TextField
+          error={form.getFieldState("name").invalid}
+          helperText ={form.formState.errors.name?.message?.toString()}
+          placeholder={t("label.name") ?? ""} 
+          {...form.register(
+            "name", 
+            {
+              required: t("error.remote_name_required") ?? "",
+              maxLength: {value: 15, message: t("error.remote_name_length") ?? ""
+            },
+            }
+          )} 
+        />
       </FormControl>
       <FormControl>
         <FormLabel>{t("label.ir_sending_device")}</FormLabel>
