@@ -36,13 +36,13 @@ export function AvatarTextCard(props: AvatarTextCardProps) {
           />
 
           <CardContent>
-            <Grid 
-            container 
-            direction="column"
-            justifyContent="flex-end"
-            alignItems="flex-start"
-            height="2.5em"
-            maxHeight="3em">
+            <Grid
+              container
+              direction="column"
+              justifyContent="flex-end"
+              alignItems="flex-start"
+              height="2em"
+            >
               <Typography
                 sx={{
                   fontSize: "1em",
