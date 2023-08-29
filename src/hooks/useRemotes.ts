@@ -67,9 +67,9 @@ export function useRemotes(): useRemoteReturnValue {
     const addRemote = (req: AddRemoteRequest) => {
         const promise = new Promise<void>((exec, reject) => {
             const _req = new aim.AddRemoteRequest()
-            const buttonsList = new Array<aim.AddButtonsRequest>
+            const buttonsList = new Array<aim.AddRemoteRequest>
             req.buttons.forEach(button => {
-                const req = new aim.AddButtonsRequest
+                const req = new aim.AddRemoteRequest
                 req.setName(button.name)
                 req.setTag(button.tag)
                 buttonsList.push(req)

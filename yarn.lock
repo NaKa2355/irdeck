@@ -1295,8 +1295,8 @@ internal-slot@^1.0.4:
     side-channel "^1.0.4"
 
 "irdeck-proto@https://github.com/NaKa2355/irdeck-proto.git":
-  version "0.0.0"
-  resolved "https://github.com/NaKa2355/irdeck-proto.git#b4f197fafe2ff2269c1b1dd38431ed4527065925"
+  version "0.1.0"
+  resolved "https://github.com/NaKa2355/irdeck-proto.git#74111011bf6bb1671fcd3a90c030e5046cf73e2f"
 
 is-arguments@^1.1.1:
   version "1.1.1"
