@@ -1,5 +1,7 @@
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
-import { RootRouter } from './route/router';;
+import { RootRouter } from './route/router'; import { RecoilRoot } from 'recoil';
+import { DrawerPage } from './composes/pages/drawerPage';
+;
 
 function App() {
 
@@ -16,7 +18,7 @@ function App() {
       },
     }
   }).palette;
-  
+
 
   const theme = createTheme({
     shadows: ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
@@ -38,9 +40,9 @@ function App() {
           root: {
             borderRadius: "5px",
             marginLeft: "5px",
-            marginRight: "5px",            
+            marginRight: "5px",
           },
-          
+
         }
       },
 
@@ -58,7 +60,7 @@ function App() {
           root: {
             height: "2.5rem"
           },
-          
+
         }
       },
 
@@ -101,8 +103,10 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <RootRouter />
+      <RecoilRoot>
+        <CssBaseline />
+        <DrawerPage />
+      </RecoilRoot>
     </ThemeProvider>
   );
 }

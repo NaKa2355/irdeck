@@ -9,7 +9,7 @@ import { useRemote } from "../../hooks/useRemotes";
 import { ListTemplate } from "../templates/listTemplate";
 import { IrData } from "../../type/irdata.type";
 import { useTranslation } from "react-i18next";
-import { ButtonsGrid } from "../organisms/lists/buttonsGrid";
+import { ButtonsGrid } from "../organisms/grids/buttonsGrid";
 import { Box, Dialog, DialogContent, DialogTitle } from "@mui/material";
 import { RemoteType } from "../../type/remote";
 
@@ -26,11 +26,11 @@ export function ButtonsListPage() {
 
   useEffect(() => {
     (async () => {
-      await getDevices()
-      await getRemote(remoteId)
-      await button.get(remoteId)
+      await getDevices();
+      await getRemote(remoteId);
+      await button.get(remoteId);
       window.setTimeout(() => {
-        setIsLoading(false)
+        setIsLoading(false);
       })
     })()
   }, []);
@@ -43,7 +43,7 @@ export function ButtonsListPage() {
 
   const onSendIr = async (buttonId: string) => {
     const irData = await button.getIr(remoteId, buttonId)
-    await sendIr(remote?.deviceId ?? "", irData)
+    await sendIr(remote?.deviceId ?? "", irData);
   }
 
   const onBack = () => {

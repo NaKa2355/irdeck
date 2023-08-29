@@ -2,35 +2,41 @@
 import { Remote } from "../../../type/remote"
 import { Device } from "../../../type/device.type"
 //organisms
-import { RemoteForm, RemoteFormData } from "../forms/remoteForm"
+import { RemoteForm } from "../forms/remoteForm"
 import { useTranslation } from "react-i18next"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import { Button, Grid, Stack } from "@mui/material"
 import { Title } from "@mui/icons-material"
+import { useRemoteEditor } from "../../../hooks/useRemoteEditor"
+
+interface EditRemoteFormData {
+  name: string,
+  deviceId: string,
+}
 
 
 interface EditRemoteModalProps {
   devices: Map<string, Device>
   remote?: Remote
-  onEdit: (remoteId: string, name: string, deviceId: string) => Promise<void>
   onClose: () => void
 }
 
 export function EditRemoteModal(props: EditRemoteModalProps) {
   const { t } = useTranslation();
+  const remoteEditor = useRemoteEditor();
 
-  const form = useForm<RemoteFormData>({
+  const form = useForm<EditRemoteFormData>({
     defaultValues: {
       name: props.remote?.name,
       deviceId: props.remote?.deviceId,
     }
   })
 
-  const submit: SubmitHandler<RemoteFormData> = formData => {
+  const submit: SubmitHandler<EditRemoteFormData> = formData => {
     if (props.remote === undefined) {
       return;
     }
-    props.onEdit?.(props.remote.id, formData.name, formData.deviceId).then(props.onClose);
+    remoteEditor.edit(props.remote.id, formData.name, formData.deviceId).then(props.onClose);
   }
 
   let devicesCanSend = Array.from(props.devices.values()).filter((device) => {

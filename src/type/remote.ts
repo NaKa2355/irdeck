@@ -1,5 +1,5 @@
 export enum RemoteType {
-    Custom = "custom",
+//    Custom = "custom",
     Button = "button",
     Toggle = "toggle",
     Thermostat = "thermostat",

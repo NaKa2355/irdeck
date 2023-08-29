@@ -16,7 +16,7 @@ import { EditRemoteModal } from "../organisms/modals/editRemoteModal";
 
 //libs
 import { useTranslation } from "react-i18next";
-import { RemotesGrid } from "../organisms/lists/remoteGrid";
+import { RemotesGrid } from "../organisms/grids/remoteGrid";
 import { Box, Dialog, DialogContent, DialogTitle } from "@mui/material";
 
 export function RemoteListPage() {

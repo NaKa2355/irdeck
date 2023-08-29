@@ -16,21 +16,19 @@ import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { FormControl, FormLabel, Stack, Select, MenuItem, Grid, Button, SelectChangeEvent, Alert } from "@mui/material";
 import { AddButtonForm } from "../forms/addButtonForm";
 import { AddSwitchForm } from "../forms/addSwitchFrom";
-import { AddCustomForm } from "../forms/addCustonForm";
 import { RpcError, StatusCode } from "grpc-web";
-import { error } from "console";
+import { useRemoteAdder } from "../../../hooks/useRemoteAdder";
 
 
 export type AddRemoteModalProps = {
   onClose: () => void,
-  onAdd?: (req: AddRemoteRequest) => Promise<void>,
   devices: Map<string, Device>,
 }
 
 export function AddRemoteModal(props: AddRemoteModalProps) {
   const [remoteType, setRemoteType] = useState<RemoteType>(Object.values(RemoteType)[0]);
   const [postErr, setPostErr] = useState(false);
-
+  const remoteAdder = useRemoteAdder();
   const { t } = useTranslation();
 
   const form = useForm<AddRemoteRequest>({
@@ -46,7 +44,7 @@ export function AddRemoteModal(props: AddRemoteModalProps) {
 
   const submit: SubmitHandler<AddRemoteRequest> = async (formData) => {
     formData.tag = remoteType
-    await props.onAdd?.(formData)
+    await remoteAdder.add(formData)
       .then(props.onClose)
       .catch((err) => {
         const grpcErr = err as RpcError;
@@ -71,7 +69,7 @@ let deviceCanSend = Array.from(props.devices.values()).filter((device) => {
 
 let remoteTypesItems = Object.values(RemoteType).map((remoteType) => {
   return (
-    <MenuItem value={remoteType}>{t(`remote_types.${remoteType}`)}</MenuItem>
+    <MenuItem key = {remoteType} value={remoteType}>{t(`remote_types.${remoteType}`)}</MenuItem>
   )
 })
 
@@ -95,9 +93,9 @@ return (
           devices={deviceCanSend}
         />
 
-        {remoteType === RemoteType.Custom &&
+        {/* {remoteType === RemoteType.Custom &&
           <AddCustomForm name="buttons" />
-        }
+        } */}
 
         {remoteType === RemoteType.Thermostat &&
           <AddThermostatForm name="buttons" />
