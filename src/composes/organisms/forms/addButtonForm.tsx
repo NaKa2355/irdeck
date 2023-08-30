@@ -8,18 +8,18 @@ interface AddButtonFormProps {
 }
 
 function getButtons(): Array<AddButtonRequest> {
-  const buttons = new Array<AddButtonRequest>
+  const buttons = new Array<AddButtonRequest>;
   buttons.push({
     name: "push",
-    tag: RemoteType.Button
+    tag: RemoteType.Button,
   });
   return buttons;
 }
 
 export function AddButtonForm(props: AddButtonFormProps) {
-  const form = useFormContext()
+  const form = useFormContext();
   useEffect(() => {
-    form.setValue(props.name, getButtons)
+    form.setValue(props.name, getButtons());
   }, [])
   return (<></>)
 }

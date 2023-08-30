@@ -28,12 +28,12 @@ export function useRemoteAdder(): useRemoteAdderReturnValue {
         const promise = new Promise<void>((exec, reject) => {
             const grpcReq = new aim.AddRemoteRequest();
             const buttonsList = new Array<aim.AddRemoteRequest>
-            req.buttons.forEach(button => {
+            for(const button of req.buttons) {
                 const req = new aim.AddRemoteRequest;
                 req.setName(button.name);
                 req.setTag(button.tag);
                 buttonsList.push(req);
-            });
+            }
             grpcReq.setDeviceId(req.deviceId);
             grpcReq.setName(req.name);
             grpcReq.setTag(req.tag);

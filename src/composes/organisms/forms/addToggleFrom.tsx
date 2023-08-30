@@ -3,7 +3,7 @@ import { useFormContext } from "react-hook-form"
 import { AddButtonRequest } from "../../../hooks/useRemotes"
 import { RemoteType } from "../../../type/remote"
 
-interface AddSwitchFormProps {
+interface AddToggleFormProps {
   name: string
 }
 
@@ -17,11 +17,11 @@ function getButtons(): Array<AddButtonRequest> {
   buttons.push({
     name: "off",
     tag: RemoteType.Toggle
-  })
+  });
   return buttons
 }
 
-export function AddSwitchForm(props: AddSwitchFormProps) {
+export function AddToggleForm(props: AddToggleFormProps) {
   const form = useFormContext()
   useEffect(() => {
     form.setValue(props.name, getButtons())

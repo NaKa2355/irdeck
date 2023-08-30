@@ -10,7 +10,7 @@ interface useRemoteDeleterReturnValue {
     delete: (applianceId: string) => Promise<void>
 }
 
-export function useRemotes(): useRemoteDeleterReturnValue{
+export function useRemoteDelter(): useRemoteDeleterReturnValue{
 
     let [data, setData] = useRecoilState(remotesAtom);
 

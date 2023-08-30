@@ -15,7 +15,7 @@ import { useTranslation } from "react-i18next";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { FormControl, FormLabel, Stack, Select, MenuItem, Grid, Button, SelectChangeEvent, Alert } from "@mui/material";
 import { AddButtonForm } from "../forms/addButtonForm";
-import { AddSwitchForm } from "../forms/addSwitchFrom";
+import { AddToggleForm } from "../forms/addToggleFrom";
 import { RpcError, StatusCode } from "grpc-web";
 import { useRemoteAdder } from "../../../hooks/useRemoteAdder";
 
@@ -33,6 +33,7 @@ export function AddRemoteModal(props: AddRemoteModalProps) {
 
   const form = useForm<AddRemoteRequest>({
     defaultValues: {
+      tag: remoteType,
       deviceId: props.devices.keys().next().value
     }
   });
@@ -57,65 +58,68 @@ export function AddRemoteModal(props: AddRemoteModalProps) {
             })
           return;
         }
+        console.log(err)
         setPostErr(true);
       });
-};
+  };
 
-let deviceCanSend = Array.from(props.devices.values()).filter((device) => {
-  if (device.canSend) {
-    return device
-  }
-})
+  let deviceCanSend = Array.from(props.devices.values()).filter((device) => {
+    if (device.canSend) {
+      return device
+    }
+  })
 
-let remoteTypesItems = Object.values(RemoteType).map((remoteType) => {
+  let remoteTypesItems = Object.values(RemoteType).map((remoteType) => {
+    return (
+      <MenuItem key={remoteType} value={remoteType}>{t(`remote_types.${remoteType}`)}</MenuItem>
+    )
+  })
+
   return (
-    <MenuItem key = {remoteType} value={remoteType}>{t(`remote_types.${remoteType}`)}</MenuItem>
-  )
-})
+    <FormProvider {...form}>
+      <form onSubmit={form.handleSubmit(submit)}>
+        <Stack spacing={2}>
+          {postErr &&
+            (<Alert severity="error">
+              {t("error.unknown")}
+            </Alert>
+            )}
+          <FormControl>
+            <FormLabel>{t("label.type")}</FormLabel>
+            <Select value={remoteType} onChange={changeForm} defaultValue={remoteType}>
+              {remoteTypesItems}
+            </Select>
+          </FormControl>
 
-return (
-  <FormProvider {...form}>
-    <form onSubmit={form.handleSubmit(submit)}>
-      <Stack spacing={2}>
-        {postErr &&
-          (<Alert severity="error">
-            {t("error.unknown")}
-          </Alert>
-          )}
-        <FormControl>
-          <FormLabel>{t("label.type")}</FormLabel>
-          <Select value={remoteType} onChange={changeForm}>
-            {remoteTypesItems}
-          </Select>
-        </FormControl>
+          <RemoteForm
+            devices={deviceCanSend}
+          />
 
-        <RemoteForm
-          devices={deviceCanSend}
-        />
-
-        {/* {remoteType === RemoteType.Custom &&
+          {/* {remoteType === RemoteType.Custom &&
           <AddCustomForm name="buttons" />
         } */}
 
-        {remoteType === RemoteType.Thermostat &&
-          <AddThermostatForm name="buttons" />
-        }
+          {remoteType === RemoteType.Thermostat &&
+            <AddThermostatForm name="buttons" />
+          }
 
-        {remoteType === RemoteType.Button &&
-          <AddButtonForm name="buttons" />
-        }
+          {remoteType === RemoteType.Button &&
+            <div>
+              <AddButtonForm name="buttons" />
+            </div>
+          }
 
-        {remoteType === RemoteType.Toggle &&
-          <AddSwitchForm name="buttons" />
-        }
+          {remoteType === RemoteType.Toggle &&
+            <AddToggleForm name="buttons" />
+          }
 
-        <Grid container direction="row" justifyContent="flex-end" alignItems="center">
-          <Grid item>
-            <Button variant="contained" type="submit">{t("button.add")}</Button>
+          <Grid container direction="row" justifyContent="flex-end" alignItems="center">
+            <Grid item>
+              <Button variant="contained" type="submit">{t("button.add")}</Button>
+            </Grid>
           </Grid>
-        </Grid>
-      </Stack>
-    </form>
-  </FormProvider>
-)
+        </Stack>
+      </form>
+    </FormProvider>
+  )
 }
