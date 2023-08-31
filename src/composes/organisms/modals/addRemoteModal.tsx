@@ -22,6 +22,7 @@ import { useRemoteAdder } from "../../../hooks/useRemoteAdder";
 
 export type AddRemoteModalProps = {
   onClose: () => void,
+  onAdd?: (remoteId: string) => void,
   devices: Map<string, Device>,
 }
 
@@ -45,22 +46,24 @@ export function AddRemoteModal(props: AddRemoteModalProps) {
 
   const submit: SubmitHandler<AddRemoteRequest> = async (formData) => {
     formData.tag = remoteType
-    await remoteAdder.add(formData)
-      .then(props.onClose)
-      .catch((err) => {
-        const grpcErr = err as RpcError;
-        if (grpcErr.code === StatusCode.ALREADY_EXISTS) {
-          form.setError(
-            "name",
-            {
-              type: "value",
-              message: t("error.remote_name_already_exists") ?? ""
-            })
-          return;
-        }
-        console.log(err)
-        setPostErr(true);
-      });
+    try {
+      const remoteId = await remoteAdder.add(formData)
+      props.onClose();
+      props.onAdd?.(remoteId);
+    } catch (err) {
+      const grpcErr = err as RpcError;
+      if (grpcErr.code === StatusCode.ALREADY_EXISTS) {
+        form.setError(
+          "name",
+          {
+            type: "value",
+            message: t("error.remote_name_already_exists") ?? ""
+          })
+        return;
+      }
+      console.log(err)
+      setPostErr(true);
+    }
   };
 
   let deviceCanSend = Array.from(props.devices.values()).filter((device) => {

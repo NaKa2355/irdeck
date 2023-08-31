@@ -13,7 +13,7 @@ export function RemoteForm(props: RemoteFormProps) {
   const form = useFormContext();
   const deviceMenu = props.devices.map((device) => {
     return (
-      <MenuItem value={device.id}>{device.name}</MenuItem>
+      <MenuItem key={device.id} value={device.id}>{device.name}</MenuItem>
     )
   })
   

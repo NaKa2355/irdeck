@@ -19,6 +19,7 @@ interface EditRemoteModalProps {
   devices: Map<string, Device>
   remote?: Remote
   onClose: () => void
+  onDelete?: (remoteId: string) => void
 }
 
 export function EditRemoteModal(props: EditRemoteModalProps) {
@@ -33,9 +34,10 @@ export function EditRemoteModal(props: EditRemoteModalProps) {
     }
   });
 
-  const deleteRemote = () => {
-    remoteDeleter.delete(props.remote?.id ?? "");
+  const deleteRemote = async () => {
+    await remoteDeleter.delete(props.remote?.id ?? "");
     props.onClose();
+    props.onDelete?.(props.remote?.id ?? "");
   }
 
   const submit: SubmitHandler<EditRemoteFormData> = formData => {
@@ -43,13 +45,13 @@ export function EditRemoteModal(props: EditRemoteModalProps) {
       return;
     }
     remoteEditor.edit(props.remote.id, formData.name, formData.deviceId).then(props.onClose);
-  }
+  };
 
   let devicesCanSend = Array.from(props.devices.values()).filter((device) => {
     if (device.canSend) {
       return device
     }
-  })
+  });
 
   return (
     <FormProvider {...form}>

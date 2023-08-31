@@ -19,13 +19,13 @@ export interface AddRemoteRequest {
 
 
 interface useRemoteAdderReturnValue {
-    add: (req: AddRemoteRequest) => Promise<void>
+    add: (req: AddRemoteRequest) => Promise<string>
 }
 
 export function useRemoteAdder(): useRemoteAdderReturnValue {
     let [data, setData] = useRecoilState(remotesAtom);
     const addRemote = (req: AddRemoteRequest) => {
-        const promise = new Promise<void>((exec, reject) => {
+        const promise = new Promise<string>((exec, reject) => {
             const grpcReq = new aim.AddRemoteRequest();
             const buttonsList = new Array<aim.AddRemoteRequest>
             for(const button of req.buttons) {
@@ -59,7 +59,7 @@ export function useRemoteAdder(): useRemoteAdderReturnValue {
                     ...data,
                     remotes: remotes,
                 });
-                exec();
+                exec(res.getRemoteId());
             });
         })
         return promise;
