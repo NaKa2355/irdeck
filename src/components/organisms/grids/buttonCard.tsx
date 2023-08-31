@@ -1,40 +1,25 @@
 import { Avatar, Menu, MenuItem } from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { RemoteType } from "../../../type/remote";
-import { SettingsRemote, Thermostat, ToggleOff, TouchApp } from "@mui/icons-material";
 import { AvatarTextCard } from "../../monecules/avatarTextCard";
 
-interface RemoteCardProps {
+interface ButtonCardProps {
   id: string
   name: string
-  remoteType: RemoteType
+  icon?: JSX.Element
+  canEdit?: boolean
+  hasIrData?: boolean
+  canDelete?: boolean
+  isLoading?: boolean
   onEdit?: (id: string) => void
   onDelete?: (id: string) => void
   onClick?: (id: string) => void
+  onClickSend?: (id: string) => void
+  onClickReceive?: (id: string) => void
 }
 
-interface RemoteIconProps {
-  remoteType: RemoteType,
-  size?: number,
-};
-
-function RemoteIcon(props: RemoteIconProps) {
-  switch (props.remoteType) {
-    case RemoteType.Custom:
-      return (<SettingsRemote color='inherit' fontSize="small" />);
-    case RemoteType.Button:
-      return (<TouchApp color='inherit' fontSize="small" />);
-    case RemoteType.Toggle:
-      return (<ToggleOff color='inherit' fontSize="small" />);
-    case RemoteType.Thermostat:
-      return (<Thermostat color='inherit' fontSize="small" />);
-  }
-}
-
-export function RemoteCard(props: RemoteCardProps) {
+export function ButtonCard(props: ButtonCardProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
   const menuOpend = Boolean(anchorEl);
   const { t } = useTranslation();
 
@@ -43,12 +28,17 @@ export function RemoteCard(props: RemoteCardProps) {
   };
 
   const handleClick = () => {
-    props.onClick?.(props.id);
+    props.onClickSend?.(props.id)
   }
 
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const handleReceive = () => {
+    handleClose();
+    props.onClickReceive?.(props.id);
+  }
 
   const handleEdit = () => {
     handleClose();
@@ -60,26 +50,38 @@ export function RemoteCard(props: RemoteCardProps) {
     props.onDelete?.(props.id);
   }
 
+  const menu = (
+    <Menu
+      open={menuOpend}
+      anchorEl={anchorEl}
+      onClose={handleClose}
+      MenuListProps={{
+        'aria-labelledby': 'basic-button',
+      }}
+    >
+      <MenuItem onClick={handleReceive}>
+        {t("button.receive")}
+      </MenuItem>
+
+      {props.canEdit && (
+        <MenuItem onClick={handleEdit}>
+          {t("button.edit")}
+        </MenuItem>
+      )}
+
+      {props.canDelete && (
+        <MenuItem onClick={handleDelete}>
+          {t("button.delete")}
+        </MenuItem>
+      )}
+    </Menu>
+  )
+
   return (
     <AvatarTextCard
       title={props.name}
-      menu={
-        <Menu
-          open={menuOpend}
-          anchorEl={anchorEl}
-          onClose={handleClose}
-          MenuListProps={{
-            'aria-labelledby': 'basic-button',
-          }}
-        >
-          <MenuItem onClick={handleEdit}>
-            {t("button.edit")}
-          </MenuItem>
-          <MenuItem onClick={handleDelete}>
-            {t("button.delete")}
-          </MenuItem>
-        </Menu>
-      }
+      isLoading={props.isLoading}
+      menu={menu}
       avatar={
         <Avatar
           sx={{
@@ -91,7 +93,7 @@ export function RemoteCard(props: RemoteCardProps) {
             borderColor: "divider"
           }}
         >
-          <RemoteIcon remoteType={props.remoteType} />
+          {props.icon}
         </Avatar>
       }
       onCardClicked={handleClick}

@@ -26,11 +26,9 @@ export function DrawerPage() {
         drawer={
           <RemotesList onRemoteSelected={onRemoteSelected}/>
         }
-
         contents={
           <ButtonsGrid remoteId={selectedRemoteId} />
         }
-
       />
     </div>
   );

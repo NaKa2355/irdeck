@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { RemoteListPage } from "../composes/pages/remotesListPage";
-import { ButtonsListPage } from "../composes/pages/buttonsListPage";
-import DrawerTemplate from "../composes/templates/drawerTemplate";
+import { RemoteListPage } from "../components/pages/remotesListPage";
+import { ButtonsListPage } from "../components/pages/buttonsListPage";
+import DrawerTemplate from "../components/templates/drawerTemplate";
 
 export function RootRouter() { 
     return(

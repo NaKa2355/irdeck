@@ -1,6 +1,6 @@
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import { RootRouter } from './route/router'; import { RecoilRoot } from 'recoil';
-import { DrawerPage } from './composes/pages/drawerPage';
+import { DrawerPage } from './components/pages/drawerPage';
 ;
 
 function App() {
