@@ -7,8 +7,7 @@ import { RpcError, StatusCode } from "grpc-web";
 import { IrData } from "../../../type/irdata.type";
 import { useIrSender } from "../../../hooks/useIrSender";
 import { useTranslation } from "react-i18next";
-import { Select, Button, FormControl, FormLabel, Grid, MenuItem, Stack, Typography, SelectChangeEvent, CircularProgress, Container, Box } from "@mui/material";
-import { useIrSetter } from "../../../hooks/useIrSetter";
+import { Select, Button, FormControl, FormLabel, Grid, MenuItem, Stack, Typography, SelectChangeEvent, CircularProgress, Box } from "@mui/material";
 
 interface ReceiveIrErrorViewProps {
   onCancel: () => void
@@ -68,7 +67,7 @@ interface ReceiveIRSuccessfulViewProps {
 
 function ReceiveIRSuccessfulView(props: ReceiveIRSuccessfulViewProps) {
   const { t } = useTranslation();
-  const [sending, setSending] = useState(false)
+  const [sending, setSending] = useState(false);
 
   const send = () => {
     setSending(true)

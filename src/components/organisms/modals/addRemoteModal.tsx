@@ -10,14 +10,13 @@ import { RemoteForm } from "../forms/remoteForm";
 import { AddThermostatForm } from "../forms/addThermostatForm";
 
 //constants
-import { AddRemoteRequest } from "../../../hooks/useRemotes";
 import { useTranslation } from "react-i18next";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { FormControl, FormLabel, Stack, Select, MenuItem, Grid, Button, SelectChangeEvent, Alert } from "@mui/material";
 import { AddButtonForm } from "../forms/addButtonForm";
 import { AddToggleForm } from "../forms/addToggleFrom";
 import { RpcError, StatusCode } from "grpc-web";
-import { useRemoteAdder } from "../../../hooks/useRemoteAdder";
+import { useRemoteAdder, AddRemoteRequest } from "../../../hooks/useRemoteAdder";
 
 
 export type AddRemoteModalProps = {
@@ -31,11 +30,17 @@ export function AddRemoteModal(props: AddRemoteModalProps) {
   const [postErr, setPostErr] = useState(false);
   const remoteAdder = useRemoteAdder();
   const { t } = useTranslation();
+  
+  const deviceCanSend = Array.from(props.devices.values()).filter((device) => {
+    if (device.canSend) {
+      return device
+    }
+  });
 
   const form = useForm<AddRemoteRequest>({
     defaultValues: {
       tag: remoteType,
-      deviceId: props.devices.keys().next().value
+      deviceId: deviceCanSend.at(0)?.id,
     }
   });
 
@@ -47,7 +52,7 @@ export function AddRemoteModal(props: AddRemoteModalProps) {
   const submit: SubmitHandler<AddRemoteRequest> = async (formData) => {
     formData.tag = remoteType
     try {
-      const remoteId = await remoteAdder.add(formData)
+      const remoteId = await remoteAdder.add(formData);
       props.onClose();
       props.onAdd?.(remoteId);
     } catch (err) {
@@ -65,12 +70,6 @@ export function AddRemoteModal(props: AddRemoteModalProps) {
       setPostErr(true);
     }
   };
-
-  let deviceCanSend = Array.from(props.devices.values()).filter((device) => {
-    if (device.canSend) {
-      return device
-    }
-  })
 
   let remoteTypesItems = Object.values(RemoteType).map((remoteType) => {
     return (

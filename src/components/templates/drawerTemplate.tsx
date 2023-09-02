@@ -5,10 +5,9 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { ArrowBack, ArrowBackIos } from '@mui/icons-material';
+import { ArrowBackIos } from '@mui/icons-material';
 
 const drawerWidth = 240;
 

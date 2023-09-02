@@ -1,5 +1,4 @@
-import { RemoteType, Remote } from "../type/remote";
-import { useState } from "react";
+import { Remote } from "../type/remote";
 import { aimClient } from "../constatnts";
 import * as aim from "irdeck-proto/gen/js/aim/api/v1/aim_service_pb";
 import { useRecoilState } from "recoil";
