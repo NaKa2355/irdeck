@@ -48,6 +48,8 @@
         "remote_name_already_exists": "same name remote is already exists.",
         "remote_name_length": "length of remote name must be less than 15 charactors.",
         "unknown": "unknown error occored!",
-        "remote_not_found": "remote is already deleted or not exists"
+        "remote_not_found": "remote is already deleted or not exists",
+        "devices_can_send_not_found": "device which can send infrared not found",
+        "devices_can_receive_not_found": "device which can receive infrared not found"
     }
 }

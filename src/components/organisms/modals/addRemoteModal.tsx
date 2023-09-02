@@ -22,7 +22,7 @@ import { useRemoteAdder, AddRemoteRequest } from "../../../hooks/useRemoteAdder"
 export type AddRemoteModalProps = {
   onClose: () => void,
   onAdd?: (remoteId: string) => void,
-  devices: Map<string, Device>,
+  devicesCanSend: Array<Device>,
 }
 
 export function AddRemoteModal(props: AddRemoteModalProps) {
@@ -31,16 +31,10 @@ export function AddRemoteModal(props: AddRemoteModalProps) {
   const remoteAdder = useRemoteAdder();
   const { t } = useTranslation();
 
-  const deviceCanSend = Array.from(props.devices.values()).filter((device) => {
-    if (device.canSend) {
-      return device
-    }
-  });
-
   const form = useForm<AddRemoteRequest>({
     defaultValues: {
       tag: remoteType,
-      deviceId: deviceCanSend.at(0)?.id,
+      deviceId: props.devicesCanSend.at(0)?.id,
     }
   });
 
@@ -94,7 +88,7 @@ export function AddRemoteModal(props: AddRemoteModalProps) {
           </FormControl>
 
           <RemoteForm
-            devices={deviceCanSend}
+            devices={props.devicesCanSend}
           />
 
           {/* {remoteType === RemoteType.Custom &&

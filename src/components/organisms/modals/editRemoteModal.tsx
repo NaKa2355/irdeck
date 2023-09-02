@@ -18,7 +18,7 @@ interface EditRemoteFormData {
 
 
 interface EditRemoteModalProps {
-  devices: Map<string, Device>
+  devicesCanSend: Array<Device>
   remote?: Remote
   onClose: () => void
   onDelete?: (remoteId: string) => void
@@ -65,12 +65,6 @@ export function EditRemoteModal(props: EditRemoteModalProps) {
     })();
   };
 
-  let devicesCanSend = Array.from(props.devices.values()).filter((device) => {
-    if (device.canSend) {
-      return device
-    }
-  });
-
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(submit)}>
@@ -81,7 +75,7 @@ export function EditRemoteModal(props: EditRemoteModalProps) {
             </Alert>
           )}
           <RemoteForm
-            devices={devicesCanSend}
+            devices={props.devicesCanSend}
           />
           <Stack
             direction="row"

@@ -39,6 +39,7 @@ export function RemotesList(props: Props) {
   const [[addRemoteModalOpend], [openAddRemoteModal, closeAddRemoteModal]] = useModal<void>();
   const [[editRemoteModalOpend, editTargetRemoteId], [openEditRemoteModal, closeEditRemoteModal]] = useModal<string>();
   const [isRemoteNotExists, setIsRemoteIsNotExist] = useState(false);
+  const [isDeviceCanSendNotFound, setIsDeviceCanSendNotFound] = useState(false);
 
   if ((!remotesGetter.isCached && remotesGetter.isFetching) || (!devicesGetter.isCached && devicesGetter.isFetching)) {
     <CircularProgress />
@@ -56,6 +57,12 @@ export function RemotesList(props: Props) {
     setSelectedRemote(remoteId);
   }
 
+  const devicesCanSend = Array.from(devicesGetter.data.values()).filter((device) => {
+    if (device.canSend) {
+      return device
+    }
+  });
+
   const selectFirstRemote = () => {
     const remotes = Array.from(remotesGetter.data).filter(remote => remote[0] != selectedRemote);
     const firstRemote = remotes.at(0);
@@ -70,6 +77,22 @@ export function RemotesList(props: Props) {
     selectFirstRemote();
   }
 
+  const onClickAddRemoteButton = () => {
+    if(devicesCanSend.length === 0) {
+      setIsDeviceCanSendNotFound(true);
+      return;
+    }
+    openAddRemoteModal();
+  };
+
+  const onClickEditRemoteButton = (remoteId: string) => {
+    if(devicesCanSend.length === 0) {
+      setIsDeviceCanSendNotFound(true);
+      return;
+    }
+    openEditRemoteModal(remoteId);
+  };
+
   return (
     <div>
       <List>
@@ -80,7 +103,9 @@ export function RemotesList(props: Props) {
               disablePadding
               secondaryAction={
                 <IconButton
-                  onClick={() => { openEditRemoteModal(id); }}
+                  onClick={() => {
+                    onClickEditRemoteButton(id);
+                  }}
                   edge="end">
                   <ModeEdit />
                 </IconButton>
@@ -101,7 +126,7 @@ export function RemotesList(props: Props) {
       </List>
 
       <SpeedDial
-        onClick={() => { openAddRemoteModal() }}
+        onClick={onClickAddRemoteButton}
         ariaLabel="SpeedDial basic example"
         sx={{ position: 'fixed', bottom: 16, left: 16 }}
         icon={<Add />}
@@ -115,7 +140,7 @@ export function RemotesList(props: Props) {
           <AddRemoteModal
             onClose={closeAddRemoteModal}
             onAdd={selectRemote}
-            devices={devicesGetter.data}
+            devicesCanSend={devicesCanSend}
           />
         </DialogContent>
       </Dialog>
@@ -132,7 +157,7 @@ export function RemotesList(props: Props) {
             }}
             remote={remotesGetter.data.get(editTargetRemoteId ?? "")}
             onClose={closeEditRemoteModal}
-            devices={devicesGetter.data}
+            devicesCanSend={devicesCanSend}
             onRemoteNotFound={() => {
               setIsRemoteIsNotExist(true);
             }}
@@ -147,6 +172,15 @@ export function RemotesList(props: Props) {
         onClose={() => {setIsRemoteIsNotExist(false)}}
       >
         <Alert severity="error">{t("error.remote_not_found")}</Alert>
+      </Snackbar>
+
+      <Snackbar
+        open={isDeviceCanSendNotFound}
+        autoHideDuration={6000}
+        security="error"
+        onClose={() => {setIsDeviceCanSendNotFound(false)}}
+      >
+        <Alert severity="error">{t("error.devices_can_send_not_found")}</Alert>
       </Snackbar>
     </div>
   )
