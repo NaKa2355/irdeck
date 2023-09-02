@@ -7,7 +7,7 @@ import { RpcError, StatusCode } from "grpc-web";
 import { IrData } from "../../../type/irdata.type";
 import { useIrSender } from "../../../hooks/useIrSender";
 import { useTranslation } from "react-i18next";
-import { Select, Button, FormControl, FormLabel, Grid, MenuItem, Stack, Typography, SelectChangeEvent, CircularProgress, Container } from "@mui/material";
+import { Select, Button, FormControl, FormLabel, Grid, MenuItem, Stack, Typography, SelectChangeEvent, CircularProgress, Container, Box } from "@mui/material";
 import { useIrSetter } from "../../../hooks/useIrSetter";
 
 interface ReceiveIrErrorViewProps {
@@ -298,7 +298,7 @@ export function ReceiveIrModal(props: ReceiveIrModalProps) {
   }
 
   return (
-    <Container sx={{ height: "100%" }}>
+    <Box>
       {state.value === "standby" && (
         <ReceiveIrView
           devices={props.devices}
@@ -334,6 +334,6 @@ export function ReceiveIrModal(props: ReceiveIrModalProps) {
           onRetry={() => { send("RETRY") }}
         />
       )}
-    </Container>
+    </Box>
   )
 }

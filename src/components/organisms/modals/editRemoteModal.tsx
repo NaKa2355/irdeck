@@ -69,7 +69,9 @@ export function EditRemoteModal(props: EditRemoteModalProps) {
             <Button
               variant="contained"
               onClick={deleteRemote}
-            >delete
+              color="error"
+            >
+              {t("button.delete")}
             </Button>
             <Button
               variant="contained"

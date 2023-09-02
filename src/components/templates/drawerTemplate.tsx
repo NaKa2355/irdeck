@@ -28,7 +28,7 @@ export default function DrawerTemplate(props: Props) {
 
   const drawer = (
     <div>
-      <Toolbar />
+      <Toolbar/>
       <Divider />
       {props.drawer}
     </div>
@@ -79,7 +79,7 @@ export default function DrawerTemplate(props: Props) {
           }}
           sx={{
             display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth},
           }}
         >
           {drawer}
@@ -88,7 +88,7 @@ export default function DrawerTemplate(props: Props) {
           variant="permanent"
           sx={{
             display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, borderTop:0 },
           }}
           open
         >
@@ -97,11 +97,11 @@ export default function DrawerTemplate(props: Props) {
       </Box>
       <Box
         component="main"
-        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)`}}}
+        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
       >
         <Toolbar />
         {props.contents}
       </Box>
-    </Box>
+    </Box >
   );
 }
