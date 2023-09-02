@@ -81,7 +81,7 @@ export function ButtonCard(props: ButtonCardProps) {
       }}
     >
       <MenuItem onClick={handleReceive}>
-        {t("button.receive")}
+        {t("button.lean")}
       </MenuItem>
 
       {props.button.tag === "" && (

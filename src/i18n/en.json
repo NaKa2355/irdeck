@@ -25,7 +25,8 @@
         "receiving_test": "Test",
         "push": "Push",
         "on": "ON",
-        "off": "OFF"
+        "off": "OFF",
+        "lean": "Lean"
     },
 
     "label": {

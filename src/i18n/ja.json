@@ -25,7 +25,8 @@
         "receiving_test": "テスト送信",
         "push": "ボタン",
         "on": "オン",
-        "off": "オフ"
+        "off": "オフ",
+        "lean": "学習"
     },
 
     "label": {
