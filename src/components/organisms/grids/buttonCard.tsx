@@ -2,19 +2,18 @@ import { Avatar, Menu, MenuItem } from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AvatarTextCard } from "../../monecules/avatarTextCard";
+import { useIrGetter } from "../../../hooks/useIrGetter";
+import { useIrSender } from "../../../hooks/useIrSender";
+import { Button } from "../../../type/button";
+import { SignalWifi0Bar, Wifi } from "@mui/icons-material";
+import { useRemotesGetter } from "../../../hooks/useRemotesGetter";
 
 interface ButtonCardProps {
-  id: string
-  name: string
-  icon?: JSX.Element
-  canEdit?: boolean
-  hasIrData?: boolean
-  canDelete?: boolean
-  isLoading?: boolean
+  button: Button
+  remoteId: string,
   onEdit?: (id: string) => void
   onDelete?: (id: string) => void
   onClick?: (id: string) => void
-  onClickSend?: (id: string) => void
   onClickReceive?: (id: string) => void
 }
 
@@ -22,32 +21,54 @@ export function ButtonCard(props: ButtonCardProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const menuOpend = Boolean(anchorEl);
   const { t } = useTranslation();
+  const irGetter = useIrGetter();
+  const [sendIr] = useIrSender()
+  const [isLoading, setLoadingState] = useState(false);
+  const remotesGetter = useRemotesGetter();
+
 
   const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClick = () => {
-    props.onClickSend?.(props.id)
-  }
-
   const handleClose = () => {
     setAnchorEl(null);
   };
 
+
+  const handleClick = async () => {
+    if(!props.button.hasIrData) {
+      return;
+    }
+
+    setLoadingState(true);
+    const remote = remotesGetter.data.get(props.remoteId);
+    if(!remote) {
+      return;
+    }
+    
+    const deviceId = remote.deviceId;
+    try {
+      const irData = await irGetter.getIr(props.remoteId, props.button.id);
+      await sendIr(deviceId, irData);
+    } finally {
+      setLoadingState(false);
+    }
+  }
+
   const handleReceive = () => {
     handleClose();
-    props.onClickReceive?.(props.id);
+    props.onClickReceive?.(props.button.id);
   }
 
   const handleEdit = () => {
     handleClose();
-    props.onEdit?.(props.id);
+    props.onEdit?.(props.button.id);
   }
 
   const handleDelete = () => {
     handleClose();
-    props.onDelete?.(props.id);
+    props.onDelete?.(props.button.id);
   }
 
   const menu = (
@@ -63,13 +84,13 @@ export function ButtonCard(props: ButtonCardProps) {
         {t("button.receive")}
       </MenuItem>
 
-      {props.canEdit && (
+      {props.button.tag === "" && (
         <MenuItem onClick={handleEdit}>
           {t("button.edit")}
         </MenuItem>
       )}
 
-      {props.canDelete && (
+      {props.button.tag === "" && (
         <MenuItem onClick={handleDelete}>
           {t("button.delete")}
         </MenuItem>
@@ -79,8 +100,8 @@ export function ButtonCard(props: ButtonCardProps) {
 
   return (
     <AvatarTextCard
-      title={props.name}
-      isLoading={props.isLoading}
+      title={props.button.name}
+      isLoading={isLoading}
       menu={menu}
       avatar={
         <Avatar
@@ -93,7 +114,7 @@ export function ButtonCard(props: ButtonCardProps) {
             borderColor: "divider"
           }}
         >
-          {props.icon}
+          {props.button.hasIrData ? <Wifi /> : <SignalWifi0Bar />}
         </Avatar>
       }
       onCardClicked={handleClick}

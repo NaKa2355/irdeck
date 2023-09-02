@@ -13,7 +13,6 @@ import { IrData } from "../../../type/irdata.type";
 
 type ButtonsGridProps = {
   onClickReceiveButton?: (buttonId: string) => void,
-  onClickSendButton?: (ButtonId: string) => void,
   onClick?: (buttonId: string) => void,
   isLoading?: boolean,
   remoteId: string,
@@ -46,13 +45,10 @@ export function ButtonsGrid(props: ButtonsGridProps) {
   const cards = Array.from(buttonsGetter.data).map(([id, button]) => (
     <Grid item xs={1} key={id}>
       <ButtonCard
-        id={id}
-        name={t(`button.${button.name}`) ?? button.name}
-        hasIrData={button.hasIrData}
-        icon={button.hasIrData ? <Wifi /> : <SignalWifi0Bar />}
+        button={button}
+        remoteId={props.remoteId}
         onClick={props.onClick}
         onClickReceive={onClickReceiveButton}
-        onClickSend={props.onClickSendButton}
       />
     </Grid>
   ));

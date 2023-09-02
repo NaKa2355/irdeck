@@ -71,7 +71,10 @@ export function AvatarTextCard(props: AvatarTextCardProps) {
             </IconButton>
           }
         />
-        <CardActionArea onClick={props.onCardClicked} sx={{borderRadius: 0}}>
+        <CardActionArea
+          disabled={props.isLoading}
+          onClick={props.onCardClicked} 
+          sx={{borderRadius: 0}}>
 
           <CardContent>
             <Grid
