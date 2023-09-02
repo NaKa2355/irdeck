@@ -48,29 +48,30 @@ export function AvatarTextCard(props: AvatarTextCardProps) {
     <Box >
       <Card variant="outlined" sx={{ position: "relative" }}>
         {props.isLoading &&
-          <LoadingLayer/>
+          <LoadingLayer />
         }
 
-        <CardActionArea onClick={props.onCardClicked}>
-          <CardHeader
-            avatar={props.avatar}
 
-            action={
-              <IconButton
-                onMouseDown={(event) => {
-                  event.stopPropagation()
-                }}
+        <CardHeader
+          avatar={props.avatar}
 
-                onClick={(event) => {
-                  event.stopPropagation();
-                  event.preventDefault();
-                  props.onKebabMenuClicked?.(event);
-                }}
-              >
-                <IconDots size={20} />
-              </IconButton>
-            }
-          />
+          action={
+            <IconButton
+              onMouseDown={(event) => {
+                event.stopPropagation()
+              }}
+
+              onClick={(event) => {
+                event.stopPropagation();
+                event.preventDefault();
+                props.onKebabMenuClicked?.(event);
+              }}
+            >
+              <IconDots size={20} />
+            </IconButton>
+          }
+        />
+        <CardActionArea onClick={props.onCardClicked} sx={{borderRadius: 0}}>
 
           <CardContent>
             <Grid
