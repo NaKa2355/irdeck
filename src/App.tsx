@@ -96,7 +96,15 @@ function App() {
         }
       },
 
-
+      MuiCard: {
+        styleOverrides: {
+          root: {
+            borderWidth: 0,
+            borderRadius: "10px",
+            boxShadow: "0px 0px 15px " +  palette.divider
+          }
+        }
+      }
 
     },
   })
