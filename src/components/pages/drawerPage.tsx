@@ -9,25 +9,42 @@ export function DrawerPage() {
   const remotesGetter = useRemotesGetter();
   const devicesGetter = useDevicesGetter();
   const [selectedRemoteId, selectRemote] = useState("");
-  
+  const [isRemoteEmpty, setRemoteIsEmpty] = useState(false);
+
   useEffect(() => {
     remotesGetter.fetch();
     devicesGetter.fetch();
   }, []);
 
   const onRemoteSelected = (remoteId: string) => {
+    setRemoteIsEmpty(false);
     selectRemote(remoteId);
-    console.log(remoteId)
+    console.log(remoteId);
+  }
+
+  const onRemoteIsEmpty = () => {
+    setRemoteIsEmpty(true);
   }
 
   return (
     <div>
       <DrawerTemplate
+        title={remotesGetter.data.get(selectedRemoteId)?.name ?? ""}
         drawer={
-          <RemotesList onRemoteSelected={onRemoteSelected}/>
+          <RemotesList
+            onRemoteSelected={onRemoteSelected}
+            onRemoteEmpty={onRemoteIsEmpty}
+          />
         }
         contents={
-          <ButtonsGrid remoteId={selectedRemoteId} />
+          <div>
+            {!isRemoteEmpty && 
+              <ButtonsGrid remoteId={selectedRemoteId} />
+            }
+            {isRemoteEmpty &&
+              <p>No Remotes</p>
+            }
+          </div>
         }
       />
     </div>

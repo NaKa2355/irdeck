@@ -2,7 +2,7 @@ import { useFormContext } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { TempSlider } from "../../monecules/tempSlider";
 import { Stack, FormControl, FormLabel, MenuItem, Select } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { RemoteType } from "../../../type/remote";
 import { AddButtonRequest } from "../../../hooks/useRemotes";
 
@@ -47,7 +47,7 @@ export function AddThermostatForm(props: AddThermostatFormProps) {
   form.setValue(props.name, getButtons(heatTempRange, coolTempRange, scale))
 
   const scalesMenu = scales.map((scale) => {
-    return (<MenuItem value={scale}>{scale}</MenuItem>)
+    return (<MenuItem key={scale} value={scale}>{scale}</MenuItem>)
   })
 
   return (

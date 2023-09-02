@@ -12,6 +12,7 @@ import Typography from '@mui/material/Typography';
 const drawerWidth = 240;
 
 interface Props {
+  title?: string,
   contents?: JSX.Element;
   drawer?: JSX.Element;
   window?: () => Window;
@@ -58,7 +59,7 @@ export default function DrawerTemplate(props: Props) {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            Responsive drawer
+            {props.title}
           </Typography>
         </Toolbar>
       </AppBar>

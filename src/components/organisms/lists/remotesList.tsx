@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 interface Props {
   onRemoteSelected?: (remoteId: string) => void,
   onClick?: (remoteId: string) => void, 
+  onRemoteEmpty?: () => void;
 }
 
 function RemoteIcon(props: { remoteType: RemoteType }) {
@@ -45,6 +46,8 @@ export function RemotesList(props: Props) {
   useEffect(() => {
     if(selectedRemote) {
       props.onRemoteSelected?.(selectedRemote);
+    } else {
+      props.onRemoteEmpty?.();
     }
   }, [selectedRemote]);
 

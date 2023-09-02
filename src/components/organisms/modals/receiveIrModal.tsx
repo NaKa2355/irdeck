@@ -172,7 +172,7 @@ function ReceiveIrView(props: ReceiveIrViewProps) {
   }
 
   const devicesItem = devicesCanReceive.map((device) => {
-    return (<MenuItem value={device.id}>{device.name}</MenuItem>)
+    return (<MenuItem key={device.id} value={device.id}>{device.name}</MenuItem>)
   })
 
   return (
