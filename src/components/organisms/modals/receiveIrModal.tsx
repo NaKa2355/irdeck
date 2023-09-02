@@ -146,21 +146,17 @@ function ReceiveIrTimeOutView(props: ReceiveIrTimeOutViewProps) {
 }
 
 interface ReceiveIrViewProps {
-  devices: Map<string, Device>
+  devicesCanReceive: Array<Device>
   onCancel: () => void,
   onReceive: (deviceId: string) => void
 }
 
 function ReceiveIrView(props: ReceiveIrViewProps) {
   const { t } = useTranslation();
-  const devicesCanReceive = Array.from(props.devices.values()).filter((device) => {
-    return device.canReceive
-  })
-
-  const [deviceId, setDeviceId] = useState<string | null>(devicesCanReceive[0].id)
+  const [deviceId, setDeviceId] = useState<string | undefined>(props.devicesCanReceive.at(0)?.id)
 
   const receive = () => {
-    if (deviceId != null) {
+    if (deviceId) {
       props.onReceive(deviceId)
     }
   }
@@ -170,7 +166,7 @@ function ReceiveIrView(props: ReceiveIrViewProps) {
     setDeviceId(deviceId);
   }
 
-  const devicesItem = devicesCanReceive.map((device) => {
+  const devicesItem = props.devicesCanReceive.map((device) => {
     return (<MenuItem key={device.id} value={device.id}>{device.name}</MenuItem>)
   })
 
@@ -211,8 +207,8 @@ function ReceiveIrView(props: ReceiveIrViewProps) {
 interface ReceiveIrModalProps {
   onClose: () => void
   onDone: (irData: IrData) => void
-  devices: Map<string, Device>
-  deviceId: string
+  devicesCanReceive: Array<Device>
+  sendDeviceId: string
 }
 
 export function ReceiveIrModal(props: ReceiveIrModalProps) {
@@ -286,7 +282,7 @@ export function ReceiveIrModal(props: ReceiveIrModalProps) {
 
   const test = async () => {
     if (state.event.type === 'SUCCESS') {
-      await sendIr(props.deviceId, state.event.irData)
+      await sendIr(props.sendDeviceId, state.event.irData)
     }
   }
 
@@ -300,7 +296,7 @@ export function ReceiveIrModal(props: ReceiveIrModalProps) {
     <Box>
       {state.value === "standby" && (
         <ReceiveIrView
-          devices={props.devices}
+          devicesCanReceive={props.devicesCanReceive}
           onCancel={cancel}
           onReceive={(deviceId) => send({ type: "RECEIVE", deviceId: deviceId })}
         />
