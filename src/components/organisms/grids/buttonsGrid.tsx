@@ -36,7 +36,7 @@ export function ButtonsGrid(props: ButtonsGridProps) {
   const onClickReceiveButton = (buttonId: string) => {
     openReceiveIrModal(buttonId);
   }
-  
+
   const cards = Array.from(buttonsGetter.data).map(([id, button]) => (
     <Grid item xs={1} key={id}>
       <ButtonCard
@@ -58,7 +58,7 @@ export function ButtonsGrid(props: ButtonsGridProps) {
       <Dialog
         open={opened}
         onClose={closeReceiveIrModal}
-        fullWidth PaperProps={{ sx: { height: '500px' } }}>
+        fullWidth>
         <DialogTitle>{t("header.receive_ir")}</DialogTitle>
         <DialogContent>
           <ReceiveIrModal
@@ -68,7 +68,7 @@ export function ButtonsGrid(props: ButtonsGridProps) {
             onDone={onSetIrData} />
         </DialogContent>
       </Dialog>
-      <Grid container spacing={2} columns={{ xs: 2, sm: 3, md: 4 }}>
+      <Grid container spacing={2} columns={{ xs: 2, md: 3, xl: 4 }}>
         {cards}
       </Grid>
     </Box>

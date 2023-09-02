@@ -18,33 +18,18 @@ function ReceiveIrErrorView(props: ReceiveIrErrorViewProps) {
   const { t } = useTranslation();
 
   return (
-    <Grid container
-      direction="column"
-      justifyContent="space-between"
-      alignItems="stretch"
-      sx={{ height: "100%" }}
-    >
-      <Grid item />
-      <Grid item>
-        <Stack>
-          <Typography color="error.light" align="center">
-            <IconAlertCircle size={100} stroke={"1px"} />
-          </Typography>
-          <Typography align="center" fontWeight="bold">Receive Faild</Typography>
-        </Stack>
-      </Grid>
-
-      <Grid item>
-        <Stack spacing={2}>
-          <Button variant="outlined" onClick={props.onCancel}>
-            {t("button.cancel")}
-          </Button>
-          <Button variant="contained" onClick={props.onRetry}>
-            {t("button.retry")}
-          </Button>
-        </Stack>
-      </Grid>
-    </Grid>
+    <Stack spacing={2}>
+      <Typography color="error.light" align="center">
+        <IconAlertCircle size={100} stroke={"1px"} />
+      </Typography>
+      <Typography align="center" fontWeight="bold">Receive Faild</Typography>
+      <Button variant="outlined" onClick={props.onCancel}>
+        {t("button.cancel")}
+      </Button>
+      <Button variant="contained" onClick={props.onRetry}>
+        {t("button.retry")}
+      </Button>
+    </Stack>
   )
 }
 
@@ -56,29 +41,21 @@ interface ReceivingIrViewProps {
 function ReceivingIrView(props: ReceivingIrViewProps) {
   const { t } = useTranslation();
   return (
-    <Grid container
-      direction="column"
-      justifyContent="space-between"
-      alignItems="stretch"
-      sx={{ height: "100%" }}
-    >
-      <Grid item />
-      <Grid item>
-        <Stack spacing={2}>
-          <Grid item container direction="row" justifyContent="center" alignItems="center">
-            <CircularProgress />
-          </Grid>
-          <Typography align="center" fontWeight="bold">{t("label.receiving")}</Typography>
-        </Stack>
+    <Stack spacing={2}>
+      <Grid
+        paddingTop={2}
+        container
+        direction="row"
+        justifyContent="center"
+        alignItems="center">
+        <Grid item>
+          <CircularProgress />
+        </Grid>
       </Grid>
-      <Grid>
-        <Stack>
-          <Button variant="outlined" onClick={props.onCancel}>
-            {t("button.cancel")}
-          </Button>
-        </Stack>
-      </Grid>
-    </Grid>
+      <Button variant="outlined" onClick={props.onCancel}>
+        {t("button.cancel")}
+      </Button>
+    </Stack>
   )
 }
 
@@ -101,51 +78,37 @@ function ReceiveIRSuccessfulView(props: ReceiveIRSuccessfulViewProps) {
   }
 
   return (
-    <Grid
-      container
-      direction="column"
-      justifyContent="space-between"
-      alignItems="stretch"
-      sx={{ height: "100%" }}
-    >
-      <Grid item />
-
-      <Grid item>
-        <Stack>
-          <Grid container direction="row" justifyContent="center" alignItems="center" >
-            <Grid item>
-              <Typography color="success.light">
-                <IconCheck size={100} stroke={"1px"} />
-              </Typography>
-            </Grid>
-          </Grid>
-          <Typography align="center" fontWeight="bold">{t("label.success")}</Typography>
-        </Stack>
+    <Stack spacing={2}>
+      <Grid container direction="row" justifyContent="center" alignItems="center" >
+        <Grid item>
+          <Typography color="success.light">
+            <IconCheck size={100} stroke={"1px"} />
+          </Typography>
+        </Grid>
       </Grid>
+      <Typography align="center" fontWeight="bold">{t("label.success")}</Typography>
 
-      <Grid item>
-        <Stack spacing={2}>
+      <Stack direction="row" spacing={2}>
+        <Button
+          fullWidth
+          variant="outlined"
+          onClick={send}
+        >
+          {t("button.receiving_test")}
+        </Button>
 
-          <Button
-            variant="outlined"
-            onClick={send}
-          >
-            {t("button.receiving_test")}
-          </Button>
-
-          <Button
-            variant="outlined"
-            onClick={props.onRetry}
-          >
-            {t("button.retry")}
-          </Button>
-
-          <Button variant="contained" onClick={props.onDone}>
-            {t("button.done")}
-          </Button>
-        </Stack>
-      </Grid>
-    </Grid>
+        <Button
+          fullWidth
+          variant="outlined"
+          onClick={props.onRetry}
+        >
+          {t("button.retry")}
+        </Button>
+      </Stack>
+      <Button variant="contained" onClick={props.onDone}>
+        {t("button.done")}
+      </Button>
+    </Stack>
   )
 }
 
@@ -158,37 +121,28 @@ function ReceiveIrTimeOutView(props: ReceiveIrTimeOutViewProps) {
   const { t } = useTranslation();
 
   return (
-    <Grid
-      container
-      direction="column"
-      justifyContent="space-between"
-      alignItems="stretch"
-      sx={{ height: "100%" }}>
-      <Grid item />
-      <Grid item>
-        <Grid container direction="row" justifyContent="center" alignItems="center" >
-          <Grid item>
-            <Stack>
-              <Typography color="text.secondary">
-                <IconHourglassLow size={100} stroke={"1px"} />
-              </Typography>
-              <Typography align="center" fontWeight="bold">{t("label.timeout")}</Typography>
-            </Stack>
-          </Grid>
+    <Stack spacing={2}>
+      <Grid container direction="row" justifyContent="center" alignItems="center" >
+        <Grid item>
+          <Stack>
+            <Typography color="text.secondary">
+              <IconHourglassLow size={100} stroke={"1px"} />
+            </Typography>
+            <Typography align="center" fontWeight="bold">{t("label.timeout")}</Typography>
+          </Stack>
         </Grid>
       </Grid>
-      <Grid item>
-        <Stack spacing={2}>
-          <Button variant="outlined" onClick={props.onCancel}>
-            {t("button.cancel")}
-          </Button>
-          <Button variant="contained" onClick={props.onRetry}>
-            {t("button.retry")}
-          </Button>
-        </Stack>
-      </Grid>
-    </Grid>
+
+      <Button variant="outlined" onClick={props.onCancel}>
+        {t("button.cancel")}
+      </Button>
+      <Button variant="contained" onClick={props.onRetry}>
+        {t("button.retry")}
+      </Button>
+    </Stack>
   )
+
+
 }
 
 interface ReceiveIrViewProps {
@@ -221,49 +175,36 @@ function ReceiveIrView(props: ReceiveIrViewProps) {
   })
 
   return (
-    <Grid container
-      direction="column"
-      justifyContent="space-between"
-      alignItems="stretch"
-      sx={{ height: "100%" }}
-    >
-      <Grid item />
-      <Grid item>
-        <Grid container direction="row" justifyContent="center" alignItems="center" >
-          <Grid item>
-            <Typography color="text.secondary">
-              <IconWifi size={100} stroke={"1px"} />
-            </Typography>
-            <Typography color="text.secondary">
-              <IconDeviceRemote size={100} stroke={"1px"} />
-            </Typography>
-          </Grid>
+    <Stack spacing={2}>
+      <Grid container direction="row" justifyContent="center" alignItems="center" >
+        <Grid item>
+          <Typography color="text.secondary">
+            <IconWifi size={100} stroke={"1px"} />
+          </Typography>
+          <Typography color="text.secondary">
+            <IconDeviceRemote size={100} stroke={"1px"} />
+          </Typography>
         </Grid>
       </Grid>
+      <FormControl>
+        <FormLabel>{t("label.ir_receiving_device")}</FormLabel>
+        <Select
+          value={deviceId ?? ""}
+          onChange={onDeviceSelected}
+        >
+          {devicesItem}
+        </Select>
+      </FormControl>
+      <Button variant="outlined" onClick={props.onCancel}>
+        {t("button.cancel")}
+      </Button>
 
-      <Grid item>
-        <Stack spacing={2}>
-          <FormControl>
-            <FormLabel>{t("label.ir_receiving_device")}</FormLabel>
-            <Select
-              value={deviceId ?? ""}
-              onChange={onDeviceSelected}
-            >
-              {devicesItem}
-            </Select>
-          </FormControl>
-          <Button variant="outlined" onClick={props.onCancel}>
-            {t("button.cancel")}
-          </Button>
-
-          <Button
-            variant="contained"
-            onClick={receive}>
-            {t("button.receive")}
-          </Button>
-        </Stack>
-      </Grid>
-    </Grid>
+      <Button
+        variant="contained"
+        onClick={receive}>
+        {t("button.receive")}
+      </Button>
+    </Stack>
   )
 }
 

@@ -1,5 +1,5 @@
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
-import { RootRouter } from './route/router'; import { RecoilRoot } from 'recoil';
+import { RecoilRoot } from 'recoil';
 import { DrawerPage } from './components/pages/drawerPage';
 ;
 
@@ -104,8 +104,27 @@ function App() {
             boxShadow: "0px 0px 15px " +  palette.divider
           }
         }
-      }
+      },
 
+      MuiAppBar: {
+        styleOverrides: {
+          root: {
+            borderLeft: 0,
+            borderRight: 0,
+            borderTop: 0,
+          }
+        }
+      },
+
+      MuiToolbar: {
+        styleOverrides: {
+          root: {
+            borderLeft: 0,
+            borderRight: 0,
+            borderTop: 0,
+          }
+        }
+      },
     },
   })
 
