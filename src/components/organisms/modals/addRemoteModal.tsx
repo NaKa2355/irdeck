@@ -30,7 +30,7 @@ export function AddRemoteModal(props: AddRemoteModalProps) {
   const [postErr, setPostErr] = useState(false);
   const remoteAdder = useRemoteAdder();
   const { t } = useTranslation();
-  
+
   const deviceCanSend = Array.from(props.devices.values()).filter((device) => {
     if (device.canSend) {
       return device
@@ -81,11 +81,11 @@ export function AddRemoteModal(props: AddRemoteModalProps) {
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(submit)}>
         <Stack spacing={2}>
-          {postErr &&
-            (<Alert severity="error">
+          {postErr && (
+            <Alert severity="error">
               {t("error.unknown")}
             </Alert>
-            )}
+          )}
           <FormControl>
             <FormLabel>{t("label.type")}</FormLabel>
             <Select value={remoteType} onChange={changeForm} defaultValue={remoteType}>

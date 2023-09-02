@@ -5,9 +5,11 @@ import { Device } from "../../../type/device.type"
 import { RemoteForm } from "../forms/remoteForm"
 import { useTranslation } from "react-i18next"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
-import { Button, Grid, Stack } from "@mui/material"
+import { Alert, Button, Grid, Stack } from "@mui/material"
 import { useRemoteEditor } from "../../../hooks/useRemoteEditor"
 import { useRemoteDelter } from "../../../hooks/useRemoteDeleter"
+import { RpcError, StatusCode } from "grpc-web"
+import { useState } from "react"
 
 interface EditRemoteFormData {
   name: string,
@@ -26,6 +28,7 @@ export function EditRemoteModal(props: EditRemoteModalProps) {
   const { t } = useTranslation();
   const remoteEditor = useRemoteEditor();
   const remoteDeleter = useRemoteDelter();
+  const [postErr, setPostErr] = useState(false);
 
   const form = useForm<EditRemoteFormData>({
     defaultValues: {
@@ -41,10 +44,23 @@ export function EditRemoteModal(props: EditRemoteModalProps) {
   }
 
   const submit: SubmitHandler<EditRemoteFormData> = formData => {
-    if (props.remote === undefined) {
-      return;
-    }
-    remoteEditor.edit(props.remote.id, formData.name, formData.deviceId).then(props.onClose);
+    (async () => {
+      if (props.remote === undefined) {
+        return;
+      }
+      try {
+        await remoteEditor.edit(props.remote.id, formData.name, formData.deviceId);
+        props.onClose();
+      } catch (err) {
+        const rpcErr = err as RpcError;
+        if (rpcErr.code === StatusCode.NOT_FOUND) {
+          props.onDelete?.(props.remote.id ?? "");
+          props.onClose();
+          return;
+        }
+        setPostErr(true);
+      }
+    })();
   };
 
   let devicesCanSend = Array.from(props.devices.values()).filter((device) => {
@@ -57,6 +73,11 @@ export function EditRemoteModal(props: EditRemoteModalProps) {
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(submit)}>
         <Stack spacing={2}>
+          {postErr && (
+            <Alert severity="error">
+              {t("error.unknown")}
+            </Alert>
+          )}
           <RemoteForm
             devices={devicesCanSend}
           />
