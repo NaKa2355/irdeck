@@ -47,6 +47,7 @@
         "remote_name_required": "remote name is required.",
         "remote_name_already_exists": "same name remote is already exists.",
         "remote_name_length": "length of remote name must be less than 15 charactors.",
-        "unknown": "unknown error occored!"
+        "unknown": "unknown error occored!",
+        "remote_not_found": "remote is already deleted or not exists"
     }
 }

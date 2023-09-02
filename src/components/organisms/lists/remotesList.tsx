@@ -1,4 +1,4 @@
-import { Box, CircularProgress, Dialog, DialogContent, DialogTitle, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, SpeedDial } from "@mui/material";
+import { Alert, Box, CircularProgress, Dialog, DialogContent, DialogTitle, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Snackbar, SpeedDial } from "@mui/material";
 import { RemoteType } from "../../../type/remote";
 import { Add, ModeEdit, Thermostat, ToggleOff, TouchApp } from "@mui/icons-material";
 import { useRemotesGetter } from "../../../hooks/useRemotesGetter";
@@ -36,8 +36,9 @@ export function RemotesList(props: Props) {
 
   const [selectedRemote, setSelectedRemote] = useState<string | undefined>(undefined);
 
-  const [[addRemoteModalOpend], [openAddRemoteModal, closeAddRemoteModal]] = useModal<void>()
-  const [[editRemoteModalOpend, editTargetRemoteId], [openEditRemoteModal, closeEditRemoteModal]] = useModal<string>()
+  const [[addRemoteModalOpend], [openAddRemoteModal, closeAddRemoteModal]] = useModal<void>();
+  const [[editRemoteModalOpend, editTargetRemoteId], [openEditRemoteModal, closeEditRemoteModal]] = useModal<string>();
+  const [isRemoteNotExists, setIsRemoteIsNotExist] = useState(false);
 
   if ((!remotesGetter.isCached && remotesGetter.isFetching) || (!devicesGetter.isCached && devicesGetter.isFetching)) {
     <CircularProgress />
@@ -132,9 +133,21 @@ export function RemotesList(props: Props) {
             remote={remotesGetter.data.get(editTargetRemoteId ?? "")}
             onClose={closeEditRemoteModal}
             devices={devicesGetter.data}
+            onRemoteNotFound={() => {
+              setIsRemoteIsNotExist(true);
+            }}
           />
         </DialogContent>
       </Dialog>
+
+      <Snackbar
+        open={isRemoteNotExists}
+        autoHideDuration={6000}
+        security="error"
+        onClose={() => {setIsRemoteIsNotExist(false)}}
+      >
+        <Alert severity="error">{t("error.remote_not_found")}</Alert>
+      </Snackbar>
     </div>
   )
 }

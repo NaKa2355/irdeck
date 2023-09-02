@@ -22,6 +22,7 @@ interface EditRemoteModalProps {
   remote?: Remote
   onClose: () => void
   onDelete?: (remoteId: string) => void
+  onRemoteNotFound?: () => void
 }
 
 export function EditRemoteModal(props: EditRemoteModalProps) {
@@ -56,6 +57,7 @@ export function EditRemoteModal(props: EditRemoteModalProps) {
         if (rpcErr.code === StatusCode.NOT_FOUND) {
           props.onDelete?.(props.remote.id ?? "");
           props.onClose();
+          props.onRemoteNotFound?.();
           return;
         }
         setPostErr(true);

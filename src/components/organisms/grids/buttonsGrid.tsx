@@ -1,9 +1,9 @@
-import { Box, Dialog, DialogContent, DialogTitle, Grid } from "@mui/material";
+import { Box, Dialog, DialogContent, DialogTitle, Grid, Snackbar } from "@mui/material";
 import { ButtonCard } from "./buttonCard";
 import { useTranslation } from "react-i18next";
 import { SignalWifi0Bar, Wifi } from "@mui/icons-material";
 import { useButtonsGetter } from "../../../hooks/useButtonsGetter";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useModal } from "../../../hooks/useModal";
 import { ReceiveIrModal } from "../modals/receiveIrModal";
 import { useRemotesGetter } from "../../../hooks/useRemotesGetter";
@@ -32,7 +32,7 @@ export function ButtonsGrid(props: ButtonsGridProps) {
   }, [props.remoteId]);
 
   const onSetIrData = async (irData: IrData) => {
-    if(buttonId) {
+    if (buttonId) {
       await irSetter.setIr(buttonId, irData);
     }
     closeReceiveIrModal();

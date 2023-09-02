@@ -49,6 +49,7 @@
         "remote_name_required": "リモコンの名前を入力してください",
         "remote_name_already_exists": "同じ名前のリモコンが既に存在しています",
         "remote_name_length": "リモコンの名前は15文字以下にしてください",
-        "unknown": "不明なエラーが発生しました"
+        "unknown": "不明なエラーが発生しました",
+        "remote_not_found": "リモコンは既に削除されたか存在していません"
     }
 }
