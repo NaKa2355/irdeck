@@ -8,6 +8,8 @@ import { useModal } from "../../../hooks/useModal";
 import { ReceiveIrModal } from "../modals/receiveIrModal";
 import { useRemotesGetter } from "../../../hooks/useRemotesGetter";
 import { useDevicesGetter } from "../../../hooks/useDevicesGetter";
+import { useIrSetter } from "../../../hooks/useIrSetter";
+import { IrData } from "../../../type/irdata.type";
 
 type ButtonsGridProps = {
   onClickReceiveButton?: (buttonId: string) => void,
@@ -20,17 +22,21 @@ type ButtonsGridProps = {
 
 export function ButtonsGrid(props: ButtonsGridProps) {
   const { t } = useTranslation();
-  const [[opened], [openReceiveIrModal, closeReceiveIrModal]] = useModal<string>();
+  const [[opened, buttonId], [openReceiveIrModal, closeReceiveIrModal]] = useModal<string>();
   const buttonsGetter = useButtonsGetter(props.remoteId);
   const remotesGetter = useRemotesGetter();
   const devicesGetter = useDevicesGetter();
+  const irSetter = useIrSetter(props.remoteId);
 
   useEffect(() => {
     buttonsGetter.fetch()
   }, [props.remoteId]);
 
-  const onSetIrData = () => {
-
+  const onSetIrData = async (irData: IrData) => {
+    if(buttonId) {
+      await irSetter.setIr(buttonId, irData);
+    }
+    closeReceiveIrModal();
   }
 
   const onClickReceiveButton = (buttonId: string) => {
