@@ -1,26 +1,40 @@
-import { useEffect, useState } from "react";
-import { useRemotesGetter } from "../../hooks/useRemotesGetter";
 import { RemotesList } from "../organisms/lists/remotesList";
 import DrawerTemplate from "../templates/drawerTemplate";
-import { useDevicesGetter } from "../../hooks/useDevicesGetter";
 import { ButtonsGrid } from "../organisms/grids/buttonsGrid";
+import { AddRemoteModal } from "../organisms/modals/addRemoteModal";
+import { AddRemoteModalAtom } from "../../recoil/atoms/addRemoteModal";
+import { Box, Dialog, DialogContent, DialogTitle } from "@mui/material";
+
+//hooks
+import { useEffect, useState } from "react";
+import { useRemotes } from "../../hooks/useRemotes";
+import { useRecoilValue } from "recoil";
+import { useDevices } from "../../hooks/useDevices";
+import { useAddRemoteModal } from "../../hooks/useAddRemoteModal";
+import { useTranslation } from "react-i18next";
+import { useEditRemoteModal } from "../../hooks/useEditRemoteModal";
+
+//atoms
+import { EditRemoteModalAtom } from "../../recoil/atoms/editRemoteModal";
+import { remotesAtom } from "../../recoil/atoms/remotes";
+import { EditRemoteModal } from "../organisms/modals/editRemoteModal";
 
 export function DrawerPage() {
-  const remotesGetter = useRemotesGetter();
-  const devicesGetter = useDevicesGetter();
+  const remotes = useRecoilValue(remotesAtom);
+  const remotesActions = useRemotes();
+  const devicesActions = useDevices();
   const [selectedRemoteId, selectRemote] = useState("");
+  const {t} = useTranslation();
   const [isRemoteEmpty, setRemoteIsEmpty] = useState(false);
+  const addRemoteModalState = useRecoilValue(AddRemoteModalAtom);
+  const editRemoteModalState = useRecoilValue(EditRemoteModalAtom);
+  const editRemoteModal = useEditRemoteModal();
+  const addRemoteModal = useAddRemoteModal();
 
   useEffect(() => {
-    remotesGetter.fetch();
-    devicesGetter.fetch();
+    remotesActions.getRemotes();
+    devicesActions.getDevices();
   }, []);
-
-  const onRemoteSelected = (remoteId: string) => {
-    setRemoteIsEmpty(false);
-    selectRemote(remoteId);
-    console.log(remoteId);
-  }
 
   const onRemoteIsEmpty = () => {
     setRemoteIsEmpty(true);
@@ -29,17 +43,16 @@ export function DrawerPage() {
   return (
     <div>
       <DrawerTemplate
-        title={remotesGetter.data.get(selectedRemoteId)?.name ?? ""}
+        title={remotes.remotes.get(selectedRemoteId)?.name ?? ""}
         drawer={
           <RemotesList
-            onRemoteSelected={onRemoteSelected}
             onRemoteEmpty={onRemoteIsEmpty}
           />
         }
         contents={
           <div>
-            {!isRemoteEmpty && 
-              <ButtonsGrid remoteId={selectedRemoteId} />
+            {!isRemoteEmpty &&
+              <ButtonsGrid />
             }
             {isRemoteEmpty &&
               <p>No Remotes</p>
@@ -47,6 +60,21 @@ export function DrawerPage() {
           </div>
         }
       />
+      <Dialog open={addRemoteModalState.isOpen} onClose={addRemoteModal.close} fullWidth>
+        <DialogTitle>{t("header.add_remote")}</DialogTitle>
+        <DialogContent>
+          <Box height={20}></Box>
+          <AddRemoteModal />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={editRemoteModalState.isOpen} onClose={editRemoteModal.close} fullWidth>
+        <DialogTitle>{t("header.add_remote")}</DialogTitle>
+        <DialogContent>
+          <Box height={20}></Box>
+          <EditRemoteModal />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

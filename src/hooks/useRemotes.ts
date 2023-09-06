@@ -1,194 +1,161 @@
-import { RemoteType, Remote } from "../type/remote";
-import { useState } from "react";
-import { aimClient } from "../constatnts";
-import * as aim from "irdeck-proto/gen/js/aim/api/v1/aim_service_pb";
-import * as remote from "irdeck-proto/gen/js/aim/api/v1/remote_pb";
-import { Any } from "google-protobuf/google/protobuf/any_pb";
-
-export interface AddButtonRequest {
-    name: string,
-    tag: string,
-}
-
-export interface AddRemoteRequest {
-    name: string
-    deviceId: string
-    tag: string
-    buttons: Array<AddButtonRequest>
-}
+import { RemoteType } from "../type/remote";
+import * as api from "../api";
+import { useRecoilState } from "recoil";
+import { remotesAtom } from "../recoil/atoms/remotes";
+import { StatusCode } from "grpc-web";
+import { selectedRemoteIdAtom } from "../recoil/atoms/selectedRemoteId";
+import { useButtons } from "./useButtons";
+import { AddRemoteRequest } from "../recoil/atoms/addRemoteModal";
 
 
-interface useRemoteReturnValue {
-    remotes: Map<string, Remote>
-    get: () => Promise<void>
-    add: (req: AddRemoteRequest) => Promise<void>
-    delete: (applianceId: string) => Promise<void>
-    edit: (applianceId: string, name:string, deviceId: string) => Promise<void>
-}
-
-export function useRemotes(): useRemoteReturnValue {
-
-    let [remotes, setRemotes] = useState<Map<string, Remote>>(new Map<string, Remote>());
-
-    const get = () => {
-        const promise = new Promise<void>((exec, reject) => {
-            aimClient.getRemotes(new Any(), {}, (err, res) => {
-                if(err) {
-                    reject(err)
-                    return
-                }
-                
-                if(res.getRemotesList() === undefined) {
-                    reject(new Error("undefined appliances"))
-                    return
-                }
-    
-                let remotes = new Map<string, Remote>();
-                for(let i = 0; i < res.getRemotesList().length; i++) {
-                    let app = res.getRemotesList()[i];
-                   
-                    remotes.set(
-                        app.getId(), 
-                        {
-                        id: app.getId(),
-                        name: app.getName(),
-                        deviceId: app.getDeviceId(),
-                        tag: app.getTag(),
-                        } as Remote
-                    )
-                }
-                setRemotes(remotes);
-                exec();
-            })
-        })
-        return promise
-    }
-    
-    const addRemote = (req: AddRemoteRequest) => {
-        const promise = new Promise<void>((exec, reject) => {
-            const _req = new aim.AddRemoteRequest()
-            const buttonsList = new Array<aim.AddRemoteRequest>
-            req.buttons.forEach(button => {
-                const req = new aim.AddRemoteRequest
-                req.setName(button.name)
-                req.setTag(button.tag)
-                buttonsList.push(req)
+const getButtons = (req: AddRemoteRequest) => {
+    const buttons = new Array<{ name: string, tag: string }>;
+    switch (req.remoteType) {
+        case RemoteType.Button:
+            buttons.push({
+                name: "push",
+                tag: req.remoteType,
             });
-            _req.setDeviceId(req.deviceId)
-            _req.setName(req.name)
-            _req.setTag(req.tag)
-            _req.setButtonsList(buttonsList)
-            aimClient.addRemote(_req, {}, (err, res) => {
-                if (err) {
-                    reject(err)
-                    return
-                }
+            break;
+        case RemoteType.Toggle:
+            buttons.push({
+                name: "on",
+                tag: req.remoteType,
+            });
+            buttons.push({
+                name: "off",
+                tag: req.remoteType,
+            });
+            break;
+        case RemoteType.Thermostat:
+            for (let i = req.heatTempRange[0]; i <= req.heatTempRange[1]; i += Number(req.scale)) {
+                buttons.push({
+                    name: "h" + i.toFixed(1),
+                    tag: RemoteType.Thermostat
+                })
+            }
+
+            for (let i = req.coolTempRange[0]; i <= req.coolTempRange[1]; i += Number(req.scale)) {
+                buttons.push({
+                    name: "c" + i.toFixed(1),
+                    tag: RemoteType.Thermostat
+                })
+            }
+            break;
+        default:
+            return;
+    }
+    return buttons;
+}
+
+export const useRemotes = () => {
+    const [remotesAtomData, setRemotes] = useRecoilState(remotesAtom);
+    const [selectedRemote, setSelectedRemoteId] = useRecoilState(selectedRemoteIdAtom);
     
-                let remoteId = res.getRemoteId()
-                remotes = new Map(remotes)
-                remotes.set(
-                    remoteId,
-                    {
-                        id: remoteId,
-                        name: req.name,
-                        deviceId: req.deviceId,
-                        tag: req.tag,
-                    } as Remote
-                )
-                setRemotes(remotes)
-                exec()
-            })
-        })
-        return promise
-    }
+    const addRemote = async (req: AddRemoteRequest) => {
+        const buttons = getButtons(req);
+        if (!buttons) {
+            return;
+        }
 
-    const deleteRemote = (applianceId: string) => {
-        const promise = new Promise<void>((exec, reject) => {
-            let req = new aim.DeleteRemoteRequest();
-            req.setRemoteId(applianceId);
-            aimClient.deleteRemote(req, {}, (err, _) => {
-                if(err) {
-                    reject(err);
-                    return;
-                }
+        const result = await api.addRemote(req.name, req.remoteType, req.deviceId, buttons);
 
-                remotes = new Map(remotes);
-                remotes.delete(applianceId);
-                setRemotes(remotes);
-                exec();
-            })
-        })
-        return promise
-    }
+        if (result.isError) {
+            return;
+        }
+        const remotes = new Map(remotesAtomData.remotes);
+        remotes.set(result.data.id, {
+            id: result.data.id,
+            name: req.name,
+            tag: req.remoteType,
+            deviceId: req.deviceId,
+        });
 
-    const editRemote = (applianceId: string, name: string, deviceId: string) => {
-        const promise = new  Promise<void>((exec, reject) => {
-            let req = new aim.EditRemoteRequest();
-            req.setRemoteId(applianceId);
-            req.setName(name)
-            req.setDeviceId(deviceId);
-            aimClient.editRemote(req, {}, (err, _) => {
-                if(err) {
-                    reject(err);
-                    return;
-                }
-                
-                remotes = new Map(remotes)
-                let app = remotes.get(applianceId) as Remote;
-                app.name = name;
-                app.deviceId = deviceId;
-                remotes.set(applianceId, app);
-                setRemotes(remotes);
-                exec();
-            })
-        })
+        setRemotes({
+            ...remotesAtomData,
+            remotes: remotes,
+        });
 
-        return promise
+        setSelectedRemoteId(result.data.id);
+    };
+
+    const deleteRemote = async (remoteId: string) => {
+        const result = await api.deleteRemotes(remoteId);
+        if (result.isError && result.error.code !== StatusCode.NOT_FOUND) {
+            return;
+        }
+        const remotes = new Map(remotesAtomData.remotes);
+        remotes.delete(remoteId);
+
+        setRemotes({
+            ...remotesAtomData,
+            remotes: remotes,
+        });
+
+        if(remoteId === selectedRemote) {
+            setSelectedRemoteId(Array.from(remotes)[0][0]);
+        }
+    };
+
+    const editRemote = async (remoteId: string, name: string, deviceId: string) => {
+        const result = await api.editRemote(remoteId, name, deviceId);
+        if (result.isError) {
+            return;
+        }
+        const remotes = new Map(remotesAtomData.remotes);
+        const remote = remotes.get(remoteId);
+        if (remote) {
+            remotes.set(remoteId, {
+                ...remote,
+                name: name,
+                deviceId: deviceId,
+            });
+
+            setRemotes({
+                ...remotesAtomData,
+                remotes: remotes,
+            });
+        }
+    };
+
+    const getRemotes = async () => {
+        setRemotes({
+            ...remotesAtomData,
+            isLoading: true,
+        });
+        const result = await api.getRemotes();
+        if(result.isError) {
+            setRemotes({
+                ...remotesAtomData,
+                isLoading: false,
+                isError: true,
+                error: result.error,
+            });
+            return;
+        }
+
+        setRemotes({
+            ...remotesAtomData,
+            remotes: result.data,
+            isLoading: false,
+            isCached: true,
+            isError: true,
+        });
+
+        if(selectedRemote === "" && result.data.size != 0) {
+            setSelectedRemoteId(Array.from(result.data)[0][0]);
+        }
+    };
+
+    const selectRemote = (remoteId: string) => {
+        setSelectedRemoteId(remoteId);
     }
 
     return {
-        remotes: remotes,
-        get: get,
-        add: addRemote,
-        delete: deleteRemote,
-        edit: editRemote
+        addRemote: addRemote,
+        getRemotes: getRemotes,
+        editRemote: editRemote,
+        deleteRemote: deleteRemote,
+        selectRemote: selectRemote,
     }
-}
-
-
-export function useRemote():
-[Remote | undefined, (applianceId: string) => Promise<void>] {
-    const [appliance, setRemote] = useState<Remote>()
-
-    const getRemote = (applianceId: string) => {
-        const promise = new Promise<void>((resolve, reject) => {
-            let req = new aim.GetRemoteRequest()
-            req.setRemoteId(applianceId)
-            
-            aimClient.getRemote(req, {}, (err, res) => {
-                if(err) {
-                    reject(err)
-                    return
-                }
-    
-                if(res.getRemote() === undefined) {
-                    reject(err)
-                    return
-                }
-    
-                let app = res.getRemote() as remote.Remote
-    
-                setRemote({
-                    id: app.getId(),
-                    deviceId: app.getDeviceId(),
-                    name: app.getName(),
-                    tag: app.getTag(),
-                });
-                resolve()
-            })
-        })
-        return promise
-    }
-
-    return [appliance, getRemote]
 }

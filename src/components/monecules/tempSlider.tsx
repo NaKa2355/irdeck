@@ -8,31 +8,30 @@ type TempSliderProps = {
 }
 
 export function TempSlider(props: TempSliderProps) {
-  const [tempRange, setTemp] = useState<number[]>(props.tempRange)
+  //const [tempRange, setTemp] = useState<number[]>(props.tempRange)
 
   return (
     <Box pl="10px" pr="10px">
       <Slider
-        value={tempRange}
+        value={props.tempRange}
         min={props.tempRange[0]}
         max={props.tempRange[1]}
         disableSwap
         onChangeCommitted={(_, tempRange) => {
           if (typeof tempRange === "object") {
-            setTemp(tempRange)
             props.onChangeCommitted?.(tempRange)
           }
         }}
         onChange={(_, tempRange) => {
           if (typeof tempRange === "object") {
-            setTemp(tempRange)
+            props.onChangeCommitted?.(tempRange)
           }
         }}
         valueLabelDisplay="auto"
       />
       <Grid container alignItems='center' justifyContent='center' direction="row">
         <Grid item>
-          <Typography>{tempRange[0]}℃ - {tempRange[1]}℃</Typography>
+          <Typography>{props.tempRange[0]}℃ - {props.tempRange[1]}℃</Typography>
         </Grid>
       </Grid>
     </Box>

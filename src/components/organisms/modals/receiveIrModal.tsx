@@ -146,14 +146,14 @@ function ReceiveIrTimeOutView(props: ReceiveIrTimeOutViewProps) {
 }
 
 interface ReceiveIrViewProps {
-  devicesCanReceive: Array<Device>
+  devicesCanReceive: Map<string, Device>
   onCancel: () => void,
   onReceive: (deviceId: string) => void
 }
 
 function ReceiveIrView(props: ReceiveIrViewProps) {
   const { t } = useTranslation();
-  const [deviceId, setDeviceId] = useState<string | undefined>(props.devicesCanReceive.at(0)?.id)
+  const [deviceId, setDeviceId] = useState<string | undefined>(Array.from(props.devicesCanReceive).at(0)?.[0]);
 
   const receive = () => {
     if (deviceId) {
@@ -166,7 +166,7 @@ function ReceiveIrView(props: ReceiveIrViewProps) {
     setDeviceId(deviceId);
   }
 
-  const devicesItem = props.devicesCanReceive.map((device) => {
+  const devicesItem = Array.from(props.devicesCanReceive).map(([,device]) => {
     return (<MenuItem key={device.id} value={device.id}>{device.name}</MenuItem>)
   })
 
@@ -207,7 +207,7 @@ function ReceiveIrView(props: ReceiveIrViewProps) {
 interface ReceiveIrModalProps {
   onClose: () => void
   onDone: (irData: IrData) => void
-  devicesCanReceive: Array<Device>
+  devicesCanReceive: Map<string, Device>
   sendDeviceId: string
 }
 

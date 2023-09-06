@@ -3,6 +3,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import "./i18n/config"
+import React from 'react';
 
 
 const root = ReactDOM.createRoot(
@@ -10,18 +11,11 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-  <App></App>
+  <React.StrictMode>
+    <App></App>
+  </React.StrictMode>
 )
-/*
-root.render(
-    <React.StrictMode>
-        <MantineProvider withNormalizeCSS withGlobalStyles theme={{primaryColor: 'dark'}}>
-            <Notifications />
-            <RootRouter/>
-        </MantineProvider>
-    </React.StrictMode>
-);
-*/
+
 
 //<iframe width='100%' height='100%' style={{padding:0, margin:0}} src='http://bridge.local:8581'/>
 // If you want to start measuring performance in your app, pass a function

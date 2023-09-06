@@ -6,7 +6,8 @@ import { useIrGetter } from "../../../hooks/useIrGetter";
 import { useIrSender } from "../../../hooks/useIrSender";
 import { Button } from "../../../type/button";
 import { SignalWifi0Bar, Wifi } from "@mui/icons-material";
-import { useRemotesGetter } from "../../../hooks/useRemotesGetter";
+import { useRecoilValue } from "recoil";
+import { remotesAtom } from "../../../recoil/atoms/remotes";
 
 interface ButtonCardProps {
   button: Button
@@ -24,7 +25,7 @@ export function ButtonCard(props: ButtonCardProps) {
   const irGetter = useIrGetter();
   const [sendIr] = useIrSender()
   const [isLoading, setLoadingState] = useState(false);
-  const remotesGetter = useRemotesGetter();
+  const remotes = useRecoilValue(remotesAtom);
 
 
   const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -42,7 +43,7 @@ export function ButtonCard(props: ButtonCardProps) {
     }
 
     setLoadingState(true);
-    const remote = remotesGetter.data.get(props.remoteId);
+    const remote = remotes.remotes.get(props.remoteId);
     if(!remote) {
       return;
     }

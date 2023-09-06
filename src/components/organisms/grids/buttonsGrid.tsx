@@ -1,67 +1,61 @@
 import { Alert, Box, Dialog, DialogContent, DialogTitle, Grid, Snackbar } from "@mui/material";
 import { ButtonCard } from "./buttonCard";
 import { useTranslation } from "react-i18next";
-import { useButtonsGetter } from "../../../hooks/useButtonsGetter";
 import { useEffect, useState } from "react";
 import { useModal } from "../../../hooks/useModal";
 import { ReceiveIrModal } from "../modals/receiveIrModal";
-import { useRemotesGetter } from "../../../hooks/useRemotesGetter";
-import { useDevicesGetter } from "../../../hooks/useDevicesGetter";
-import { useIrSetter } from "../../../hooks/useIrSetter";
 import { IrData } from "../../../type/irdata.type";
+import { useRecoilValue } from "recoil";
+import { selectedRemoteIdAtom } from "../../../recoil/atoms/selectedRemoteId";
+import { buttonsAtom } from "../../../recoil/atoms/buttons";
+import { useButtons } from "../../../hooks/useButtons";
+import { remotesAtom } from "../../../recoil/atoms/remotes";
+import { devicesCanReceiveSelector } from "../../../recoil/selector/devicesCanReceive";
+
 
 type ButtonsGridProps = {
   onClickReceiveButton?: (buttonId: string) => void,
   onClick?: (buttonId: string) => void,
   isLoading?: boolean,
-  remoteId: string,
 }
-
 
 export function ButtonsGrid(props: ButtonsGridProps) {
   const { t } = useTranslation();
   const [[opened, buttonId], [openReceiveIrModal, closeReceiveIrModal]] = useModal<string>();
-  const buttonsGetter = useButtonsGetter(props.remoteId);
-  const remotesGetter = useRemotesGetter();
-  const devicesGetter = useDevicesGetter();
-  const irSetter = useIrSetter(props.remoteId);
+  const selectedRemoteId = useRecoilValue(selectedRemoteIdAtom);
+  const buttons = useRecoilValue(buttonsAtom(selectedRemoteId));
+  const buttonsAction = useButtons(selectedRemoteId);
+  const remotes = useRecoilValue(remotesAtom);
+  const devicesCanReceive = useRecoilValue(devicesCanReceiveSelector);
   const [isDeviceCanReceiveNotFound, setIsDeviceCanReceiveNotFound] = useState(false);
 
   useEffect(() => {
-    buttonsGetter.fetch()
-  }, [props.remoteId]);
+    buttonsAction.getButtons();
+  }, [selectedRemoteId]);
 
   const onSetIrData = async (irData: IrData) => {
     if (buttonId) {
-      await irSetter.setIr(buttonId, irData);
+      await buttonsAction.setIrData(buttonId, irData);
     }
     closeReceiveIrModal();
   };
 
-  const devicesCanReceive = Array.from(devicesGetter.data.values()).filter((device) => {
-    return device.canReceive
-  });
+  const onClickReceiveButton = (id: string) => {
+    openReceiveIrModal(id);
+  }
 
-  const onClickReceiveButton = (buttonId: string) => {
-    if(devicesCanReceive.length === 0) {
-      setIsDeviceCanReceiveNotFound(true);
-      return;
-    }
-    openReceiveIrModal(buttonId);
-  };
-
-  const cards = Array.from(buttonsGetter.data).map(([id, button]) => (
+  const cards = Array.from(buttons.buttons).map(([id, button]) => (
     <Grid item xs={1} key={id}>
       <ButtonCard
         button={button}
-        remoteId={props.remoteId}
+        remoteId={selectedRemoteId}
         onClick={props.onClick}
         onClickReceive={onClickReceiveButton}
       />
     </Grid>
   ));
 
-  const remote = remotesGetter.data.get(props.remoteId);
+  const remote = remotes.remotes.get(selectedRemoteId);
 
   return (
     <Box>

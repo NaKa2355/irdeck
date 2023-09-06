@@ -1,16 +1,22 @@
 import { Alert, Box, CircularProgress, Dialog, DialogContent, DialogTitle, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Snackbar, SpeedDial } from "@mui/material";
 import { RemoteType } from "../../../type/remote";
 import { Add, ModeEdit, Thermostat, ToggleOff, TouchApp } from "@mui/icons-material";
-import { useRemotesGetter } from "../../../hooks/useRemotesGetter";
 import { AddRemoteModal } from "../modals/addRemoteModal";
 import { EditRemoteModal } from "../modals/editRemoteModal";
 import { useTranslation } from "react-i18next";
 import { useModal } from "../../../hooks/useModal";
-import { useDevicesGetter } from "../../../hooks/useDevicesGetter";
 import { useEffect, useState } from "react";
+import { useRecoilValue } from "recoil";
+import { remotesAtom } from "../../../recoil/atoms/remotes";
+import { selectedRemoteIdAtom } from "../../../recoil/atoms/selectedRemoteId";
+import { useRemotes } from "../../../hooks/useRemotes";
+import { useDevices } from "../../../hooks/useDevices";
+import { devicesAtom } from "../../../recoil/atoms/devices";
+import { useAddRemoteModal } from "../../../hooks/useAddRemoteModal";
+import { AddRemoteModalAtom } from "../../../recoil/atoms/addRemoteModal";
+import { useEditRemoteModal } from "../../../hooks/useEditRemoteModal";
 
 interface Props {
-  onRemoteSelected?: (remoteId: string) => void,
   onClick?: (remoteId: string) => void, 
   onRemoteEmpty?: () => void;
 }
@@ -31,73 +37,32 @@ function RemoteIcon(props: { remoteType: RemoteType }) {
 export function RemotesList(props: Props) {
   const { t } = useTranslation();
 
-  const remotesGetter = useRemotesGetter();
-  const devicesGetter = useDevicesGetter();
-
-  const [selectedRemote, setSelectedRemote] = useState<string | undefined>(undefined);
-
-  const [[addRemoteModalOpend], [openAddRemoteModal, closeAddRemoteModal]] = useModal<void>();
-  const [[editRemoteModalOpend, editTargetRemoteId], [openEditRemoteModal, closeEditRemoteModal]] = useModal<string>();
+  const remotesAtomValue = useRecoilValue(remotesAtom);
+  const selectedRemoteId = useRecoilValue(selectedRemoteIdAtom);
+  const remoteActions = useRemotes();
+  const devices = useRecoilValue(devicesAtom);
+  const addRemoteModal = useAddRemoteModal();
+  const editRemoteModal = useEditRemoteModal();
   const [isRemoteNotExists, setIsRemoteIsNotExist] = useState(false);
   const [isDeviceCanSendNotFound, setIsDeviceCanSendNotFound] = useState(false);
 
-  if ((!remotesGetter.isCached && remotesGetter.isFetching) || (!devicesGetter.isCached && devicesGetter.isFetching)) {
+  if ((!remotesAtomValue.isCached && remotesAtomValue.isLoading) || (!devices.isCached && devices.isLoading)) {
     <CircularProgress />
   }
 
-  useEffect(() => {
-    if(selectedRemote) {
-      props.onRemoteSelected?.(selectedRemote);
-    } else {
-      props.onRemoteEmpty?.();
-    }
-  }, [selectedRemote]);
-
-  const selectRemote = (remoteId: string) => {
-    setSelectedRemote(remoteId);
-  }
-
-  const devicesCanSend = Array.from(devicesGetter.data.values()).filter((device) => {
-    if (device.canSend) {
-      return device
-    }
-  });
-
-  const selectFirstRemote = () => {
-    const remotes = Array.from(remotesGetter.data).filter(remote => remote[0] != selectedRemote);
-    const firstRemote = remotes.at(0);
-    if (firstRemote) {
-      selectRemote(firstRemote[0]);
-    } else {
-      setSelectedRemote(undefined);
-    }
-  }
-
-  if (selectedRemote == undefined && remotesGetter.isCached && remotesGetter.data.size != 0) {
-    selectFirstRemote();
-  }
-
   const onClickAddRemoteButton = () => {
-    if(devicesCanSend.length === 0) {
-      setIsDeviceCanSendNotFound(true);
-      return;
-    }
-    openAddRemoteModal();
+    addRemoteModal.open();
   };
 
   const onClickEditRemoteButton = (remoteId: string) => {
-    if(devicesCanSend.length === 0) {
-      setIsDeviceCanSendNotFound(true);
-      return;
-    }
-    openEditRemoteModal(remoteId);
+    editRemoteModal.open(remoteId);
   };
 
   return (
     <div>
       <List>
         {
-          Array.from(remotesGetter.data).map(([id, remote]) => (
+          Array.from(remotesAtomValue.remotes).map(([id, remote]) => (
             <ListItem
               key={id}
               disablePadding
@@ -112,8 +77,10 @@ export function RemotesList(props: Props) {
               }
             >
               <ListItemButton
-                onClick={() => { selectRemote(remote.id) }}
-                selected={selectedRemote == remote.id}
+                onClick={() => {
+                  remoteActions.selectRemote(id);
+                }}
+                selected={selectedRemoteId == remote.id}
               >
                 <ListItemIcon>
                   <RemoteIcon remoteType={remote.tag as RemoteType} />
@@ -132,38 +99,6 @@ export function RemotesList(props: Props) {
         icon={<Add />}
       >
       </SpeedDial>
-
-      <Dialog open={addRemoteModalOpend} onClose={closeAddRemoteModal} fullWidth>
-        <DialogTitle>{t("header.add_remote")}</DialogTitle>
-        <DialogContent>
-          <Box height={20}></Box>
-          <AddRemoteModal
-            onClose={closeAddRemoteModal}
-            onAdd={selectRemote}
-            devicesCanSend={devicesCanSend}
-          />
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={editRemoteModalOpend} onClose={closeEditRemoteModal} fullWidth>
-        <DialogTitle>{t("header.edit")}</DialogTitle>
-        <DialogContent>
-          <Box height={20}></Box>
-          <EditRemoteModal
-            onDelete={(remoteId) => {
-              if(selectedRemote == remoteId) {
-                selectFirstRemote();
-              }
-            }}
-            remote={remotesGetter.data.get(editTargetRemoteId ?? "")}
-            onClose={closeEditRemoteModal}
-            devicesCanSend={devicesCanSend}
-            onRemoteNotFound={() => {
-              setIsRemoteIsNotExist(true);
-            }}
-          />
-        </DialogContent>
-      </Dialog>
 
       <Snackbar
         open={isRemoteNotExists}
