@@ -1,9 +1,9 @@
 import { RpcError } from "grpc-web";
 import { Remote } from "../type/remote";
-import { Result } from "./result";
 import { AddRemoteRequest } from "irdeck-proto/gen/js/aim/api/v1/aim_service_pb";
 import { Button } from "../type/button";
 import { aimClient } from "../constatnts";
+import { Result } from "../type/result";
 
 export const addRemote = (name: string, tag: string, deviceId: string, buttons: Array<{name: string, tag: string}>) => {
     const promise = new Promise<Result<Remote, RpcError>>((resolve) => {

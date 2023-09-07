@@ -1,5 +1,5 @@
 import { RpcError } from "grpc-web";
-import { Result } from "./result";
+import { Result } from "../type/result"
 import { Device } from "../type/device.type";
 import { piremClient } from "../constatnts";
 import { GetAllDeviceInfoRequest } from "irdeck-proto/gen/js/pirem/api/v1/pirem_service_pb";

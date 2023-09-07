@@ -2,11 +2,17 @@ import { RemoteType } from "../type/remote";
 import * as api from "../api";
 import { useRecoilState } from "recoil";
 import { remotesAtom } from "../recoil/atoms/remotes";
-import { StatusCode } from "grpc-web";
-import { selectedRemoteIdAtom } from "../recoil/atoms/selectedRemoteId";
-import { useButtons } from "./useButtons";
-import { AddRemoteRequest } from "../recoil/atoms/addRemoteModal";
+import { RpcError, StatusCode } from "grpc-web";
+import { useRemoteSelector } from "./useRemoteSelector";
 
+export interface AddRemoteRequest {
+    remoteType: RemoteType;
+    name: string;
+    deviceId: string;
+    heatTempRange: [number, number];
+    coolTempRange: [number, number];
+    scale: string;
+}
 
 const getButtons = (req: AddRemoteRequest) => {
     const buttons = new Array<{ name: string, tag: string }>;
@@ -46,13 +52,13 @@ const getButtons = (req: AddRemoteRequest) => {
             return;
     }
     return buttons;
-}
+};
 
 export const useRemotes = () => {
     const [remotesAtomData, setRemotes] = useRecoilState(remotesAtom);
-    const [selectedRemote, setSelectedRemoteId] = useRecoilState(selectedRemoteIdAtom);
-    
-    const addRemote = async (req: AddRemoteRequest) => {
+    const remoteSelector = useRemoteSelector();
+
+    const addRemote = async (req: AddRemoteRequest): Promise<RpcError | undefined> => {
         const buttons = getButtons(req);
         if (!buttons) {
             return;
@@ -61,29 +67,36 @@ export const useRemotes = () => {
         const result = await api.addRemote(req.name, req.remoteType, req.deviceId, buttons);
 
         if (result.isError) {
-            return;
+            return result.error;
         }
         const remotes = new Map(remotesAtomData.remotes);
-        remotes.set(result.data.id, {
+        const remote = {
             id: result.data.id,
             name: req.name,
             tag: req.remoteType,
             deviceId: req.deviceId,
-        });
+        };
+
+        remotes.set(result.data.id, remote);
 
         setRemotes({
             ...remotesAtomData,
             remotes: remotes,
         });
 
-        setSelectedRemoteId(result.data.id);
+        remoteSelector.selectRemote(remote);
+        return;
     };
 
-    const deleteRemote = async (remoteId: string) => {
+    const deleteRemote = async (remoteId: string): Promise<RpcError | undefined> => {
         const result = await api.deleteRemotes(remoteId);
-        if (result.isError && result.error.code !== StatusCode.NOT_FOUND) {
-            return;
+        if (result.isError) {
+            if (result.error.code === StatusCode.NOT_FOUND) {
+                return;
+            }
+            return result.error;
         }
+
         const remotes = new Map(remotesAtomData.remotes);
         remotes.delete(remoteId);
 
@@ -92,15 +105,15 @@ export const useRemotes = () => {
             remotes: remotes,
         });
 
-        if(remoteId === selectedRemote) {
-            setSelectedRemoteId(Array.from(remotes)[0][0]);
+        if (remoteId === remoteSelector.selectedRemote?.id) {
+            remoteSelector.selectRemote(Array.from(remotes)[0][1]);
         }
     };
 
-    const editRemote = async (remoteId: string, name: string, deviceId: string) => {
+    const editRemote = async (remoteId: string, name: string, deviceId: string): Promise<RpcError | undefined> => {
         const result = await api.editRemote(remoteId, name, deviceId);
         if (result.isError) {
-            return;
+            return result.error;
         }
         const remotes = new Map(remotesAtomData.remotes);
         const remote = remotes.get(remoteId);
@@ -118,20 +131,20 @@ export const useRemotes = () => {
         }
     };
 
-    const getRemotes = async () => {
+    const getRemotes = async (): Promise<RpcError | undefined> => {
         setRemotes({
             ...remotesAtomData,
             isLoading: true,
         });
         const result = await api.getRemotes();
-        if(result.isError) {
+        if (result.isError) {
             setRemotes({
                 ...remotesAtomData,
                 isLoading: false,
                 isError: true,
                 error: result.error,
             });
-            return;
+            return result.error;
         }
 
         setRemotes({
@@ -142,20 +155,15 @@ export const useRemotes = () => {
             isError: true,
         });
 
-        if(selectedRemote === "" && result.data.size != 0) {
-            setSelectedRemoteId(Array.from(result.data)[0][0]);
+        if (remoteSelector.selectedRemote?.id && result.data.size != 0) {
+            remoteSelector.selectRemote(Array.from(result.data)[0][1]);
         }
     };
-
-    const selectRemote = (remoteId: string) => {
-        setSelectedRemoteId(remoteId);
-    }
 
     return {
         addRemote: addRemote,
         getRemotes: getRemotes,
         editRemote: editRemote,
         deleteRemote: deleteRemote,
-        selectRemote: selectRemote,
     }
-}
+};

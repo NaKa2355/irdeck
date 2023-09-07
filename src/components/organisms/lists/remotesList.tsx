@@ -1,25 +1,15 @@
 import { Alert, Box, CircularProgress, Dialog, DialogContent, DialogTitle, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Snackbar, SpeedDial } from "@mui/material";
 import { RemoteType } from "../../../type/remote";
 import { Add, ModeEdit, Thermostat, ToggleOff, TouchApp } from "@mui/icons-material";
-import { AddRemoteModal } from "../modals/addRemoteModal";
-import { EditRemoteModal } from "../modals/editRemoteModal";
 import { useTranslation } from "react-i18next";
-import { useModal } from "../../../hooks/useModal";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { useRecoilValue } from "recoil";
 import { remotesAtom } from "../../../recoil/atoms/remotes";
-import { selectedRemoteIdAtom } from "../../../recoil/atoms/selectedRemoteId";
-import { useRemotes } from "../../../hooks/useRemotes";
-import { useDevices } from "../../../hooks/useDevices";
+import { selectedRemoteAtom } from "../../../recoil/atoms/selectedRemote";
 import { devicesAtom } from "../../../recoil/atoms/devices";
 import { useAddRemoteModal } from "../../../hooks/useAddRemoteModal";
-import { AddRemoteModalAtom } from "../../../recoil/atoms/addRemoteModal";
 import { useEditRemoteModal } from "../../../hooks/useEditRemoteModal";
-
-interface Props {
-  onClick?: (remoteId: string) => void, 
-  onRemoteEmpty?: () => void;
-}
+import { useRemoteSelector } from "../../../hooks/useRemoteSelector";
 
 function RemoteIcon(props: { remoteType: RemoteType }) {
   switch (props.remoteType) {
@@ -34,12 +24,12 @@ function RemoteIcon(props: { remoteType: RemoteType }) {
   }
 }
 
-export function RemotesList(props: Props) {
+export function RemotesList() {
   const { t } = useTranslation();
 
   const remotesAtomValue = useRecoilValue(remotesAtom);
-  const selectedRemoteId = useRecoilValue(selectedRemoteIdAtom);
-  const remoteActions = useRemotes();
+  const selectedRemote = useRecoilValue(selectedRemoteAtom);
+  const remoteSelector = useRemoteSelector();
   const devices = useRecoilValue(devicesAtom);
   const addRemoteModal = useAddRemoteModal();
   const editRemoteModal = useEditRemoteModal();
@@ -78,9 +68,9 @@ export function RemotesList(props: Props) {
             >
               <ListItemButton
                 onClick={() => {
-                  remoteActions.selectRemote(id);
+                  remoteSelector.selectRemote(remote);
                 }}
-                selected={selectedRemoteId == remote.id}
+                selected={selectedRemote === remote}
               >
                 <ListItemIcon>
                   <RemoteIcon remoteType={remote.tag as RemoteType} />

@@ -4,10 +4,12 @@ import { RemoteType } from "../type/remote";
 import { devicesCanReceiveSelector } from "../recoil/selector/devicesCanReceive";
 import { useRemotes } from "./useRemotes";
 
+
 export const useAddRemoteModal = () => {
     const [modalState, setModalState] = useRecoilState(AddRemoteModalAtom);
     const devicesCanSend = useRecoilValue(devicesCanReceiveSelector);
-    const remotesActions = useRemotes();
+    const remotesAction = useRemotes();
+
     const openModal = () => {
         if (devicesCanSend.size === 0) {
             return;
@@ -136,8 +138,21 @@ export const useAddRemoteModal = () => {
         });
     }
     
+
     const submit = async () => {
-        await remotesActions.addRemote(modalState);
+        if(!modalState.canSubmit) {
+            return;
+        }
+
+        const error = await remotesAction.addRemote(modalState);
+        if(error) {
+            return;
+        }
+
+        setModalState({
+            ...modalState,
+            isOpen: false,
+        });
     };
 
     return {

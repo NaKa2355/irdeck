@@ -1,6 +1,6 @@
 import { RpcError } from "grpc-web";
 import { aimClient } from "../constatnts";
-import { Result } from "./result";
+import { Result } from "../type/result"
 import { Remote } from "../type/remote";
 import { Any } from "google-protobuf/google/protobuf/any_pb";
 

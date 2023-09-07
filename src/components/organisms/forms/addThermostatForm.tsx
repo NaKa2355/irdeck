@@ -1,24 +1,15 @@
 import { useTranslation } from "react-i18next";
 import { TempSlider } from "../../monecules/tempSlider";
 import { Stack, FormControl, FormLabel, MenuItem, Select } from "@mui/material";
-import { useRecoilValue } from "recoil";
-import { AddRemoteModalAtom } from "../../../recoil/atoms/addRemoteModal";
 import { useAddRemoteModal } from "../../../hooks/useAddRemoteModal";
+import { useAddRemoteModalState } from "../../../hooks";
 
-interface AddThermostatFormProps {
-  name: string
-}
-
-export function AddThermostatForm(props: AddThermostatFormProps) {
+export function AddThermostatForm() {
   const { t } = useTranslation();
-  const modalState = useRecoilValue(AddRemoteModalAtom);
+  const addRemoteModalState = useAddRemoteModalState();
   const modal = useAddRemoteModal();
-  
-  if(modalState.isOpen === undefined) {
-    return (<></>);
-  }
 
-  const scalesMenu = modalState.scales.map((scale) => {
+  const scalesMenu = addRemoteModalState.scales.map((scale) => {
     return (<MenuItem key={scale} value={scale}>{scale}</MenuItem>)
   });
 
@@ -26,7 +17,7 @@ export function AddThermostatForm(props: AddThermostatFormProps) {
     <Stack spacing={2}>
       <FormControl>
         <FormLabel>{t("label.scale")}</FormLabel>
-        <Select defaultValue={modalState.scales[0]} onChange={(e) => {
+        <Select defaultValue={addRemoteModalState.scale} onChange={(e) => {
           modal.onScaleChanged(e.target.value)
         }}>
           {scalesMenu}
@@ -36,7 +27,7 @@ export function AddThermostatForm(props: AddThermostatFormProps) {
         <FormLabel>{t("label.cool")}</FormLabel>
         <TempSlider
           color="blue"
-          tempRange={modalState.coolTempRange}
+          tempRange={addRemoteModalState.coolTempRange}
           onChangeCommitted={(value) => {
             modal.onCoolTempRangeChanged([value[0], value[1]])
           }}
@@ -46,7 +37,7 @@ export function AddThermostatForm(props: AddThermostatFormProps) {
         <FormLabel>{t("label.heat")}</FormLabel>
         <TempSlider
           color="red"
-          tempRange={modalState.heatTempRange}
+          tempRange={addRemoteModalState.heatTempRange}
           onChangeCommitted={(value) => {
             modal.onHeatTempRangeChanged([value[0], value[1]])
           }}

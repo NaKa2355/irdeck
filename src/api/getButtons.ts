@@ -1,6 +1,6 @@
 import { RpcError } from "grpc-web";
 import { Button } from "../type/button";
-import { Result } from "./result";
+import { Result } from "../type/result";
 import { GetButtonsRequest } from "irdeck-proto/gen/js/aim/api/v1/aim_service_pb";
 import { aimClient } from "../constatnts";
 

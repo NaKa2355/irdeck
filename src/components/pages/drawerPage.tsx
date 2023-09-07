@@ -2,59 +2,45 @@ import { RemotesList } from "../organisms/lists/remotesList";
 import DrawerTemplate from "../templates/drawerTemplate";
 import { ButtonsGrid } from "../organisms/grids/buttonsGrid";
 import { AddRemoteModal } from "../organisms/modals/addRemoteModal";
-import { AddRemoteModalAtom } from "../../recoil/atoms/addRemoteModal";
 import { Box, Dialog, DialogContent, DialogTitle } from "@mui/material";
 
 //hooks
-import { useEffect, useState } from "react";
-import { useRemotes } from "../../hooks/useRemotes";
-import { useRecoilValue } from "recoil";
-import { useDevices } from "../../hooks/useDevices";
-import { useAddRemoteModal } from "../../hooks/useAddRemoteModal";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useEditRemoteModal } from "../../hooks/useEditRemoteModal";
+import { useRemotes, useDevices, useAddRemoteModal, useEditRemoteModal, useAddRemoteModalState, useEditRemoteModalState, useRemoteState, useSelectedRemote } from "../../hooks";
 
 //atoms
-import { EditRemoteModalAtom } from "../../recoil/atoms/editRemoteModal";
-import { remotesAtom } from "../../recoil/atoms/remotes";
 import { EditRemoteModal } from "../organisms/modals/editRemoteModal";
 
 export function DrawerPage() {
-  const remotes = useRecoilValue(remotesAtom);
   const remotesActions = useRemotes();
   const devicesActions = useDevices();
-  const [selectedRemoteId, selectRemote] = useState("");
+  const selectedRemote = useSelectedRemote();
   const {t} = useTranslation();
-  const [isRemoteEmpty, setRemoteIsEmpty] = useState(false);
-  const addRemoteModalState = useRecoilValue(AddRemoteModalAtom);
-  const editRemoteModalState = useRecoilValue(EditRemoteModalAtom);
   const editRemoteModal = useEditRemoteModal();
+  const editRemoteModalState = useEditRemoteModalState();
   const addRemoteModal = useAddRemoteModal();
+  const addRemoteModalState = useAddRemoteModalState();
+  const remotesState = useRemoteState();
 
   useEffect(() => {
     remotesActions.getRemotes();
     devicesActions.getDevices();
   }, []);
 
-  const onRemoteIsEmpty = () => {
-    setRemoteIsEmpty(true);
-  }
-
   return (
     <div>
       <DrawerTemplate
-        title={remotes.remotes.get(selectedRemoteId)?.name ?? ""}
+        title={selectedRemote?.name}
         drawer={
-          <RemotesList
-            onRemoteEmpty={onRemoteIsEmpty}
-          />
+          <RemotesList/>
         }
         contents={
           <div>
-            {!isRemoteEmpty &&
+            {remotesState.remotes.size !== 0 &&
               <ButtonsGrid />
             }
-            {isRemoteEmpty &&
+            {(remotesState.remotes.size === 0 && !remotesState.isLoading) &&
               <p>No Remotes</p>
             }
           </div>
