@@ -1,56 +1,39 @@
-import { Alert, Box, Dialog, DialogContent, DialogTitle, Grid, Snackbar } from "@mui/material";
-import { ButtonCard } from "./buttonCard";
-import { useTranslation } from "react-i18next";
-import { useState } from "react";
-import { useModal } from "../../../hooks/useModal";
-import { ReceiveIrModal } from "../modals/receiveIrModal";
-import { IrData } from "../../../type/irdata.type";
-import { useRecoilValue } from "recoil";
-import { useButtons } from "../../../hooks/useButtons";
-import { devicesCanReceiveSelector } from "../../../recoil/selector/devicesCanReceive";
-import { useButtonsState, useSelectedRemote } from "../../../hooks";
+import { Alert, Box, Grid, Snackbar } from '@mui/material'
+import { ButtonCard } from './buttonCard'
+import { useTranslation } from 'react-i18next'
+import { useState } from 'react'
+import { type Button } from '../../../type/button'
 
-
-type ButtonsGridProps = {
-  onClickReceiveButton?: (buttonId: string) => void,
-  onClick?: (buttonId: string) => void,
-  isLoading?: boolean,
+interface ButtonsGridProps {
+  onClickReceiveButton?: (buttonId: string) => void
+  onClick?: (buttonId: string) => void
+  isLoading?: boolean
+  buttons?: Button[]
 }
 
-export function ButtonsGrid(props: ButtonsGridProps) {
-  const { t } = useTranslation();
-  const [[opened, buttonId], [openReceiveIrModal, closeReceiveIrModal]] = useModal<string>();
-  const selectedRemote = useSelectedRemote();
-  const buttonsState = useButtonsState(selectedRemote);
-  const buttonsAction = useButtons(selectedRemote?.id ?? "");
-  const devicesCanReceive = useRecoilValue(devicesCanReceiveSelector);
-  const [isDeviceCanReceiveNotFound, setIsDeviceCanReceiveNotFound] = useState(false);
+export function ButtonsGrid (props: ButtonsGridProps): JSX.Element {
+  const { t } = useTranslation()
+  const [isDeviceCanReceiveNotFound, setIsDeviceCanReceiveNotFound] = useState(false)
 
-  const onSetIrData = async (irData: IrData) => {
-    if (buttonId) {
-      await buttonsAction.setIrData(buttonId, irData);
-    }
-    closeReceiveIrModal();
-  };
-
-  const onClickReceiveButton = (id: string) => {
-    openReceiveIrModal(id);
+  const onClickReceiveButton = (id: string): void => {
+    // openReceiveIrModal(id);
   }
 
-  const cards = Array.from(buttonsState.buttons).map(([id, button]) => (
-    <Grid item xs={1} key={id}>
+  const cards = props.buttons?.map((button) => (
+    <Grid item xs={1} key={button.id}>
       <ButtonCard
         button={button}
-        remoteId={selectedRemote?.id ?? ""}
+        remoteId={''}
         onClick={props.onClick}
         onClickReceive={onClickReceiveButton}
+        isLoading={false}
       />
     </Grid>
-  ));
+  ))
 
   return (
     <Box>
-      <Dialog
+      {/* <Dialog
         open={opened}
         onClose={closeReceiveIrModal}
         fullWidth>
@@ -62,7 +45,7 @@ export function ButtonsGrid(props: ButtonsGridProps) {
             onClose={closeReceiveIrModal}
             onDone={onSetIrData} />
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
       <Grid container spacing={2} columns={{ xs: 2, md: 3, xl: 4 }}>
         {cards}
       </Grid>
@@ -71,9 +54,9 @@ export function ButtonsGrid(props: ButtonsGridProps) {
         open={isDeviceCanReceiveNotFound}
         autoHideDuration={6000}
         security="error"
-        onClose={() => {setIsDeviceCanReceiveNotFound(false)}}
+        onClose={() => { setIsDeviceCanReceiveNotFound(false) }}
       >
-        <Alert severity="error">{t("error.devices_can_receive_not_found")}</Alert>
+        <Alert severity="error">{t('error.devices_can_receive_not_found')}</Alert>
       </Snackbar>
     </Box>
   )

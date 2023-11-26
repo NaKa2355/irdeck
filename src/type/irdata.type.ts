@@ -1,1 +1,1 @@
-export type IrData = Uint8Array;
+export type IrData = Uint8Array

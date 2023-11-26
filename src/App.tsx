@@ -1,36 +1,33 @@
-import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
-import { RecoilRoot } from 'recoil';
-import { DrawerPage } from './components/pages/drawerPage';
-;
+import { CssBaseline, ThemeProvider, createTheme } from '@mui/material'
+import { RecoilRoot } from 'recoil'
+import { DrawerPage } from './components/pages/drawerPage'
 
-function App() {
-
+function App (): JSX.Element {
   const palette = createTheme({
     palette: {
       text: {
-        primary: "#383b59",
-        secondary: "#888B95",
+        primary: '#383b59',
+        secondary: '#888B95'
       },
       background: {
         // Purple and green play nicely together.
-        default: "#fafafa",
-        paper: "#ffffff"
-      },
+        default: '#fafafa',
+        paper: '#ffffff'
+      }
     }
-  }).palette;
-
+  }).palette
 
   const theme = createTheme({
     shadows: ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
-    palette: palette,
+    palette,
     components: {
       MuiDialogTitle: {
         styleOverrides: {
           root: {
-            borderBottom: "solid",
+            borderBottom: 'solid',
             borderBottomWidth: 1,
             borderBottomColor: palette.divider,
-            backgroundColor: palette.background.default,
+            backgroundColor: palette.background.default
           }
         }
       },
@@ -38,10 +35,10 @@ function App() {
       MuiMenuItem: {
         styleOverrides: {
           root: {
-            borderRadius: "5px",
-            marginLeft: "5px",
-            marginRight: "5px",
-          },
+            borderRadius: '5px',
+            marginLeft: '5px',
+            marginRight: '5px'
+          }
 
         }
       },
@@ -49,7 +46,7 @@ function App() {
       MuiDialog: {
         styleOverrides: {
           root: {
-            backdropFilter: "blur(2px)",
+            backdropFilter: 'blur(2px)'
 
           }
         }
@@ -58,8 +55,8 @@ function App() {
       MuiInputBase: {
         styleOverrides: {
           root: {
-            height: "2.5rem"
-          },
+            height: '2.5rem'
+          }
 
         }
       },
@@ -67,29 +64,29 @@ function App() {
       MuiFormLabel: {
         styleOverrides: {
           root: {
-            fontSize: "0.8rem"
-          },
+            fontSize: '0.8rem'
+          }
         }
       },
 
       MuiButton: {
         styleOverrides: {
           root: {
-            border: "solid",
+            border: 'solid',
             borderWidth: 1,
-            borderColor: palette.divider,
+            borderColor: palette.divider
           },
 
           outlined: {
             color: palette.text.primary
-          },
-        },
+          }
+        }
       },
 
       MuiPaper: {
         styleOverrides: {
           root: {
-            border: "solid",
+            border: 'solid',
             borderWidth: 1,
             borderColor: palette.divider
           }
@@ -100,8 +97,8 @@ function App() {
         styleOverrides: {
           root: {
             borderWidth: 0,
-            borderRadius: "10px",
-            boxShadow: "0px 0px 15px " +  palette.divider
+            borderRadius: '10px',
+            boxShadow: '0px 0px 15px ' + palette.divider
           }
         }
       },
@@ -111,7 +108,7 @@ function App() {
           root: {
             borderLeft: 0,
             borderRight: 0,
-            borderTop: 0,
+            borderTop: 0
           }
         }
       },
@@ -121,11 +118,11 @@ function App() {
           root: {
             borderLeft: 0,
             borderRight: 0,
-            borderTop: 0,
+            borderTop: 0
           }
         }
-      },
-    },
+      }
+    }
   })
 
   return (
@@ -135,8 +132,7 @@ function App() {
         <DrawerPage />
       </RecoilRoot>
     </ThemeProvider>
-  );
+  )
 }
 
-
-export default App;
+export default App

@@ -1,22 +1,21 @@
-import { Box, Card, CardActionArea, CardContent, CardHeader, CircularProgress, Grid, IconButton, Typography } from "@mui/material";
-import { IconDots } from "@tabler/icons-react";
-import React from "react"
+import { Box, Card, CardActionArea, CardContent, CardHeader, CircularProgress, Grid, IconButton, Typography } from '@mui/material'
+import { IconDots } from '@tabler/icons-react'
+import React from 'react'
 
-
-function LoadingLayer() {
+function LoadingLayer (): JSX.Element {
   return (
     <Box sx={{
-      position: "absolute",
-      pointerEvents: "none",
-      width: "100%",
-      height: "100%"
+      position: 'absolute',
+      pointerEvents: 'none',
+      width: '100%',
+      height: '100%'
     }}>
       <Box sx={{
-        position: "absolute",
-        backgroundColor: "text.primary",
-        opacity: "0.3",
-        width: "100%",
-        height: "100%"
+        position: 'absolute',
+        backgroundColor: 'text.primary',
+        opacity: '0.3',
+        width: '100%',
+        height: '100%'
       }}>
       </Box>
       <Grid
@@ -35,22 +34,21 @@ function LoadingLayer() {
 }
 
 interface AvatarTextCardProps {
-  title: string,
-  avatar: React.ReactNode,
-  menu: React.ReactNode,
-  isLoading?: boolean,
+  title: string
+  avatar: React.ReactNode
+  menu: React.ReactNode
+  isLoading?: boolean
   onKebabMenuClicked?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
   onCardClicked?: () => void
 }
 
-export function AvatarTextCard(props: AvatarTextCardProps) {
+export function AvatarTextCard (props: AvatarTextCardProps): JSX.Element {
   return (
     <Box >
-      <Card variant="outlined" sx={{ position: "relative" }}>
-        {props.isLoading &&
+      <Card variant="outlined" sx={{ position: 'relative' }}>
+        {(props.isLoading ?? false) &&
           <LoadingLayer />
         }
-
 
         <CardHeader
           avatar={props.avatar}
@@ -62,9 +60,9 @@ export function AvatarTextCard(props: AvatarTextCardProps) {
               }}
 
               onClick={(event) => {
-                event.stopPropagation();
-                event.preventDefault();
-                props.onKebabMenuClicked?.(event);
+                event.stopPropagation()
+                event.preventDefault()
+                props.onKebabMenuClicked?.(event)
               }}
             >
               <IconDots size={20} />
@@ -73,8 +71,8 @@ export function AvatarTextCard(props: AvatarTextCardProps) {
         />
         <CardActionArea
           disabled={props.isLoading}
-          onClick={props.onCardClicked} 
-          sx={{borderRadius: 0}}>
+          onClick={props.onCardClicked}
+          sx={{ borderRadius: 0 }}>
 
           <CardContent>
             <Grid
@@ -86,9 +84,9 @@ export function AvatarTextCard(props: AvatarTextCardProps) {
             >
               <Typography
                 sx={{
-                  fontSize: "1em",
-                  fontWeight: "bold",
-                  overflowWrap: "revert",
+                  fontSize: '1em',
+                  fontWeight: 'bold',
+                  overflowWrap: 'revert'
                 }}
               >
                 {props.title}

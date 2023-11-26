@@ -1,65 +1,41 @@
-import { Alert, Box, CircularProgress, Dialog, DialogContent, DialogTitle, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Snackbar, SpeedDial } from "@mui/material";
-import { RemoteType } from "../../../type/remote";
-import { Add, ModeEdit, Thermostat, ToggleOff, TouchApp } from "@mui/icons-material";
-import { useTranslation } from "react-i18next";
-import {  useState } from "react";
-import { useRecoilValue } from "recoil";
-import { remotesAtom } from "../../../recoil/atoms/remotes";
-import { selectedRemoteAtom } from "../../../recoil/atoms/selectedRemote";
-import { devicesAtom } from "../../../recoil/atoms/devices";
-import { useAddRemoteModal } from "../../../hooks/useAddRemoteModal";
-import { useEditRemoteModal } from "../../../hooks/useEditRemoteModal";
-import { useRemoteSelector } from "../../../hooks/useRemoteSelector";
+import { IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, SpeedDial } from '@mui/material'
+import { type Remote, RemoteType } from '../../../type/remote'
+import { Add, ModeEdit, Thermostat, ToggleOff, TouchApp } from '@mui/icons-material'
 
-function RemoteIcon(props: { remoteType: RemoteType }) {
+function RemoteIcon (props: { remoteType: RemoteType }): JSX.Element {
   switch (props.remoteType) {
     case RemoteType.Button:
-      return (<TouchApp />);
+      return (<TouchApp />)
     case RemoteType.Toggle:
-      return (<ToggleOff />);
+      return (<ToggleOff />)
     case RemoteType.Thermostat:
-      return (<Thermostat />);
+      return (<Thermostat />)
     default:
       return (<></>)
   }
 }
 
-export function RemotesList() {
-  const { t } = useTranslation();
+interface RemotesListProps {
+  remotes?: Remote[]
+  isLoading?: boolean
+  selectedRemoteId?: string
+  onClick?: (remoteId: string) => void
+  onAdd?: () => void
+  onEdit?: (remoteId: string) => void
+}
 
-  const remotesAtomValue = useRecoilValue(remotesAtom);
-  const selectedRemote = useRecoilValue(selectedRemoteAtom);
-  const remoteSelector = useRemoteSelector();
-  const devices = useRecoilValue(devicesAtom);
-  const addRemoteModal = useAddRemoteModal();
-  const editRemoteModal = useEditRemoteModal();
-  const [isRemoteNotExists, setIsRemoteIsNotExist] = useState(false);
-  const [isDeviceCanSendNotFound, setIsDeviceCanSendNotFound] = useState(false);
-
-  if ((!remotesAtomValue.isCached && remotesAtomValue.isLoading) || (!devices.isCached && devices.isLoading)) {
-    <CircularProgress />
-  }
-
-  const onClickAddRemoteButton = () => {
-    addRemoteModal.open();
-  };
-
-  const onClickEditRemoteButton = (remoteId: string) => {
-    editRemoteModal.open(remoteId);
-  };
-
+export function RemotesList (props: RemotesListProps): JSX.Element {
   return (
     <div>
       <List>
-        {
-          Array.from(remotesAtomValue.remotes).map(([id, remote]) => (
+        {props.remotes?.map((remote) => (
             <ListItem
-              key={id}
+              key={remote.id}
               disablePadding
               secondaryAction={
                 <IconButton
                   onClick={() => {
-                    onClickEditRemoteButton(id);
+                    props.onEdit?.(remote.id)
                   }}
                   edge="end">
                   <ModeEdit />
@@ -67,10 +43,8 @@ export function RemotesList() {
               }
             >
               <ListItemButton
-                onClick={() => {
-                  remoteSelector.selectRemote(remote);
-                }}
-                selected={selectedRemote === remote}
+                onClick={() => { props.onClick?.(remote.id) }}
+                selected={props.selectedRemoteId === remote.id}
               >
                 <ListItemIcon>
                   <RemoteIcon remoteType={remote.tag as RemoteType} />
@@ -78,35 +52,17 @@ export function RemotesList() {
                 <ListItemText primary={remote.name} />
               </ListItemButton>
             </ListItem>
-          ))
+        ))
         }
       </List>
 
       <SpeedDial
-        onClick={onClickAddRemoteButton}
-        ariaLabel="SpeedDial basic example"
+        onClick={props.onAdd}
+        ariaLabel="irdeck"
         sx={{ position: 'fixed', bottom: 16, left: 16 }}
         icon={<Add />}
       >
       </SpeedDial>
-
-      <Snackbar
-        open={isRemoteNotExists}
-        autoHideDuration={6000}
-        security="error"
-        onClose={() => {setIsRemoteIsNotExist(false)}}
-      >
-        <Alert severity="error">{t("error.remote_not_found")}</Alert>
-      </Snackbar>
-
-      <Snackbar
-        open={isDeviceCanSendNotFound}
-        autoHideDuration={6000}
-        security="error"
-        onClose={() => {setIsDeviceCanSendNotFound(false)}}
-      >
-        <Alert severity="error">{t("error.devices_can_send_not_found")}</Alert>
-      </Snackbar>
     </div>
   )
 }

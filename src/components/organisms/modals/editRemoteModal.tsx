@@ -1,91 +1,104 @@
-//types
-//organisms
-import { Alert, Button, FormControl, FormHelperText, FormLabel, MenuItem, Select, Stack, TextField } from "@mui/material"
-import { EditRemoteModalAtom } from "../../../recoil/atoms/editRemoteModal"
-import { useEditRemoteModal } from "../../../hooks/useEditRemoteModal"
+// types
+// organisms
+import { Alert, Box, Button, Dialog, DialogContent, DialogTitle, FormControl, FormHelperText, FormLabel, MenuItem, Select, Stack, TextField } from '@mui/material'
 
-//hooks
+// hooks
+import { useTranslation } from 'react-i18next'
+import { type Device } from '../../../type/device.type'
+import { type EditRemotesReq } from '../../../interfaces/api'
 
-import { useTranslation } from "react-i18next"
-import { useRemotes } from "../../../hooks/useRemotes"
-import { useRecoilValue } from "recoil"
+interface EditRemoteModalProps {
+  devicesCanSend?: Device[]
+  postError?: boolean
+  remoteName?: string
+  deviceId?: string
+  isRemoteNameInvaild?: boolean
+  remoteNameValidateErrorMessage?: string
+  isOpen?: boolean
+  close?: () => void
+  onDelete?: () => void
+  onSubmit?: (req: EditRemotesReq) => void
+}
 
-export function EditRemoteModal() {
-  const { t } = useTranslation();
-  const remotesActions = useRemotes();
-  const modalState = useRecoilValue(EditRemoteModalAtom);
-  const modal = useEditRemoteModal();
+export function EditRemoteModal (props: EditRemoteModalProps): JSX.Element {
+  const { t } = useTranslation()
 
-  const deviceMenu = Array.from(modalState.devices).map(([, device]) => {
+  const deviceMenu = props.devicesCanSend?.map((device) => {
     return (
       <MenuItem key={device.id} value={device.id}>{device.name}</MenuItem>
     )
-  });
+  })
 
-  const deleteRemote = async () => {
-    await remotesActions.deleteRemote(modalState.remoteId);
-    modal.close();
+  const deleteRemote = (): void => {
+    props.onDelete?.()
   }
 
-  const submit = async () => {
-    await modal.submit();
-    modal.close();
-  };
+  const submit = (): void => {
+  }
 
   return (
-    <Stack spacing={2}>
-      {modalState.isError && (
-        <Alert severity="error">
-          {t("error.unknown")}
-        </Alert>
-      )}
+    <Dialog open={props.isOpen ?? false} onClose={props.close} fullWidth>
+      <DialogTitle>{t('header.add_remote')}</DialogTitle>
+      <DialogContent>
+        <Box height={20}></Box>
+        <form>
+          <Stack spacing={2}>
+            {(props.postError ?? false) && (
+              <Alert severity="error">
+                {t('error.unknown')}
+              </Alert>
+            )}
+            <FormControl error={props.isRemoteNameInvaild}>
+              <FormLabel>{t('label.name')}</FormLabel>
+              <TextField
+                name="name"
+                error={props.isRemoteNameInvaild}
+                defaultValue={props.remoteName}
+                placeholder={t('label.name') ?? ''}
+                onChange={(e) => {
+                  // remote name changed
+                }}
+              />
+              <FormHelperText>
+                {(props.isRemoteNameInvaild ?? false) ? t(props.remoteNameValidateErrorMessage ?? '') : ''}
+              </FormHelperText>
+            </FormControl>
 
-      <FormControl error={modalState.nameValidationError.isError}>
-        <FormLabel>{t("label.name")}</FormLabel>
-        <TextField
-          error={modalState.nameValidationError.isError}
-          defaultValue={modalState.name}
-          placeholder={t("label.name") ?? ""}
-          onChange={(e) => {
-            modal.onNameChanged(e.target.value);
-          }}
-        />
-        <FormHelperText>
-          {modalState.nameValidationError.isError ? t(modalState.nameValidationError.message) : ""}
-        </FormHelperText>
-      </FormControl>
-      <FormControl>
-        <FormLabel>{t("label.ir_sending_device")}</FormLabel>
-        <Select
-          onChange={
-            (e) => modal.onDeviceChanged(e.target.value as string)
-          }
-          defaultValue={modalState.deviceId}>
-          {deviceMenu}
-        </Select>
-      </FormControl>
+            <FormControl>
+              <FormLabel>{t('label.ir_sending_device')}</FormLabel>
+              <Select
+                name="device"
+                onChange={() => {
+                  // device changed
+                }}
+                defaultValue={props.deviceId}>
+                {deviceMenu}
+              </Select>
+            </FormControl>
 
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-        spacing={2}
-      >
-        <Button
-          variant="contained"
-          onClick={deleteRemote}
-          color="error"
-        >
-          {t("button.delete")}
-        </Button>
-        <Button
-          disabled={!modalState.canSubmit}
-          onClick={submit}
-          variant="contained"
-          type="submit">
-          {t("button.done")}
-        </Button>
-      </Stack>
-    </Stack>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              spacing={2}
+            >
+              <Button
+                variant="contained"
+                onClick={deleteRemote}
+                color="error"
+              >
+                {t('button.delete')}
+              </Button>
+              <Button
+                onClick={submit}
+                variant="contained"
+                type="submit">
+                {t('button.done')}
+              </Button>
+            </Stack>
+          </Stack>
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }

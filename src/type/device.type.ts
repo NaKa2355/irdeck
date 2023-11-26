@@ -1,9 +1,9 @@
-export type Device = {
-    name: string
-    id: string
-    canSend: Boolean
-    canReceive: boolean
-    bufferSize: Number
-    driverVersion: string
-    firmwareVersion: string
+export interface Device {
+  name: string
+  id: string
+  canSend: boolean
+  canReceive: boolean
+  bufferSize: number
+  driverVersion: string
+  firmwareVersion: string
 }

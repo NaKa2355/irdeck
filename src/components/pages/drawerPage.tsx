@@ -1,66 +1,46 @@
-import { RemotesList } from "../organisms/lists/remotesList";
-import DrawerTemplate from "../templates/drawerTemplate";
-import { ButtonsGrid } from "../organisms/grids/buttonsGrid";
-import { AddRemoteModal } from "../organisms/modals/addRemoteModal";
-import { Box, Dialog, DialogContent, DialogTitle } from "@mui/material";
+import { RemotesList } from '../organisms/lists/remotesList'
+import DrawerTemplate from '../templates/drawerTemplate'
+import { ButtonsGrid } from '../organisms/grids/buttonsGrid'
+import { AddRemoteModal } from '../organisms/modals/addRemoteModal'
 
-//hooks
-import { useEffect } from "react";
-import { useTranslation } from "react-i18next";
-import { useRemotes, useDevices, useAddRemoteModal, useEditRemoteModal, useAddRemoteModalState, useEditRemoteModalState, useRemoteState, useSelectedRemote } from "../../hooks";
+// atoms
+import { EditRemoteModal } from '../organisms/modals/editRemoteModal'
+import { type Remote } from '../../type/remote'
 
-//atoms
-import { EditRemoteModal } from "../organisms/modals/editRemoteModal";
+interface DrawerPageProps {
+  selectedRemote?: Remote
+  remotes?: Remote[]
+  isFetchingRemote?: boolean
+}
 
-export function DrawerPage() {
-  const remotesActions = useRemotes();
-  const devicesActions = useDevices();
-  const selectedRemote = useSelectedRemote();
-  const {t} = useTranslation();
-  const editRemoteModal = useEditRemoteModal();
-  const editRemoteModalState = useEditRemoteModalState();
-  const addRemoteModal = useAddRemoteModal();
-  const addRemoteModalState = useAddRemoteModalState();
-  const remotesState = useRemoteState();
-
-  useEffect(() => {
-    remotesActions.getRemotes();
-    devicesActions.getDevices();
-  }, []);
-
+export function DrawerPage (props: DrawerPageProps): JSX.Element {
   return (
     <div>
       <DrawerTemplate
-        title={selectedRemote?.name}
+        title={props.selectedRemote?.name}
         drawer={
-          <RemotesList/>
+          <RemotesList />
         }
         contents={
           <div>
-            {remotesState.remotes.size !== 0 &&
+            {props.remotes?.length !== 0 &&
               <ButtonsGrid />
             }
-            {(remotesState.remotes.size === 0 && !remotesState.isLoading) &&
+            {(props.remotes?.length === 0 && !(props.isFetchingRemote ?? false)) &&
               <p>No Remotes</p>
             }
           </div>
         }
       />
-      <Dialog open={addRemoteModalState.isOpen} onClose={addRemoteModal.close} fullWidth>
-        <DialogTitle>{t("header.add_remote")}</DialogTitle>
-        <DialogContent>
-          <Box height={20}></Box>
-          <AddRemoteModal />
-        </DialogContent>
-      </Dialog>
 
-      <Dialog open={editRemoteModalState.isOpen} onClose={editRemoteModal.close} fullWidth>
-        <DialogTitle>{t("header.add_remote")}</DialogTitle>
-        <DialogContent>
-          <Box height={20}></Box>
-          <EditRemoteModal />
-        </DialogContent>
-      </Dialog>
+      <AddRemoteModal />
+      <EditRemoteModal />
+
+      {/* <Snackbar open={snackBar.state.isOpen} onClose={snackBar.close} autoHideDuration={6000}>
+        <Alert onClose={snackBar.close} severity={snackBar.state.severity} sx={{ width: '100%' }}>
+          {snackBar.state.message}
+        </Alert>
+      </Snackbar> */}
     </div>
-  );
-}
+  )
+};

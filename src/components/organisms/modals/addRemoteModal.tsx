@@ -1,97 +1,122 @@
-//types
-import { RemoteType } from "../../../type/remote";
+// types
+import { RemoteType } from '../../../type/remote'
 
-//organisms
-import { AddThermostatForm } from "../forms/addThermostatForm";
+// organisms
+import { AddThermostatForm } from '../forms/addThermostatForm'
 
-//conmponents
-import { FormControl, FormLabel, Stack, Select, MenuItem, Grid, Button, SelectChangeEvent, Alert, TextField, FormHelperText } from "@mui/material";
+// conmponents
+import { FormControl, FormLabel, Stack, Select, MenuItem, Grid, Button, type SelectChangeEvent, Alert, TextField, FormHelperText, Dialog, DialogTitle, DialogContent, Box } from '@mui/material'
 
-//hooks
-import { useAddRemoteModal } from "../../../hooks/useAddRemoteModal";
-import { useTranslation } from "react-i18next";
-import { useState } from "react";
-import { useAddRemoteModalState } from "../../../hooks";
+// hooks
+import { useTranslation } from 'react-i18next'
+import { type Device } from '../../../type/device.type'
+import { type AddRemotesReq } from '../../../interfaces/api'
+import { type FormEventHandler, useState } from 'react'
 
-export function AddRemoteModal() {
-  const [remoteType, setRemoteType] = useState<RemoteType>(Object.values(RemoteType)[0]);
-  const modal = useAddRemoteModal();
-  const addRemoteModalState = useAddRemoteModalState();
-  const { t } = useTranslation();
+interface AddRemoteModalProps {
+  devices?: Device[]
+  submitFailed?: boolean
+  isRemoteNameInvaild?: boolean
+  remoteNameValidateErrorMessage?: string
+  isOpen?: boolean
+  close?: () => void
+  onSubmit?: (req: AddRemotesReq) => void
+  onRemoteNameInvaild?: () => void
+}
 
-  let remoteTypesItems = Object.values(RemoteType).map((remoteType) => {
+export function AddRemoteModal (props: AddRemoteModalProps): JSX.Element {
+  const { t } = useTranslation()
+  const [remoteType, setRemoteType] = useState<RemoteType>(RemoteType.Button)
+
+  const remoteTypesItems = Object.values(RemoteType).map((remoteType) => {
     return (
       <MenuItem key={remoteType} value={remoteType}>{t(`remote_types.${remoteType}`)}</MenuItem>
     )
-  });
+  })
 
-  const changeForm = (e: SelectChangeEvent<RemoteType>) => {
+  const changeForm = (e: SelectChangeEvent<RemoteType>): void => {
     const remoteType = e.target.value as RemoteType
-    setRemoteType(remoteType);
-    modal.onRemoteTypeChanged(remoteType);
+    setRemoteType(remoteType)
   }
 
-  const deviceMenu = Array.from(addRemoteModalState.devices).map(([, device]) => {
+  const deviceMenu = props.devices?.map((device) => {
     return (
       <MenuItem key={device.id} value={device.id}>{device.name}</MenuItem>
     )
-  });
+  })
 
-  const submit = async () => {
-    await modal.submit();
+  const onSubmit: FormEventHandler<HTMLFormElement> = (event) => {
+    const form = new FormData(event.currentTarget)
+    form.forEach((value, key) => {
+      console.log(value, key)
+    })
   }
 
   return (
-    <Stack spacing={2}>
-      {addRemoteModalState.isError && (
-        <Alert severity="error">
-          {t("error.unknown")}
-        </Alert>
-      )}
-      <FormControl>
-        <FormLabel>{t("label.type")}</FormLabel>
-        <Select value={remoteType} onChange={changeForm} defaultValue={remoteType}>
-          {remoteTypesItems}
-        </Select>
-      </FormControl>
+    <Dialog open={props.isOpen ?? false} onClose={props.close} fullWidth>
+      <DialogTitle>{t('header.add_remote')}</DialogTitle>
+      <DialogContent>
+        <Box height={20}></Box>
 
-      <FormControl error={addRemoteModalState.nameValidationError.isError}>
-        <FormLabel>{t("label.name")}</FormLabel>
-        <TextField
-          error={addRemoteModalState.nameValidationError.isError}
-          placeholder={t("label.name") ?? ""}
-          onChange={(e) => {
-            modal.onNameChanged(e.target.value);
-          }}
-        />
-        <FormHelperText>
-          {addRemoteModalState.nameValidationError.isError ? t(addRemoteModalState.nameValidationError.message) : ""}
-        </FormHelperText>
-      </FormControl>
-      <FormControl>
-        <FormLabel>{t("label.ir_sending_device")}</FormLabel>
-        <Select
-          defaultValue={addRemoteModalState.deviceId}
-          name="deviceId"
-          onChange={(e) => { modal.onDeviceChanged(e.target.value as string) }}>
-          {deviceMenu}
-        </Select>
-      </FormControl>
+        <form id="add_remote_form" onSubmit={onSubmit}>
+          <Stack spacing={2}>
+            {(props.submitFailed ?? false) && (
+              <Alert severity="error">
+                {t('error.unknown')}
+              </Alert>
+            )}
 
-      {remoteType === RemoteType.Thermostat &&
-        <AddThermostatForm/>
-      }
+            <FormControl>
+              <FormLabel>{t('label.type')}</FormLabel>
+              <Select name="type" value={remoteType} onChange={changeForm} defaultValue={remoteType}>
+                {remoteTypesItems}
+              </Select>
+            </FormControl>
 
-      <Grid container direction="row" justifyContent="flex-end" alignItems="center">
-        <Grid item>
-          <Button
-            onClick={submit}
-            variant="contained"
-            type="submit">
-            {t("button.add")}
-          </Button>
-        </Grid>
-      </Grid>
-    </Stack>
+            <FormControl error={props.isRemoteNameInvaild}>
+              <FormLabel>{t('label.name')}</FormLabel>
+              <TextField
+                name="name"
+                error={props.isRemoteNameInvaild}
+                placeholder={t('label.name') ?? ''}
+                onChange={(e) => {
+                  // changed remote name
+                }}
+              />
+              <FormHelperText>
+                {(props.isRemoteNameInvaild ?? false) ? t(props.remoteNameValidateErrorMessage ?? '') : ''}
+              </FormHelperText>
+            </FormControl>
+
+            <FormControl>
+              <FormLabel>{t('label.ir_sending_device')}</FormLabel>
+              <Select
+                defaultValue={props.devices?.at(0)?.id ?? ''}
+                name="device_id"
+                onChange={(e) => {
+                  // cahnged devices
+                }}
+              >
+                {deviceMenu}
+              </Select>
+            </FormControl>
+
+            {remoteType === RemoteType.Thermostat &&
+              <AddThermostatForm />
+            }
+
+            <Grid container direction="row" justifyContent="flex-end" alignItems="center">
+              <Grid item>
+                <Button
+                  variant="contained"
+                  type="submit">
+                  {t('button.add')}
+                </Button>
+              </Grid>
+            </Grid>
+          </Stack>
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 };
