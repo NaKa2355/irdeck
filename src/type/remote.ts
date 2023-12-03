@@ -10,4 +10,5 @@ export interface Remote {
   id: string
   deviceId: string
   tag: string
+  buttonIds: string[]
 }

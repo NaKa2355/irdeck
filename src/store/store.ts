@@ -4,7 +4,7 @@ import { type IApi } from '../interfaces/api'
 import { Api } from '../api/api'
 
 import { url } from '../constatnts'
-import { remoteReducer } from '../ducks/remotes'
+import { remoteReducer } from '../ducks/remotes/'
 import { buttonsReducer } from '../ducks/buttons'
 import { devicesReducer } from '../ducks/devices'
 

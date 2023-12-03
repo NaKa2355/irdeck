@@ -1,5 +1,8 @@
 import { listenerMiddleware } from '../../store/store'
-import { fetchDevices, fetchDevicesFailure, fetchDevicesSuccess, receiveIr, receiveIrFailure, receiveSuccess, sendIr, sendIrFailure, sendIrSuccess } from './slice'
+import { devicesFetched } from './domainSlice'
+import { fetchDevices, fetchDevicesFailure, fetchDevicesSuccess } from './fechStateSlice'
+import { irDataReceived } from './receivedIrDataSlice'
+import { receiveIr, receiveIrFailure, receiveIrSuccess, sendIr, sendIrFailure, sendIrSuccess } from './requestStateSlice'
 
 listenerMiddleware.startListening({
   actionCreator: fetchDevices,
@@ -11,7 +14,8 @@ listenerMiddleware.startListening({
       }))
       return
     }
-    api.dispatch(fetchDevicesSuccess({
+    api.dispatch(fetchDevicesSuccess())
+    api.dispatch(devicesFetched({
       devices: result.data
     }))
   }
@@ -20,38 +24,36 @@ listenerMiddleware.startListening({
 listenerMiddleware.startListening({
   actionCreator: sendIr,
   effect: async (action, api) => {
+    const { deviceId, irData } = action.payload
     const result = await api.extra.api.sendIr({
-      irData: action.payload.irData,
-      deviceId: action.payload.deviceId
+      irData,
+      deviceId
     })
     if (result.isError) {
       api.dispatch(sendIrFailure({
-        deviceId: action.payload.deviceId,
         error: result.error
       }))
       return
     }
-    api.dispatch(sendIrSuccess({
-      deviceId: action.payload.deviceId
-    }))
+    api.dispatch(sendIrSuccess())
   }
 })
 
 listenerMiddleware.startListening({
   actionCreator: receiveIr,
   effect: async (action, api) => {
+    const { deviceId } = action.payload
     const result = await api.extra.api.receiveIr({
-      deviceId: action.payload.deviceId
+      deviceId
     })
     if (result.isError) {
       api.dispatch(receiveIrFailure({
-        deviceId: action.payload.deviceId,
         error: result.error
       }))
       return
     }
-    api.dispatch(receiveSuccess({
-      deviceId: action.payload.deviceId,
+    api.dispatch(receiveIrSuccess())
+    api.dispatch(irDataReceived({
       irData: result.data
     }))
   }

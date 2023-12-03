@@ -1,23 +1,33 @@
-import { fetchButtons, fetchButtonsFailure, fetchButtonsSuccess, patchIrData, patchIrDataFailure, patchIrDataSuccess, pushButton, pushButtonFailure, pushButtonSuccess } from './slice'
 import { listenerMiddleware } from '../../store/store'
+import { remoteButtonsFetched } from '../remotes/domainSlice'
+import { buttonsFetched, irDataLearned } from './domainSlice'
+import { fetchButtons, fetchButtonsFailure, fetchButtonsSuccess } from './fetchStateSlice'
+import { leanIrData, learnIrDataFailure, learnIrDataSuccess, pushButton, pushButtonFailure, pushButtonSuccess } from './requestStateSlice'
 
 listenerMiddleware.startListening({
   actionCreator: fetchButtons,
   effect: async (action, api) => {
+    const { remoteId } = action.payload
     const result = await api.extra.api.getButtons({
-      remoteId: action.payload.remoteId
+      remoteId
     })
 
     if (result.isError) {
       api.dispatch(fetchButtonsFailure({
-        remoteId: action.payload.remoteId,
+        remoteId,
         error: result.error
       }))
       return
     }
     api.dispatch(fetchButtonsSuccess({
-      remoteId: action.payload.remoteId,
+      remoteId
+    }))
+    api.dispatch(buttonsFetched({
       buttons: result.data
+    }))
+    api.dispatch(remoteButtonsFetched({
+      remoteId,
+      buttonIds: result.data.map(buttons => buttons.id)
     }))
   }
 })
@@ -25,10 +35,13 @@ listenerMiddleware.startListening({
 listenerMiddleware.startListening({
   actionCreator: pushButton,
   effect: async (action, api) => {
+    const { buttonId } = action.payload
+    const remoteId = api.getState().buttons.domain.byId[buttonId].remoteId
+    const deviceId = api.getState().remotes.domain.byId[remoteId].deviceId
     const result = await api.extra.api.pushButton({
-      remoteId: action.payload.remoteId,
-      buttonId: action.payload.buttonId,
-      deviceId: action.payload.deviceId
+      remoteId,
+      buttonId,
+      deviceId
     })
     if (result.isError) {
       api.dispatch(pushButtonFailure({
@@ -44,22 +57,30 @@ listenerMiddleware.startListening({
 })
 
 listenerMiddleware.startListening({
-  actionCreator: patchIrData,
+  actionCreator: leanIrData,
   effect: async (action, api) => {
+    const { buttonId, irData } = action.payload
+    const remoteId = api.getState().buttons.domain.byId[buttonId].remoteId
+
     const result = await api.extra.api.setIrData({
-      remoteId: action.payload.remoteId,
-      buttonId: action.payload.buttonId,
-      irData: action.payload.irData
+      remoteId,
+      buttonId,
+      irData
     })
+
     if (result.isError) {
-      api.dispatch(patchIrDataFailure({
-        buttonId: action.payload.buttonId,
+      api.dispatch(learnIrDataFailure({
+        buttonId,
         error: result.error
       }))
       return
     }
-    api.dispatch(patchIrDataSuccess({
-      buttonId: action.payload.buttonId
+
+    api.dispatch(learnIrDataSuccess({
+      buttonId
+    }))
+    api.dispatch(irDataLearned({
+      buttonId
     }))
   }
 })
