@@ -1,11 +1,11 @@
-import { listenerMiddleware } from '../../store/store'
+import { type AppStartListening } from '../../app'
 import { remoteButtonsFetched } from '../remotes/domainSlice'
 import { buttonsFetched, irDataLearned } from './domainSlice'
 import { fetchButtons, fetchButtonsFailure, fetchButtonsSuccess } from './fetchStateSlice'
 import { leanIrData, learnIrDataFailure, learnIrDataSuccess, pushButton, pushButtonFailure, pushButtonSuccess } from './requestStateSlice'
 
-export const setupButtonsListener = (): void => {
-  listenerMiddleware.startListening({
+const addFetchButtonsListener = (startListening: AppStartListening): void => {
+  startListening({
     actionCreator: fetchButtons,
     effect: async (action, api) => {
       const { remoteId } = action.payload
@@ -32,8 +32,10 @@ export const setupButtonsListener = (): void => {
       }))
     }
   })
+}
 
-  listenerMiddleware.startListening({
+const addPushButtonListener = (startListening: AppStartListening): void => {
+  startListening({
     actionCreator: pushButton,
     effect: async (action, api) => {
       const { buttonId } = action.payload
@@ -56,8 +58,10 @@ export const setupButtonsListener = (): void => {
       }))
     }
   })
+}
 
-  listenerMiddleware.startListening({
+const addLearnIrDataListener = (startListening: AppStartListening): void => {
+  startListening({
     actionCreator: leanIrData,
     effect: async (action, api) => {
       const { buttonId, irData } = action.payload
@@ -85,4 +89,10 @@ export const setupButtonsListener = (): void => {
       }))
     }
   })
+}
+
+export const addButtonsListener = (startListening: AppStartListening): void => {
+  addFetchButtonsListener(startListening)
+  addPushButtonListener(startListening)
+  addLearnIrDataListener(startListening)
 }

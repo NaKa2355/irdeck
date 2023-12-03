@@ -1,13 +1,12 @@
-import { listenerMiddleware } from '../../store/store'
+import { type AppStartListening } from '../../app'
 import { remoteAdded, remoteDeleted, remoteEdited, remotesFetched } from './domainSlice'
 import { fetchRemote, fetchRemoteFailure, fetchRemoteSuccess } from './fetchStateSlice'
 import { deleteRemote, deleteRemoteFailure, deleteRemoteSuccess, patchRemote, patchRemoteFailure, patchRemoteSuccess, postRemote, postRemoteFailure, postRemoteSuccess } from './requestStateSlice'
 import { remoteSelected } from './selectedRemoteSlice'
 import { selectedRemoteSelector } from './selector'
 
-export const setupRemotesListener = (): void => {
-  // fetched remote
-  listenerMiddleware.startListening({
+const addFetchRemotesListener = (startListening: AppStartListening): void => {
+  startListening({
     actionCreator: fetchRemote,
     effect: async (_, api) => {
       const result = await api.extra.api.getRemotes()
@@ -21,7 +20,6 @@ export const setupRemotesListener = (): void => {
       api.dispatch(remotesFetched({
         remotes: result.data
       }))
-
       const selectedRemote = selectedRemoteSelector(api.getState())
       if (selectedRemote !== null) {
         return
@@ -33,9 +31,10 @@ export const setupRemotesListener = (): void => {
       api.dispatch(remoteSelected({ remoteId: firstRemote.id }))
     }
   })
+}
 
-  // posted new remote
-  listenerMiddleware.startListening({
+const addPostRemoteListener = (startListening: AppStartListening): void => {
+  startListening({
     actionCreator: postRemote,
     effect: async (action, api) => {
       const payload = action.payload
@@ -60,9 +59,11 @@ export const setupRemotesListener = (): void => {
       }))
     }
   })
+}
 
-  // posted edited remote
-  listenerMiddleware.startListening({
+// posted edited remote
+const addPatchRemoteListener = (startListening: AppStartListening): void => {
+  startListening({
     actionCreator: patchRemote,
     effect: async (action, api) => {
       const { remoteId, remoteName, deviceId } = action.payload
@@ -85,8 +86,10 @@ export const setupRemotesListener = (): void => {
       }))
     }
   })
+}
 
-  listenerMiddleware.startListening({
+const addDeleteRemoteListener = (startListening: AppStartListening): void => {
+  startListening({
     actionCreator: deleteRemote,
     effect: async (action, api) => {
       const { remoteId } = action.payload
@@ -105,4 +108,11 @@ export const setupRemotesListener = (): void => {
       }))
     }
   })
+}
+
+export const addRemotesListener = (startListening: AppStartListening): void => {
+  addDeleteRemoteListener(startListening)
+  addFetchRemotesListener(startListening)
+  addPatchRemoteListener(startListening)
+  addPostRemoteListener(startListening)
 }

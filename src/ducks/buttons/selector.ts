@@ -1,4 +1,4 @@
-import { type RootStore } from '../../store/store'
+import { type RootStore } from '../../app/store'
 import { type Button } from '../../type/button'
 import { selectedRemoteSelector } from '../remotes/selector'
 

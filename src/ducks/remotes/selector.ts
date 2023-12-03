@@ -1,5 +1,5 @@
 import { type ApiError } from '../../interfaces/api'
-import { type RootStore } from '../../store/store'
+import { type RootStore } from '../../app/store'
 import { type Remote } from '../../type/remote'
 import { type FetchStatus } from '../../utils/reqStatus'
 

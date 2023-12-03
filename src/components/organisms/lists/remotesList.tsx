@@ -2,8 +2,7 @@ import { IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText,
 import { RemoteType } from '../../../type/remote'
 import { Add, ModeEdit, Thermostat, ToggleOff, TouchApp } from '@mui/icons-material'
 import { useDispatch, useSelector } from 'react-redux'
-import { remoteSelector, selectedRemoteSelector } from '../../../ducks/remotes/selector'
-import { remoteSelected } from '../../../ducks/remotes'
+import { remoteSelected, selectedRemoteSelector, remoteSelector } from '../../../ducks/remotes'
 import { fetchButtons } from '../../../ducks/buttons'
 import { useEffect } from 'react'
 
