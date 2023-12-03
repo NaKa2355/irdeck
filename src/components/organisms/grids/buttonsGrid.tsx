@@ -2,29 +2,25 @@ import { Alert, Box, Grid, Snackbar } from '@mui/material'
 import { ButtonCard } from './buttonCard'
 import { useTranslation } from 'react-i18next'
 import { useState } from 'react'
-import { type Button } from '../../../type/button'
+import { useSelector } from 'react-redux'
+import { buttonsSelector } from '../../../ducks/buttons/selector'
 
-interface ButtonsGridProps {
-  onClickReceiveButton?: (buttonId: string) => void
-  onClick?: (buttonId: string) => void
-  isLoading?: boolean
-  buttons?: Button[]
-}
-
-export function ButtonsGrid (props: ButtonsGridProps): JSX.Element {
+export function ButtonsGrid (): JSX.Element {
   const { t } = useTranslation()
   const [isDeviceCanReceiveNotFound, setIsDeviceCanReceiveNotFound] = useState(false)
-
+  const buttons = useSelector(buttonsSelector)
   const onClickReceiveButton = (id: string): void => {
     // openReceiveIrModal(id);
   }
+  const onCardClick = (): void => {
 
-  const cards = props.buttons?.map((button) => (
+  }
+  const cards = buttons?.map((button) => (
     <Grid item xs={1} key={button.id}>
       <ButtonCard
         button={button}
         remoteId={''}
-        onClick={props.onClick}
+        onClick={onCardClick}
         onClickReceive={onClickReceiveButton}
         isLoading={false}
       />
@@ -33,19 +29,6 @@ export function ButtonsGrid (props: ButtonsGridProps): JSX.Element {
 
   return (
     <Box>
-      {/* <Dialog
-        open={opened}
-        onClose={closeReceiveIrModal}
-        fullWidth>
-        <DialogTitle>{t("header.receive_ir")}</DialogTitle>
-        <DialogContent>
-          <ReceiveIrModal
-            sendDeviceId={selectedRemote?.deviceId ?? ""}
-            devicesCanReceive={devicesCanReceive}
-            onClose={closeReceiveIrModal}
-            onDone={onSetIrData} />
-        </DialogContent>
-      </Dialog> */}
       <Grid container spacing={2} columns={{ xs: 2, md: 3, xl: 4 }}>
         {cards}
       </Grid>

@@ -1,4 +1,4 @@
-import { type AddRemotesReq, ApiError, type DeleteRemotesReq, type EditRemotesReq, type ErrorCode, type GetButtonsReq, type IApi, type ReceiveIrReq, type SendIrReq, type SetIrDataReq, type PushButtonReq } from '../interfaces/api'
+import { type AddRemoteReq, ApiError, type DeleteRemoteReq, type EditRemoteReq, type ErrorCode, type GetButtonsReq, type IApi, type ReceiveIrReq, type SendIrReq, type SetIrDataReq, type PushButtonReq } from '../interfaces/api'
 import { type Device } from '../type/device.type'
 import { type Result } from '../type/result'
 import * as pirem from 'irdeck-proto/gen/js/pirem/api/v1/irdata_pb'
@@ -29,7 +29,7 @@ export class Api implements IApi {
       let errCode: ErrorCode = 'unknown'
 
       this.piremClient.sendIr(req, {}, (err, _) => {
-        if (err.code !== StatusCode.OK) {
+        if (err !== null) {
           switch (err.code) {
             case StatusCode.NOT_FOUND:
               errCode = 'device_not_found'
@@ -64,7 +64,7 @@ export class Api implements IApi {
       let errCode: ErrorCode = 'unknown'
 
       this.aimClient.getIrData(req, {}, (err, res) => {
-        if (err.code !== StatusCode.OK) {
+        if (err !== null) {
           switch (err.code) {
             case StatusCode.NOT_FOUND:
               errCode = 'remote_not_found'
@@ -96,7 +96,7 @@ export class Api implements IApi {
   async getDevices (): Promise<Result<Device[], ApiError>> {
     return await new Promise((resolve) => {
       this.piremClient.getAllDeviceInfo(new GetAllDeviceInfoRequest(), {}, (err, res) => {
-        if (err.code !== StatusCode.OK) {
+        if (err !== null) {
           resolve({
             isError: true,
             error: new ApiError(
@@ -146,7 +146,7 @@ export class Api implements IApi {
             break
         }
 
-        if (err.code !== StatusCode.OK) {
+        if (err !== null) {
           resolve({
             isError: true,
             error: new ApiError(
@@ -193,7 +193,7 @@ export class Api implements IApi {
       apiReq.setIrdata(any)
 
       this.aimClient.setIrData(apiReq, {}, (err, _) => {
-        if (err.code !== StatusCode.OK) {
+        if (err !== null) {
           switch (err.code) {
             case StatusCode.NOT_FOUND:
               errCode = 'remote_not_found'
@@ -223,7 +223,7 @@ export class Api implements IApi {
   async getRemotes (): Promise<Result<Remote[], ApiError>> {
     return await new Promise((resolve) => {
       this.aimClient.getRemotes(new Any(), {}, (err, res) => {
-        if (err.code !== StatusCode.OK) {
+        if (err !== null) {
           resolve({
             isError: true,
             error: new ApiError(
@@ -239,7 +239,8 @@ export class Api implements IApi {
             id: remote.getId(),
             name: remote.getName(),
             deviceId: remote.getDeviceId(),
-            tag: remote.getTag()
+            tag: remote.getTag(),
+            buttonIds: []
           }
         })
 
@@ -251,7 +252,7 @@ export class Api implements IApi {
     })
   }
 
-  async addRemote (req: AddRemotesReq): Promise<Result<Remote, ApiError>> {
+  async addRemote (req: AddRemoteReq): Promise<Result<Remote, ApiError>> {
     return await new Promise((resolve) => {
       const grpcReq = new AddRemoteRequest()
       const buttonsList = new Array<AddRemoteRequest.Button>()
@@ -269,7 +270,7 @@ export class Api implements IApi {
       grpcReq.setButtonsList(buttonsList)
 
       this.aimClient.addRemote(grpcReq, {}, (err, res) => {
-        if (err.code !== StatusCode.OK) {
+        if (err !== null) {
           switch (err.code) {
             case StatusCode.ALREADY_EXISTS:
               errCode = 'remote_name_already_exists'
@@ -293,23 +294,24 @@ export class Api implements IApi {
             id: remoteId,
             name: req.remoteName,
             deviceId: req.deviceId,
-            tag: req.tag
+            tag: req.tag,
+            buttonIds: []
           }
         })
       })
     })
   }
 
-  async editRemotes (req: EditRemotesReq): Promise<Result<void, ApiError>> {
+  async editRemotes (req: EditRemoteReq): Promise<Result<void, ApiError>> {
     return await new Promise((resolve) => {
       const apiReq = new EditRemoteRequest()
       let errCode: ErrorCode = 'unknown'
 
       apiReq.setRemoteId(req.remoteId)
-      apiReq.setName(req.name)
+      apiReq.setName(req.remoteName)
       apiReq.setDeviceId(req.deviceId)
       this.aimClient.editRemote(apiReq, {}, (err) => {
-        if (err.code !== StatusCode.OK) {
+        if (err !== null) {
           switch (err.code) {
             case StatusCode.ALREADY_EXISTS:
               errCode = 'remote_name_already_exists'
@@ -337,14 +339,14 @@ export class Api implements IApi {
     })
   }
 
-  async deleteRemotes (req: DeleteRemotesReq): Promise<Result<void, ApiError>> {
+  async deleteRemotes (req: DeleteRemoteReq): Promise<Result<void, ApiError>> {
     return await new Promise((resolve) => {
       const apiReq = new DeleteRemoteRequest()
       let errCode: ErrorCode = 'unknown'
 
       apiReq.setRemoteId(req.remoteId)
       this.aimClient.deleteRemote(apiReq, {}, (err) => {
-        if (err.code !== StatusCode.OK) {
+        if (err !== null) {
           switch (err.code) {
             case StatusCode.NOT_FOUND:
               errCode = 'remote_not_found'
@@ -377,7 +379,7 @@ export class Api implements IApi {
       apiReq.setRemoteId(req.remoteId)
 
       this.aimClient.getButtons(apiReq, {}, (err, res) => {
-        if (err.code !== StatusCode.OK) {
+        if (err !== null) {
           switch (err.code) {
             case StatusCode.NOT_FOUND:
               errCode = 'button_not_found'

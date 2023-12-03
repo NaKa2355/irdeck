@@ -6,6 +6,9 @@ import { AddRemoteModal } from '../organisms/modals/addRemoteModal'
 // atoms
 import { EditRemoteModal } from '../organisms/modals/editRemoteModal'
 import { type Remote } from '../../type/remote'
+import { useEffect } from 'react'
+import { useDispatch } from 'react-redux'
+import { fetchRemote } from '../../ducks/remotes'
 
 interface DrawerPageProps {
   selectedRemote?: Remote
@@ -14,6 +17,10 @@ interface DrawerPageProps {
 }
 
 export function DrawerPage (props: DrawerPageProps): JSX.Element {
+  const dispatch = useDispatch()
+  useEffect(() => {
+    dispatch(fetchRemote())
+  }, [])
   return (
     <div>
       <DrawerTemplate

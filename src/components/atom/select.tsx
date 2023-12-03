@@ -5,6 +5,7 @@ import { type Control, Controller } from 'react-hook-form'
 interface SelectProps {
   name: string
   control: Control
+  defaultValue: string
   children?: ReactNode
 }
 
@@ -14,7 +15,7 @@ export function Select (props: SelectProps): React.ReactElement {
       name={props.name}
       control={props.control}
       render={({ field }) => (
-        <BaseSelect defaultValue={field.value} onChange={(value) => { field.onChange(value) }}>
+        <BaseSelect defaultValue={props.defaultValue} onChange={(value) => { field.onChange(value) }}>
           {props.children}
         </BaseSelect>
       )}

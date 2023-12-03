@@ -1,5 +1,4 @@
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material'
-import { RecoilRoot } from 'recoil'
 import { DrawerPage } from './components/pages/drawerPage'
 
 function App (): JSX.Element {
@@ -127,10 +126,8 @@ function App (): JSX.Element {
 
   return (
     <ThemeProvider theme={theme}>
-      <RecoilRoot>
-        <CssBaseline />
-        <DrawerPage />
-      </RecoilRoot>
+      <CssBaseline />
+      <DrawerPage />
     </ThemeProvider>
   )
 }
