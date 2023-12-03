@@ -1,12 +1,12 @@
 import { type ApiError } from '../../interfaces/api'
 import { type RootStore } from '../../store/store'
 import { type Device } from '../../type/device.type'
-import { type FetchStatus, type PostStatus } from '../../utils/reqStatus'
+import { type FetchStatus, type RequestStatus } from '../../utils/reqStatus'
 
 interface DevicesState {
   fetchStatus: FetchStatus<ApiError>
-  postIrDataStatus: Record<string, PostStatus<ApiError> | undefined>
-  postReceiveIrStatus: Record<string, PostStatus<ApiError> | undefined>
+  postIrDataStatus: Record<string, RequestStatus<ApiError> | undefined>
+  postReceiveIrStatus: Record<string, RequestStatus<ApiError> | undefined>
 }
 
 export const selectDevicesCanSend = (state: RootStore): Device[] => {

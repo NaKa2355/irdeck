@@ -1,8 +1,8 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { type Button } from '../../type/button'
 import { type IrData } from '../../type/irdata.type'
-import { success, type ApiError } from '../../interfaces/api'
-import { type FetchStatus, type PostStatus } from '../../utils/reqStatus'
+import { type ApiError } from '../../interfaces/api'
+import { type FetchStatus, type RequestStatus } from '../../utils/reqStatus'
 
 interface ButtonsState {
   domianData: {
@@ -10,11 +10,31 @@ interface ButtonsState {
     byIds: Record<string, Button>
   }
   appData: {
-    postingStatus: Record<string, {
-      pushButton: PostStatus<ApiError> | undefined
-      settingIrData: PostStatus<ApiError> | undefined
-    }>
-    fetchingStatus: Record<string, FetchStatus<ApiError> | undefined>
+    requestStatus: Record<
+    string,
+    {
+      pushButton: RequestStatus<ApiError>
+      patchIrData: RequestStatus<ApiError>
+    } | undefined
+    >
+
+    fetchStatus: Record<
+    string,
+    FetchStatus<ApiError> | undefined
+    >
+  }
+}
+
+const initialRequestStatus = {
+  pushButton: {
+    isPending: false,
+    isFailed: false,
+    error: undefined
+  },
+  patchIrData: {
+    isPending: false,
+    isFailed: false,
+    error: undefined
   }
 }
 
@@ -24,8 +44,8 @@ const initialState: ButtonsState = {
     byIds: {}
   },
   appData: {
-    postingStatus: {},
-    fetchingStatus: {}
+    requestStatus: {},
+    fetchStatus: {}
   }
 }
 
@@ -34,91 +54,122 @@ const buttonsSlice = createSlice({
   initialState,
   reducers: {
 
-    postPushButtonReq: (state, action: PayloadAction<{ remoteId: string, buttonId: string, deviceId: string }>) => {
-      state.appData.postingStatus[action.payload.buttonId].pushButton = {
-        isPosting: true,
-        isPostFailed: false,
-        postError: success
+    pushButton: (state, action: PayloadAction<{ remoteId: string, buttonId: string, deviceId: string }>) => {
+      const status = state.appData.requestStatus[action.payload.buttonId]
+      if (status === undefined) {
+        return
+      }
+      status.pushButton = {
+        isPending: true,
+        isFailed: false,
+        error: undefined
       }
     },
 
-    postPushButtonFailure: (state, action: PayloadAction<{ buttonId: string, error: ApiError }>) => {
-      state.appData.postingStatus[action.payload.buttonId].pushButton = {
-        isPosting: false,
-        isPostFailed: true,
-        postError: action.payload.error
+    pushButtonFailure: (state, action: PayloadAction<{ buttonId: string, error: ApiError }>) => {
+      const status = state.appData.requestStatus[action.payload.buttonId]
+      if (status === undefined) {
+        return
+      }
+      status.pushButton = {
+        isPending: false,
+        isFailed: true,
+        error: action.payload.error
       }
     },
 
-    postPushButtonSuccess: (state, action: PayloadAction<{ buttonId: string }>) => {
-      state.appData.postingStatus[action.payload.buttonId].pushButton = {
-        isPosting: false,
-        isPostFailed: false,
-        postError: success
+    pushButtonSuccess: (state, action: PayloadAction<{ buttonId: string }>) => {
+      const status = state.appData.requestStatus[action.payload.buttonId]
+      if (status === undefined) {
+        return
+      }
+      status.pushButton = {
+        isPending: false,
+        isFailed: false,
+        error: undefined
       }
     },
 
-    postSettingIrData: (state, action: PayloadAction<{ remoteId: string, buttonId: string, irData: IrData }>) => {
-      state.appData.postingStatus[action.payload.buttonId].settingIrData = {
-        isPosting: true,
-        isPostFailed: false,
-        postError: success
+    patchIrData: (state, action: PayloadAction<{ remoteId: string, buttonId: string, irData: IrData }>) => {
+      const status = state.appData.requestStatus[action.payload.buttonId]
+      if (status === undefined) {
+        return
+      }
+      status.patchIrData = {
+        isPending: true,
+        isFailed: false,
+        error: undefined
       }
     },
 
-    postSettingIrDataFailure: (state, action: PayloadAction<{ buttonId: string, error: ApiError }>) => {
-      state.appData.postingStatus[action.payload.buttonId].settingIrData = {
-        isPosting: false,
-        isPostFailed: true,
-        postError: action.payload.error
+    patchIrDataFailure: (state, action: PayloadAction<{ buttonId: string, error: ApiError }>) => {
+      const status = state.appData.requestStatus[action.payload.buttonId]
+      if (status === undefined) {
+        return
+      }
+
+      status.patchIrData = {
+        isPending: false,
+        isFailed: true,
+        error: action.payload.error
       }
     },
 
-    postSettingIrDataSuccess: (state, action: PayloadAction<{ buttonId: string }>) => {
-      state.appData.postingStatus[action.payload.buttonId].settingIrData = {
-        isPosting: false,
-        isPostFailed: false,
-        postError: success
+    patchIrDataSuccess: (state, action: PayloadAction<{ buttonId: string }>) => {
+      const status = state.appData.requestStatus[action.payload.buttonId]
+      if (status === undefined) {
+        return
+      }
+      status.patchIrData = {
+        isPending: false,
+        isFailed: false,
+        error: undefined
       }
     },
 
     fetchButtons: (state, action: PayloadAction<{ remoteId: string }>) => {
       const remoteId = action.payload.remoteId
-      const fetchButtonsStatus = state.appData.fetchingStatus[remoteId]
-      if (fetchButtonsStatus !== undefined) {
-        fetchButtonsStatus.isFetching = true
-        fetchButtonsStatus.isFetchFailed = false
+      const status = state.appData.fetchStatus[remoteId]
+      if (status !== undefined) {
+        status.isFetching = true
+        status.isFetchFailed = false
         return
       }
-      state.appData.fetchingStatus[remoteId] = {
+
+      state.appData.fetchStatus[remoteId] = {
         isFetching: true,
         isCached: false,
         isFetchFailed: false,
-        fetchError: success
+        fetchError: undefined
       }
     },
 
     fetchButtonsFailure: (state, action: PayloadAction<{ remoteId: string, error: ApiError }>) => {
-      const fetchButtonStatus = state.appData.fetchingStatus[action.payload.remoteId]
-      if (fetchButtonStatus === undefined) {
+      const status = state.appData.fetchStatus[action.payload.remoteId]
+      if (status === undefined) {
         return
       }
-      fetchButtonStatus.isFetching = false
-      fetchButtonStatus.isFetchFailed = true
-      fetchButtonStatus.fetchError = action.payload.error
+      status.isFetching = false
+      status.isFetchFailed = true
+      status.fetchError = action.payload.error
     },
 
     fetchButtonsSuccess: (state, action: PayloadAction<{ remoteId: string, buttons: Button[] }>) => {
       state.domianData.ids[action.payload.remoteId] = action.payload.buttons.map((button) => button.id)
+
       action.payload.buttons.forEach((button) => {
         state.domianData.byIds[button.id] = button
+        state.appData.requestStatus[button.id] = initialRequestStatus
       })
-      const fetchButtonStatus = state.appData.fetchingStatus[action.payload.remoteId]
-      if (fetchButtonStatus === undefined) {
+
+      const status = state.appData.fetchStatus[action.payload.remoteId]
+      if (status === undefined) {
         return
       }
-      fetchButtonStatus.isFetching = false
-      fetchButtonStatus.isFetchFailed = false
+
+      status.isCached = true
+      status.isFetching = false
+      status.isFetchFailed = false
     }
   }
 })
@@ -129,10 +180,10 @@ export const {
   fetchButtons,
   fetchButtonsFailure,
   fetchButtonsSuccess,
-  postPushButtonReq,
-  postPushButtonFailure,
-  postPushButtonSuccess,
-  postSettingIrData,
-  postSettingIrDataFailure,
-  postSettingIrDataSuccess
+  pushButton,
+  pushButtonFailure,
+  pushButtonSuccess,
+  patchIrData,
+  patchIrDataFailure,
+  patchIrDataSuccess
 } = buttonsSlice.actions

@@ -1,7 +1,7 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { type Remote } from '../../type/remote'
 import { success, type ApiError } from '../../interfaces/api'
-import { type FetchStatus, type PostStatus } from '../../utils/reqStatus'
+import { type FetchStatus, type RequestStatus } from '../../utils/reqStatus'
 
 interface RemotesState {
   domainData: {
@@ -11,9 +11,9 @@ interface RemotesState {
   appData: {
     selectedRemoteId: string | undefined
     fetchStatus: FetchStatus<ApiError>
-    postNewRemoteStatus: PostStatus<ApiError>
-    postEditedRemoteStatus: PostStatus<ApiError>
-    postDeletedRemoteStatus: PostStatus<ApiError>
+    postRemoteStatus: RequestStatus<ApiError>
+    patchRemoteStatus: RequestStatus<ApiError>
+    deleteRemoteStatus: RequestStatus<ApiError>
   }
 }
 
@@ -44,22 +44,22 @@ const initialState: RemotesState = {
       isFetching: false,
       isCached: false,
       isFetchFailed: false,
-      fetchError: success
+      fetchError: undefined
     },
-    postEditedRemoteStatus: {
-      isPosting: false,
-      isPostFailed: false,
-      postError: success
+    postRemoteStatus: {
+      isPending: false,
+      isFailed: false,
+      error: undefined
     },
-    postNewRemoteStatus: {
-      isPosting: false,
-      isPostFailed: false,
-      postError: success
+    patchRemoteStatus: {
+      isPending: false,
+      isFailed: false,
+      error: undefined
     },
-    postDeletedRemoteStatus: {
-      isPosting: false,
-      isPostFailed: false,
-      postError: success
+    deleteRemoteStatus: {
+      isPending: false,
+      isFailed: false,
+      error: undefined
     }
   }
 }
@@ -75,10 +75,6 @@ interface RemoteEditedActionPayload {
   remoteId: string
   remoteName: string
   deviceId: string
-}
-
-interface RemoteDeletedActionPayload {
-  remoteId: string
 }
 
 const remotesSlice = createSlice({
@@ -111,22 +107,22 @@ const remotesSlice = createSlice({
       })
     },
 
-    postNewRemote: (state, _: PayloadAction<PostNewRemotePayload>) => {
-      state.appData.postNewRemoteStatus.isPosting = true
-      state.appData.postNewRemoteStatus.isPostFailed = false
+    postRemote: (state, _: PayloadAction<PostNewRemotePayload>) => {
+      state.appData.postRemoteStatus.isPending = true
+      state.appData.postRemoteStatus.isFailed = false
     },
 
-    postNewRemoteFailure: (state, action: PayloadAction<{ error: ApiError }>) => {
-      state.appData.postNewRemoteStatus.isPosting = false
-      state.appData.postNewRemoteStatus.isPostFailed = true
-      state.appData.postNewRemoteStatus.postError = action.payload.error
+    postRemoteFailure: (state, action: PayloadAction<{ error: ApiError }>) => {
+      state.appData.postRemoteStatus.isPending = false
+      state.appData.postRemoteStatus.isFailed = true
+      state.appData.postRemoteStatus.error = action.payload.error
     },
 
-    postNewRemoteSuccess: (state, action: PayloadAction<RemoteAddedActionPayload>) => {
+    postRemoteSuccess: (state, action: PayloadAction<RemoteAddedActionPayload>) => {
       const payload = action.payload
 
-      state.appData.postNewRemoteStatus.isPosting = false
-      state.appData.postNewRemoteStatus.isPostFailed = false
+      state.appData.postRemoteStatus.isPending = false
+      state.appData.postRemoteStatus.isFailed = false
 
       state.domainData.ids.push(payload.remoteId)
       state.domainData.byId[payload.remoteId] = {
@@ -137,20 +133,20 @@ const remotesSlice = createSlice({
       }
     },
 
-    postEditedRemote: (state, _: PayloadAction<PostEditedRemotePayload>) => {
-      state.appData.postEditedRemoteStatus.isPosting = true
-      state.appData.postEditedRemoteStatus.isPostFailed = false
+    patchRemote: (state, _: PayloadAction<PostEditedRemotePayload>) => {
+      state.appData.patchRemoteStatus.isPending = true
+      state.appData.patchRemoteStatus.isFailed = false
     },
 
-    postEditedRemoteFailure: (state, action: PayloadAction<{ error: ApiError }>) => {
-      state.appData.postEditedRemoteStatus.isPosting = false
-      state.appData.postEditedRemoteStatus.isPostFailed = true
-      state.appData.postEditedRemoteStatus.postError = action.payload.error
+    patchRemoteFailure: (state, action: PayloadAction<{ error: ApiError }>) => {
+      state.appData.patchRemoteStatus.isPending = false
+      state.appData.patchRemoteStatus.isFailed = true
+      state.appData.patchRemoteStatus.error = action.payload.error
     },
 
-    postEditedRemoteSuccess: (state, action: PayloadAction<RemoteEditedActionPayload>) => {
-      state.appData.postEditedRemoteStatus.isPosting = false
-      state.appData.postEditedRemoteStatus.isPostFailed = false
+    patchRemoteSuccess: (state, action: PayloadAction<RemoteEditedActionPayload>) => {
+      state.appData.patchRemoteStatus.isPending = false
+      state.appData.patchRemoteStatus.isFailed = false
 
       if (state.domainData.byId[action.payload.remoteId] === undefined) {
         return
@@ -159,26 +155,22 @@ const remotesSlice = createSlice({
       state.domainData.byId[action.payload.deviceId].name = action.payload.remoteName
     },
 
-    postDeleteRemoteReq: (state, _: PayloadAction<{ remoteId: string }>) => {
-      state.appData.postDeletedRemoteStatus.isPosting = true
-      state.appData.postDeletedRemoteStatus.isPostFailed = false
+    deleteRemote: (state, _: PayloadAction<{ remoteId: string }>) => {
+      state.appData.patchRemoteStatus.isPending = true
+      state.appData.patchRemoteStatus.isFailed = false
     },
 
-    postDeleteRemoteFailure: (state, action: PayloadAction<{ error: ApiError }>) => {
-      state.appData.postDeletedRemoteStatus.isPostFailed = true
-      state.appData.postDeletedRemoteStatus.isPosting = false
-      state.appData.postDeletedRemoteStatus.postError = action.payload.error
+    deleteRemoteFailure: (state, action: PayloadAction<{ error: ApiError }>) => {
+      state.appData.patchRemoteStatus.isFailed = true
+      state.appData.patchRemoteStatus.isPending = false
+      state.appData.patchRemoteStatus.error = action.payload.error
     },
 
-    postDeleteRemoteSuccess: (state, action: PayloadAction<{ deletedRemoteId: string }>) => {
-      state.appData.postDeletedRemoteStatus.isPostFailed = false
-      state.appData.postDeletedRemoteStatus.isPosting = false
-      state.appData.postDeletedRemoteStatus.postError = success
+    deleteRemoteSuccess: (state, action: PayloadAction<{ deletedRemoteId: string }>) => {
+      state.appData.patchRemoteStatus.isFailed = false
+      state.appData.patchRemoteStatus.isPending = false
+      state.appData.patchRemoteStatus.error = success
       state.domainData.ids.filter((id) => id !== action.payload.deletedRemoteId)
-    },
-
-    remoteDeleted: (store, action: PayloadAction<RemoteDeletedActionPayload>) => {
-      store.domainData.ids = store.domainData.ids.filter((id) => id !== action.payload.remoteId)
     }
   }
 })
@@ -190,13 +182,13 @@ export const {
   fetchRemotes,
   fetchRemotesFailure,
   fetchRemotesSuccess,
-  postEditedRemote,
-  postEditedRemoteFailure,
-  postEditedRemoteSuccess,
-  postNewRemote,
-  postNewRemoteFailure,
-  postNewRemoteSuccess,
-  postDeleteRemoteReq,
-  postDeleteRemoteSuccess,
-  postDeleteRemoteFailure
+  postRemote,
+  postRemoteFailure,
+  postRemoteSuccess,
+  patchRemote,
+  patchRemoteFailure,
+  patchRemoteSuccess,
+  deleteRemote,
+  deleteRemoteFailure,
+  deleteRemoteSuccess
 } = remotesSlice.actions

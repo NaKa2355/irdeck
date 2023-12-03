@@ -1,7 +1,7 @@
 import { type ApiError } from '../../interfaces/api'
 import { type RootStore } from '../../store/store'
 import { type Button } from '../../type/button'
-import { type FetchStatus, type PostStatus } from '../../utils/reqStatus'
+import { type FetchStatus, type RequestStatus } from '../../utils/reqStatus'
 
 export const selectButtons = (state: RootStore): Button[] => {
   return state.buttons.domianData.ids[state.remotes.appData.selectedRemoteId ?? ''].map((id) => {
@@ -10,16 +10,16 @@ export const selectButtons = (state: RootStore): Button[] => {
 }
 
 interface ButtonsState {
-  postingStatus: Record<string, {
-    pushButton: PostStatus<ApiError> | undefined
-    settingIrData: PostStatus<ApiError> | undefined
-  }>
+  requestStatus: Record<string, {
+    pushButton: RequestStatus<ApiError>
+    patchIrData: RequestStatus<ApiError>
+  } | undefined>
   fetchingStatus: FetchStatus<ApiError> | undefined
 }
 
 export const selectButtonsState = (state: RootStore): ButtonsState => {
   return {
-    postingStatus: state.buttons.appData.postingStatus,
-    fetchingStatus: state.buttons.appData.fetchingStatus[state.remotes.appData.selectedRemoteId ?? '']
+    requestStatus: state.buttons.appData.requestStatus,
+    fetchingStatus: state.buttons.appData.fetchStatus[state.remotes.appData.selectedRemoteId ?? '']
   }
 }

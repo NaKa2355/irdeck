@@ -1,4 +1,4 @@
-import { fetchButtons, fetchButtonsFailure, fetchButtonsSuccess, postPushButtonReq, postPushButtonSuccess, postPushButtonFailure, postSettingIrData, postSettingIrDataFailure, postSettingIrDataSuccess } from './slice'
+import { fetchButtons, fetchButtonsFailure, fetchButtonsSuccess, patchIrData, patchIrDataFailure, patchIrDataSuccess, pushButton, pushButtonFailure, pushButtonSuccess } from './slice'
 import { listenerMiddleware } from '../../store/store'
 
 listenerMiddleware.startListening({
@@ -23,7 +23,7 @@ listenerMiddleware.startListening({
 })
 
 listenerMiddleware.startListening({
-  actionCreator: postPushButtonReq,
+  actionCreator: pushButton,
   effect: async (action, api) => {
     const result = await api.extra.api.pushButton({
       remoteId: action.payload.remoteId,
@@ -31,20 +31,20 @@ listenerMiddleware.startListening({
       deviceId: action.payload.deviceId
     })
     if (result.isError) {
-      api.dispatch(postPushButtonFailure({
+      api.dispatch(pushButtonFailure({
         buttonId: action.payload.buttonId,
         error: result.error
       }))
       return
     }
-    api.dispatch(postPushButtonSuccess({
+    api.dispatch(pushButtonSuccess({
       buttonId: action.payload.buttonId
     }))
   }
 })
 
 listenerMiddleware.startListening({
-  actionCreator: postSettingIrData,
+  actionCreator: patchIrData,
   effect: async (action, api) => {
     const result = await api.extra.api.setIrData({
       remoteId: action.payload.remoteId,
@@ -52,13 +52,13 @@ listenerMiddleware.startListening({
       irData: action.payload.irData
     })
     if (result.isError) {
-      api.dispatch(postSettingIrDataFailure({
+      api.dispatch(patchIrDataFailure({
         buttonId: action.payload.buttonId,
         error: result.error
       }))
       return
     }
-    api.dispatch(postSettingIrDataSuccess({
+    api.dispatch(patchIrDataSuccess({
       buttonId: action.payload.buttonId
     }))
   }

@@ -1,5 +1,5 @@
 import { listenerMiddleware } from '../../store/store'
-import { fetchDevices, fetchDevicesFailure, fetchDevicesSuccess, postIrData, postIrDataFailure, postIrDataSuccess, postReceiveIrReq, postReceiveIrReqFailure, postReceiveIrReqSuccess } from './slice'
+import { fetchDevices, fetchDevicesFailure, fetchDevicesSuccess, receiveIr, receiveIrFailure, receiveSuccess, sendIr, sendIrFailure, sendIrSuccess } from './slice'
 
 listenerMiddleware.startListening({
   actionCreator: fetchDevices,
@@ -18,39 +18,39 @@ listenerMiddleware.startListening({
 })
 
 listenerMiddleware.startListening({
-  actionCreator: postIrData,
+  actionCreator: sendIr,
   effect: async (action, api) => {
     const result = await api.extra.api.sendIr({
       irData: action.payload.irData,
       deviceId: action.payload.deviceId
     })
     if (result.isError) {
-      api.dispatch(postIrDataFailure({
+      api.dispatch(sendIrFailure({
         deviceId: action.payload.deviceId,
         error: result.error
       }))
       return
     }
-    api.dispatch(postIrDataSuccess({
+    api.dispatch(sendIrSuccess({
       deviceId: action.payload.deviceId
     }))
   }
 })
 
 listenerMiddleware.startListening({
-  actionCreator: postReceiveIrReq,
+  actionCreator: receiveIr,
   effect: async (action, api) => {
     const result = await api.extra.api.receiveIr({
       deviceId: action.payload.deviceId
     })
     if (result.isError) {
-      api.dispatch(postReceiveIrReqFailure({
+      api.dispatch(receiveIrFailure({
         deviceId: action.payload.deviceId,
         error: result.error
       }))
       return
     }
-    api.dispatch(postReceiveIrReqSuccess({
+    api.dispatch(receiveSuccess({
       deviceId: action.payload.deviceId,
       irData: result.data
     }))

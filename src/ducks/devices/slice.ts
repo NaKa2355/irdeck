@@ -1,7 +1,7 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { type Device } from '../../type/device.type'
 import { success, type ApiError } from '../../interfaces/api'
-import { type PostStatus, type FetchStatus } from '../../utils/reqStatus'
+import { type RequestStatus, type FetchStatus } from '../../utils/reqStatus'
 import { type IrData } from '../../type/irdata.type'
 
 type DomainDevice = {
@@ -15,8 +15,8 @@ interface DevicesState {
   }
   appData: {
     fetchStatus: FetchStatus<ApiError>
-    postIrDataStatus: Record<string, PostStatus<ApiError> | undefined>
-    postReceiveIrStatus: Record<string, PostStatus<ApiError> | undefined>
+    postIrDataStatus: Record<string, RequestStatus<ApiError> | undefined>
+    postReceiveIrStatus: Record<string, RequestStatus<ApiError> | undefined>
   }
 }
 
@@ -65,51 +65,51 @@ const remotesSlice = createSlice({
       })
     },
 
-    postIrData: (state, action: PayloadAction<{ deviceId: string, irData: IrData }>) => {
+    sendIr: (state, action: PayloadAction<{ deviceId: string, irData: IrData }>) => {
       state.appData.postIrDataStatus[action.payload.deviceId] = {
-        isPosting: true,
-        isPostFailed: false,
-        postError: success
+        isPending: true,
+        isFailed: false,
+        error: success
       }
     },
 
-    postIrDataFailure: (state, action: PayloadAction<{ deviceId: string, error: ApiError }>) => {
+    sendIrFailure: (state, action: PayloadAction<{ deviceId: string, error: ApiError }>) => {
       state.appData.postIrDataStatus[action.payload.deviceId] = {
-        isPosting: false,
-        isPostFailed: true,
-        postError: action.payload.error
+        isPending: false,
+        isFailed: true,
+        error: action.payload.error
       }
     },
 
-    postIrDataSuccess: (state, action: PayloadAction<{ deviceId: string }>) => {
+    sendIrSuccess: (state, action: PayloadAction<{ deviceId: string }>) => {
       state.appData.postIrDataStatus[action.payload.deviceId] = {
-        isPosting: false,
-        isPostFailed: true,
-        postError: success
+        isPending: false,
+        isFailed: true,
+        error: success
       }
     },
 
-    postReceiveIrReq: (state, action: PayloadAction<{ deviceId: string }>) => {
+    receiveIr: (state, action: PayloadAction<{ deviceId: string }>) => {
       state.appData.postReceiveIrStatus[action.payload.deviceId] = {
-        isPosting: true,
-        isPostFailed: false,
-        postError: success
+        isPending: true,
+        isFailed: false,
+        error: success
       }
     },
 
-    postReceiveIrReqFailure: (state, action: PayloadAction<{ deviceId: string, error: ApiError }>) => {
+    receiveIrFailure: (state, action: PayloadAction<{ deviceId: string, error: ApiError }>) => {
       state.appData.postReceiveIrStatus[action.payload.deviceId] = {
-        isPosting: false,
-        isPostFailed: true,
-        postError: action.payload.error
+        isPending: false,
+        isFailed: true,
+        error: action.payload.error
       }
     },
 
-    postReceiveIrReqSuccess: (state, action: PayloadAction<{ deviceId: string, irData: IrData }>) => {
+    receiveSuccess: (state, action: PayloadAction<{ deviceId: string, irData: IrData }>) => {
       state.appData.postReceiveIrStatus[action.payload.deviceId] = {
-        isPosting: false,
-        isPostFailed: true,
-        postError: success
+        isPending: false,
+        isFailed: true,
+        error: success
       }
       state.domainData.byId[action.payload.deviceId].receivedIrData = action.payload.irData
     }
@@ -122,10 +122,10 @@ export const {
   fetchDevices,
   fetchDevicesFailure,
   fetchDevicesSuccess,
-  postIrData,
-  postIrDataFailure,
-  postIrDataSuccess,
-  postReceiveIrReqSuccess,
-  postReceiveIrReq,
-  postReceiveIrReqFailure
+  sendIr,
+  sendIrFailure,
+  sendIrSuccess,
+  receiveSuccess,
+  receiveIr,
+  receiveIrFailure
 } = remotesSlice.actions

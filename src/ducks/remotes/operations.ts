@@ -1,5 +1,5 @@
 import { listenerMiddleware } from '../../store/store'
-import { fetchRemotes, fetchRemotesFailure, fetchRemotesSuccess, postDeleteRemoteFailure, postDeleteRemoteReq, postDeleteRemoteSuccess, postEditedRemote, postEditedRemoteFailure, postEditedRemoteSuccess, postNewRemote, postNewRemoteFailure, postNewRemoteSuccess, selectRemote } from './slice'
+import { deleteRemote, deleteRemoteFailure, deleteRemoteSuccess, fetchRemotes, fetchRemotesFailure, fetchRemotesSuccess, patchRemote, patchRemoteFailure, patchRemoteSuccess, postRemote, postRemoteFailure, postRemoteSuccess, selectRemote } from './slice'
 
 // fetched remote
 listenerMiddleware.startListening({
@@ -26,9 +26,9 @@ listenerMiddleware.startListening({
 
 // posted new remote
 listenerMiddleware.startListening({
-  actionCreator: postNewRemote,
+  actionCreator: postRemote,
   effect: async (action, api) => {
-    if (api.getState().remotes.appData.postNewRemoteStatus.isPosting) {
+    if (api.getState().remotes.appData.postRemoteStatus.isPending) {
       return
     }
     const payload = action.payload
@@ -39,12 +39,12 @@ listenerMiddleware.startListening({
       buttons: payload.buttons
     })
     if (result.isError) {
-      api.dispatch(postNewRemoteFailure({
+      api.dispatch(postRemoteFailure({
         error: result.error
       }))
       return
     }
-    api.dispatch(postNewRemoteSuccess({
+    api.dispatch(postRemoteSuccess({
       remoteId: result.data.id,
       remoteName: result.data.name,
       deviceId: result.data.deviceId,
@@ -55,7 +55,7 @@ listenerMiddleware.startListening({
 
 // posted edited remote
 listenerMiddleware.startListening({
-  actionCreator: postEditedRemote,
+  actionCreator: patchRemote,
   effect: async (action, api) => {
     const payload = action.payload
     const result = await api.extra.api.editRemotes({
@@ -64,12 +64,12 @@ listenerMiddleware.startListening({
       deviceId: payload.deviceId
     })
     if (result.isError) {
-      api.dispatch(postEditedRemoteFailure({
+      api.dispatch(patchRemoteFailure({
         error: result.error
       }))
       return
     }
-    api.dispatch(postEditedRemoteSuccess({
+    api.dispatch(patchRemoteSuccess({
       remoteId: payload.remoteId,
       remoteName: payload.remoteName,
       deviceId: payload.deviceId
@@ -78,9 +78,9 @@ listenerMiddleware.startListening({
 })
 
 listenerMiddleware.startListening({
-  actionCreator: postDeleteRemoteReq,
+  actionCreator: deleteRemote,
   effect: async (action, api) => {
-    if (api.getState().remotes.appData.postEditedRemoteStatus.isPosting) {
+    if (api.getState().remotes.appData.deleteRemoteStatus.isPending) {
       return
     }
     const payload = action.payload
@@ -88,12 +88,12 @@ listenerMiddleware.startListening({
       remoteId: payload.remoteId
     })
     if (result.isError) {
-      api.dispatch(postDeleteRemoteFailure({
+      api.dispatch(deleteRemoteFailure({
         error: result.error
       }))
       return
     }
-    api.dispatch(postDeleteRemoteSuccess({
+    api.dispatch(deleteRemoteSuccess({
       deletedRemoteId: action.payload.remoteId
     }))
   }
