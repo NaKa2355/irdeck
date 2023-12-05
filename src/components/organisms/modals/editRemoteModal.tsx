@@ -5,7 +5,9 @@ import { Alert, Box, Button, Dialog, DialogContent, DialogTitle, FormControl, Fo
 // hooks
 import { useTranslation } from 'react-i18next'
 import { type Device } from '../../../type/device.type'
-import { type EditRemotesReq } from '../../../interfaces/api'
+import { type EditRemoteReq } from '../../../interfaces/api'
+import { useDispatch, useSelector } from 'react-redux'
+import { editRemoteModalStateSelector, editRemoteModalClosed } from '../../../ducks/ui'
 
 interface EditRemoteModalProps {
   devicesCanSend?: Device[]
@@ -17,17 +19,23 @@ interface EditRemoteModalProps {
   isOpen?: boolean
   close?: () => void
   onDelete?: () => void
-  onSubmit?: (req: EditRemotesReq) => void
+  onSubmit?: (req: EditRemoteReq) => void
 }
 
 export function EditRemoteModal (props: EditRemoteModalProps): JSX.Element {
   const { t } = useTranslation()
+  const { isOpen, editingRemote } = useSelector(editRemoteModalStateSelector)
+  const dispatch = useDispatch()
 
   const deviceMenu = props.devicesCanSend?.map((device) => {
     return (
       <MenuItem key={device.id} value={device.id}>{device.name}</MenuItem>
     )
   })
+
+  const onClose = (): void => {
+    dispatch(editRemoteModalClosed())
+  }
 
   const deleteRemote = (): void => {
     props.onDelete?.()
@@ -37,7 +45,7 @@ export function EditRemoteModal (props: EditRemoteModalProps): JSX.Element {
   }
 
   return (
-    <Dialog open={props.isOpen ?? false} onClose={props.close} fullWidth>
+    <Dialog open={isOpen} onClose={onClose} fullWidth>
       <DialogTitle>{t('header.add_remote')}</DialogTitle>
       <DialogContent>
         <Box height={20}></Box>
@@ -53,7 +61,7 @@ export function EditRemoteModal (props: EditRemoteModalProps): JSX.Element {
               <TextField
                 name="name"
                 error={props.isRemoteNameInvaild}
-                defaultValue={props.remoteName}
+                defaultValue={editingRemote?.name ?? ''}
                 placeholder={t('label.name') ?? ''}
                 onChange={(e) => {
                   // remote name changed
@@ -71,7 +79,7 @@ export function EditRemoteModal (props: EditRemoteModalProps): JSX.Element {
                 onChange={() => {
                   // device changed
                 }}
-                defaultValue={props.deviceId}>
+                defaultValue={editingRemote?.deviceId}>
                 {deviceMenu}
               </Select>
             </FormControl>

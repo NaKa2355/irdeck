@@ -3,7 +3,7 @@ import { type RootStore } from '../../app/store'
 import { type Remote } from '../../type/remote'
 import { type FetchStatus } from '../../utils/reqStatus'
 
-export const remoteSelector = (state: RootStore): Remote[] => {
+export const remotesSelector = (state: RootStore): Remote[] => {
   const remote = state.remotes.domain
   return remote.ids.map(id => remote.byId[id])
 }
@@ -14,4 +14,8 @@ export const fetchRemoteStatusSelector = (state: RootStore): FetchStatus<ApiErro
 
 export const selectedRemoteSelector = (state: RootStore): string | null => {
   return state.remotes.selectedRemote.id
+}
+
+export const remoteSelector = (state: RootStore, remoteId: string): Remote | null => {
+  return state.remotes.domain.byId[remoteId]
 }

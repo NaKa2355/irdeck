@@ -4,11 +4,13 @@ import { addButtonsListener, buttonsReducer } from '../ducks/buttons'
 import { addDevicesListener, devicesReducer } from '../ducks/devices'
 
 import { listenerMiddleware } from './listenerMiddleware'
+import { UiReducer } from '../ducks/ui'
 
 const rootReducer = combineReducers({
   remotes: remoteReducer,
   buttons: buttonsReducer,
-  devices: devicesReducer
+  devices: devicesReducer,
+  ui: UiReducer
 })
 
 export type RootStore = ReturnType<typeof rootReducer>

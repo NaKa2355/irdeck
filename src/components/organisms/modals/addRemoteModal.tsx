@@ -10,8 +10,10 @@ import { FormControl, FormLabel, Stack, Select, MenuItem, Grid, Button, type Sel
 // hooks
 import { useTranslation } from 'react-i18next'
 import { type Device } from '../../../type/device.type'
-import { type AddRemotesReq } from '../../../interfaces/api'
+import { type AddRemoteReq } from '../../../interfaces/api'
 import { type FormEventHandler, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { addRemoteModalClosed, addRemoteModalStateSelector } from '../../../ducks/ui'
 
 interface AddRemoteModalProps {
   devices?: Device[]
@@ -20,15 +22,21 @@ interface AddRemoteModalProps {
   remoteNameValidateErrorMessage?: string
   isOpen?: boolean
   close?: () => void
-  onSubmit?: (req: AddRemotesReq) => void
+  onSubmit?: (req: AddRemoteReq) => void
   onRemoteNameInvaild?: () => void
 }
 
 export function AddRemoteModal (props: AddRemoteModalProps): JSX.Element {
   const { t } = useTranslation()
+  const dispatch = useDispatch()
+  const isOpen = useSelector(addRemoteModalStateSelector)
   const [remoteType, setRemoteType] = useState<RemoteType>(RemoteType.Button)
 
-  const remoteTypesItems = Object.values(RemoteType).map((remoteType) => {
+  const onClose = (): void => {
+    dispatch(addRemoteModalClosed())
+  }
+
+  const remoteTypesItems: JSX.Element[] = Object.values(RemoteType).map((remoteType) => {
     return (
       <MenuItem key={remoteType} value={remoteType}>{t(`remote_types.${remoteType}`)}</MenuItem>
     )
@@ -53,7 +61,7 @@ export function AddRemoteModal (props: AddRemoteModalProps): JSX.Element {
   }
 
   return (
-    <Dialog open={props.isOpen ?? false} onClose={props.close} fullWidth>
+    <Dialog open={isOpen} onClose={onClose} fullWidth>
       <DialogTitle>{t('header.add_remote')}</DialogTitle>
       <DialogContent>
         <Box height={20}></Box>

@@ -12,6 +12,7 @@ export { remoteSelected } from './selectedRemoteSlice'
 // selector
 export {
   selectedRemoteSelector,
+  remotesSelector,
   remoteSelector,
   fetchRemoteStatusSelector
 } from './selector'
