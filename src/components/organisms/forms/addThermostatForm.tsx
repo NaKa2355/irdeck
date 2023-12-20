@@ -11,7 +11,6 @@ interface AddThermostatFormProps {
 export function AddThermostatForm (props: AddThermostatFormProps): JSX.Element {
   const { t } = useTranslation()
   const scales = ['0.5', '1']
-
   const scalesMenu = scales.map((scale) => {
     return (<MenuItem key={scale} value={scale}>{scale}</MenuItem>)
   })

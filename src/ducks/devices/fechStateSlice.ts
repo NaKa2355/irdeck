@@ -19,7 +19,7 @@ const fetchStateSlice = createSlice({
   name: 'fetchState.devices',
   initialState,
   reducers: {
-    fetchDevices: (state) => {
+    fetchDevicesRequested: (state) => {
       state.fetchStatus.isFetching = true
     },
     fetchDevicesFailure: (state, action: PayloadAction<{ error: ApiError }>) => {
@@ -37,7 +37,7 @@ const fetchStateSlice = createSlice({
 })
 
 export const {
-  fetchDevices,
+  fetchDevicesRequested,
   fetchDevicesFailure,
   fetchDevicesSuccess
 } = fetchStateSlice.actions

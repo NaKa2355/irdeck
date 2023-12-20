@@ -2,12 +2,11 @@ import { IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText,
 import { RemoteType } from '../../../type/remote'
 import { Add, ModeEdit, Thermostat, ToggleOff, TouchApp } from '@mui/icons-material'
 import { useDispatch, useSelector } from 'react-redux'
-import { remoteSelected, selectedRemoteSelector, remotesSelector } from '../../../ducks/remotes'
-import { fetchButtons } from '../../../ducks/buttons'
-import { useEffect } from 'react'
+import { remoteSelected, remotesSelector, selectedRemoteSelector } from '../../../ducks/remotes'
 import { addRemoteModalOpened, editRemoteModalOpened } from '../../../ducks/ui'
+import { type AppDispatch } from '../../../app/thunk'
 
-function RemoteIcon (props: { remoteType: RemoteType }): JSX.Element {
+const RemoteIcon = (props: { remoteType: RemoteType }): JSX.Element => {
   switch (props.remoteType) {
     case RemoteType.Button:
       return (<TouchApp />)
@@ -20,25 +19,17 @@ function RemoteIcon (props: { remoteType: RemoteType }): JSX.Element {
   }
 }
 
-export function RemotesList (): JSX.Element {
+export const RemotesList = (): JSX.Element => {
   const remotes = useSelector(remotesSelector)
-  const dispatch = useDispatch()
+  const dispatch = useDispatch<AppDispatch>()
   const selectedRemote = useSelector(selectedRemoteSelector)
+
   const onEdit = (remoteId: string): void => {
     dispatch(editRemoteModalOpened({ remoteId }))
   }
   const onClick = (remoteId: string): void => {
     dispatch(remoteSelected({ remoteId }))
   }
-
-  useEffect(() => {
-    if (selectedRemote === null) {
-      return
-    }
-    dispatch(fetchButtons({
-      remoteId: selectedRemote
-    }))
-  }, [selectedRemote])
 
   const onAdd = (): void => {
     dispatch(addRemoteModalOpened())

@@ -8,6 +8,7 @@ import { type Device } from '../../../type/device.type'
 import { type EditRemoteReq } from '../../../interfaces/api'
 import { useDispatch, useSelector } from 'react-redux'
 import { editRemoteModalStateSelector, editRemoteModalClosed } from '../../../ducks/ui'
+import { devicesCanSendSelector } from '../../../ducks/devices'
 
 interface EditRemoteModalProps {
   devicesCanSend?: Device[]
@@ -25,9 +26,10 @@ interface EditRemoteModalProps {
 export function EditRemoteModal (props: EditRemoteModalProps): JSX.Element {
   const { t } = useTranslation()
   const { isOpen, editingRemote } = useSelector(editRemoteModalStateSelector)
+  const devicesCanSend = useSelector(devicesCanSendSelector)
   const dispatch = useDispatch()
 
-  const deviceMenu = props.devicesCanSend?.map((device) => {
+  const deviceMenu = devicesCanSend.map((device) => {
     return (
       <MenuItem key={device.id} value={device.id}>{device.name}</MenuItem>
     )
@@ -38,7 +40,7 @@ export function EditRemoteModal (props: EditRemoteModalProps): JSX.Element {
   }
 
   const deleteRemote = (): void => {
-    props.onDelete?.()
+    dispatch(editRemoteModalClosed())
   }
 
   const submit = (): void => {

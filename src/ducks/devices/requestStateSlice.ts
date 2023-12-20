@@ -1,7 +1,6 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { type ApiError } from '../../interfaces/api'
 import { type RequestStatus } from '../../utils/reqStatus'
-import { type IrData } from '../../type/irdata.type'
 
 interface RequestState {
   sendIrStatus: RequestStatus<ApiError>
@@ -25,20 +24,20 @@ const requestStateSlice = createSlice({
   name: 'resuestState.devices',
   initialState,
   reducers: {
-    sendIr: (state, _: PayloadAction<{ deviceId: string, irData: IrData }>) => {
+    tryIrDataRequested: (state) => {
       state.sendIrStatus.isPending = true
     },
-    sendIrFailure: (state, action: PayloadAction<{ error: ApiError }>) => {
+    tryIrDataFailure: (state, action: PayloadAction<{ error: ApiError }>) => {
       const { error } = action.payload
       state.sendIrStatus.error = error
       state.sendIrStatus.isFailed = true
       state.sendIrStatus.isPending = false
     },
-    sendIrSuccess: (state) => {
+    tryIrDataSuccess: (state) => {
       state.sendIrStatus.isPending = false
       state.sendIrStatus.isFailed = false
     },
-    receiveIr: (state, _: PayloadAction<{ deviceId: string }>) => {
+    receiveIrRequested: (state) => {
       state.receiveIrStatus.isPending = true
     },
     receiveIrFailure: (state, action: PayloadAction<{ error: ApiError }>) => {
@@ -57,10 +56,10 @@ const requestStateSlice = createSlice({
 export const requestStateReducer = requestStateSlice.reducer
 
 export const {
-  sendIr,
-  sendIrFailure,
-  sendIrSuccess,
-  receiveIr,
+  tryIrDataRequested,
+  tryIrDataFailure,
+  tryIrDataSuccess,
+  receiveIrRequested,
   receiveIrFailure,
   receiveIrSuccess
 } = requestStateSlice.actions

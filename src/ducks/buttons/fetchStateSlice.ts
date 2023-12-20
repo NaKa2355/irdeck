@@ -14,14 +14,14 @@ const fetchStateSlice = createSlice({
   name: 'fetchState.buttons',
   initialState,
   reducers: {
-    fetchButtons: (state, action: PayloadAction<{ remoteId: string }>) => {
+    fetchButtonsRequested: (state, action: PayloadAction<{ remoteId: string }>) => {
       const { remoteId } = action.payload
       const status = state.fetchStatus[remoteId]
       if (status === undefined) {
         state.fetchStatus[remoteId] = {
-          isCached: false,
           isFetchFailed: false,
           isFetching: true,
+          isCached: false,
           fetchError: undefined
         }
         return
@@ -52,7 +52,7 @@ const fetchStateSlice = createSlice({
 })
 
 export const {
-  fetchButtons,
+  fetchButtonsRequested,
   fetchButtonsFailure,
   fetchButtonsSuccess
 } = fetchStateSlice.actions

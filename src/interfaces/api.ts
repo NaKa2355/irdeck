@@ -26,14 +26,17 @@ export interface PushButtonReq {
   deviceId: string
 }
 
-export interface AddRemoteReq {
+export type AddRemoteReq = {
   remoteName: string
   deviceId: string
-  tag: string
-  buttons: Array<{
-    buttonName: string
-    tag: string
-  }>
+  remoteType: 'button' | 'toggle'
+} | {
+  remoteName: string
+  deviceId: string
+  remoteType: 'thermostat'
+  heatTempRange: [number, number]
+  coolTempRange: [number, number]
+  scale: 0.5 | 1
 }
 
 export interface EditRemoteReq {

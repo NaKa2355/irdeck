@@ -7,8 +7,11 @@ import { AddRemoteModal } from '../organisms/modals/addRemoteModal'
 import { EditRemoteModal } from '../organisms/modals/editRemoteModal'
 import { type Remote } from '../../type/remote'
 import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
-import { fetchRemote } from '../../ducks/remotes'
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchRemotes, selectedRemoteSelector } from '../../ducks/remotes'
+import { fetchDevices } from '../../ducks/devices'
+import { type AppDispatch } from '../../app/thunk'
+import { fetchButtons } from '../../ducks/buttons'
 
 interface DrawerPageProps {
   selectedRemote?: Remote
@@ -16,11 +19,17 @@ interface DrawerPageProps {
   isFetchingRemote?: boolean
 }
 
-export function DrawerPage (props: DrawerPageProps): JSX.Element {
-  const dispatch = useDispatch()
+export const DrawerPage = (props: DrawerPageProps): JSX.Element => {
+  const dispatch = useDispatch<AppDispatch>()
+  const selectedRemote = useSelector(selectedRemoteSelector)
   useEffect(() => {
-    dispatch(fetchRemote())
+    void dispatch(fetchRemotes())
+    void dispatch(fetchDevices())
   }, [])
+  useEffect(() => {
+    void dispatch(fetchButtons({ remoteId: selectedRemote ?? '' }))
+  }, [selectedRemote])
+
   return (
     <div>
       <DrawerTemplate
@@ -50,4 +59,4 @@ export function DrawerPage (props: DrawerPageProps): JSX.Element {
       </Snackbar> */}
     </div>
   )
-};
+}

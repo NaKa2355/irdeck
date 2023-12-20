@@ -19,7 +19,7 @@ const fetchStateSlice = createSlice({
   name: 'fetchState.remotes',
   initialState,
   reducers: {
-    fetchRemote: (state) => {
+    fetchRemoteRequested: (state) => {
       state.fetchStatus.isFetching = true
     },
     fetchRemoteFailure: (state, action: PayloadAction<{ error: ApiError }>) => {
@@ -37,7 +37,7 @@ const fetchStateSlice = createSlice({
 })
 
 export const {
-  fetchRemote,
+  fetchRemoteRequested,
   fetchRemoteFailure,
   fetchRemoteSuccess
 } = fetchStateSlice.actions

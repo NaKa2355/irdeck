@@ -1,118 +1,92 @@
-import { type AppStartListening } from '../../app'
+import { type ActionCreator } from 'redux'
+import { type ThunkActionFunc } from '../../app'
+import { type AddRemoteReq } from '../../interfaces/api'
 import { remoteAdded, remoteDeleted, remoteEdited, remotesFetched } from './domainSlice'
-import { fetchRemote, fetchRemoteFailure, fetchRemoteSuccess } from './fetchStateSlice'
-import { deleteRemote, deleteRemoteFailure, deleteRemoteSuccess, patchRemote, patchRemoteFailure, patchRemoteSuccess, postRemote, postRemoteFailure, postRemoteSuccess } from './requestStateSlice'
+import { fetchRemoteFailure, fetchRemoteRequested, fetchRemoteSuccess } from './fetchStateSlice'
+import { deleteRemoteFailure, deleteRemoteRequested, deleteRemoteSuccess, patchRemoteFailure, patchRemoteRequested, patchRemoteSuccess, postRemoteFailure, postRemoteRequested, postRemoteSuccess } from './requestStateSlice'
 import { remoteSelected } from './selectedRemoteSlice'
 import { selectedRemoteSelector } from './selector'
 
-const addFetchRemotesListener = (startListening: AppStartListening): void => {
-  startListening({
-    actionCreator: fetchRemote,
-    effect: async (_, api) => {
-      const result = await api.extra.api.getRemotes()
-      if (result.isError) {
-        api.dispatch(fetchRemoteFailure({
-          error: result.error
-        }))
-        return
-      }
-      api.dispatch(fetchRemoteSuccess())
-      api.dispatch(remotesFetched({
-        remotes: result.data
+export const fetchRemotes: ActionCreator<
+ThunkActionFunc
+> = () => {
+  return async (dispatch, getState, extra) => {
+    dispatch(fetchRemoteRequested())
+    const result = await extra.api.getRemotes()
+    if (result.isError) {
+      dispatch(fetchRemoteFailure({
+        error: result.error
       }))
-      const selectedRemote = selectedRemoteSelector(api.getState())
-      if (selectedRemote !== null) {
-        return
-      }
-      const firstRemote = result.data.at(0)
-      if (firstRemote === undefined) {
-        return
-      }
-      api.dispatch(remoteSelected({ remoteId: firstRemote.id }))
+      return
     }
-  })
+    dispatch(fetchRemoteSuccess())
+    dispatch(remotesFetched({
+      remotes: result.data
+    }))
+
+    const selectedRemote = selectedRemoteSelector(getState())
+    if (selectedRemote !== null) {
+      return
+    }
+    const firstRemote = result.data.at(0)
+    if (firstRemote === undefined) {
+      return
+    }
+    dispatch(remoteSelected({ remoteId: firstRemote.id }))
+  }
 }
 
-const addPostRemoteListener = (startListening: AppStartListening): void => {
-  startListening({
-    actionCreator: postRemote,
-    effect: async (action, api) => {
-      const payload = action.payload
-      const result = await api.extra.api.addRemote({
-        remoteName: payload.remoteName,
-        tag: payload.tag,
-        deviceId: payload.deviceId,
-        buttons: payload.buttons
-      })
-      if (result.isError) {
-        api.dispatch(postRemoteFailure({
-          error: result.error
-        }))
-        return
-      }
-      api.dispatch(postRemoteSuccess())
-      api.dispatch(remoteAdded({
-        remoteId: result.data.id,
-        remoteName: result.data.name,
-        tag: result.data.tag,
-        deviceId: result.data.deviceId
+export const postRemote = (req: AddRemoteReq): ThunkActionFunc => {
+  return async (dispatch, _, extra) => {
+    dispatch(postRemoteRequested())
+    const result = await extra.api.addRemote(req)
+    if (result.isError) {
+      dispatch(postRemoteFailure({
+        error: result.error
       }))
+      return
     }
-  })
+    const addedRemote = result.data
+    dispatch(postRemoteSuccess())
+    dispatch(remoteAdded({
+      remoteId: addedRemote.id,
+      remoteName: addedRemote.name,
+      tag: addedRemote.tag,
+      deviceId: addedRemote.deviceId
+    }))
+  }
 }
 
-// posted edited remote
-const addPatchRemoteListener = (startListening: AppStartListening): void => {
-  startListening({
-    actionCreator: patchRemote,
-    effect: async (action, api) => {
-      const { remoteId, remoteName, deviceId } = action.payload
-      const result = await api.extra.api.editRemotes({
-        remoteId,
-        remoteName,
-        deviceId
-      })
-      if (result.isError) {
-        api.dispatch(patchRemoteFailure({
-          error: result.error
-        }))
-        return
-      }
-      api.dispatch(patchRemoteSuccess())
-      api.dispatch(remoteEdited({
-        remoteId,
-        remoteName,
-        deviceId
+export const patchRemote = (payload: { remoteId: string, remoteName: string, deviceId: string }): ThunkActionFunc => {
+  return async (dispatch, _, extra) => {
+    dispatch(patchRemoteRequested())
+    const result = await extra.api.editRemotes(payload)
+    if (result.isError) {
+      dispatch(patchRemoteFailure({
+        error: result.error
       }))
+      return
     }
-  })
+    dispatch(patchRemoteSuccess())
+    dispatch(remoteEdited({
+      ...payload
+    }))
+  }
 }
 
-const addDeleteRemoteListener = (startListening: AppStartListening): void => {
-  startListening({
-    actionCreator: deleteRemote,
-    effect: async (action, api) => {
-      const { remoteId } = action.payload
-      const result = await api.extra.api.deleteRemotes({
-        remoteId
-      })
-      if (result.isError) {
-        api.dispatch(deleteRemoteFailure({
-          error: result.error
-        }))
-        return
-      }
-      api.dispatch(deleteRemoteSuccess())
-      api.dispatch(remoteDeleted({
-        deletedRemoteId: remoteId
+export const deleteRemote = (payload: { remoteId: string }): ThunkActionFunc => {
+  return async (dispatch, _, extra) => {
+    dispatch(deleteRemoteRequested())
+    const result = await extra.api.deleteRemotes(payload)
+    if (result.isError) {
+      dispatch(deleteRemoteFailure({
+        error: result.error
       }))
+      return
     }
-  })
-}
-
-export const addRemotesListener = (startListening: AppStartListening): void => {
-  addDeleteRemoteListener(startListening)
-  addFetchRemotesListener(startListening)
-  addPatchRemoteListener(startListening)
-  addPostRemoteListener(startListening)
+    dispatch(deleteRemoteSuccess())
+    dispatch(remoteDeleted({
+      deletedRemoteId: payload.remoteId
+    }))
+  }
 }

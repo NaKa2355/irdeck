@@ -12,6 +12,11 @@ import { type Button } from '../type/button'
 import { Any } from 'google-protobuf/google/protobuf/any_pb'
 import { StatusCode } from 'grpc-web'
 
+interface PostButtonRequest {
+  buttonName: string
+  tag: string
+}
+
 export class Api implements IApi {
   private readonly aimClient: AimServiceClient
   private readonly piremClient: PiRemServiceClient
@@ -19,6 +24,51 @@ export class Api implements IApi {
   constructor (url: string) {
     this.aimClient = new AimServiceClient(url)
     this.piremClient = new PiRemServiceClient(url)
+  }
+
+  private computeButtons (req: AddRemoteReq): PostButtonRequest[] {
+    const type = req.remoteType
+    const buttons = new Array<PostButtonRequest>()
+    if (type === 'button') {
+      buttons.push({
+        buttonName: 'push',
+        tag: type
+      })
+    } else if (type === 'toggle') {
+      buttons.push({
+        buttonName: 'on',
+        tag: type
+      })
+      buttons.push({
+        buttonName: 'off',
+        tag: type
+      })
+    } else if (type === 'thermostat') {
+      const coolTempRange = req.coolTempRange
+      const heatTempRange = req.heatTempRange
+      const scale = req.scale
+      buttons.push({
+        buttonName: 'on',
+        tag: type
+      })
+      buttons.push({
+        buttonName: 'off',
+        tag: type
+      })
+      for (let temp = coolTempRange[0]; temp <= coolTempRange[1]; temp += scale) {
+        buttons.push({
+          buttonName: 'h' + temp.toString(),
+          tag: type
+        })
+      }
+      for (let temp = heatTempRange[0]; temp <= heatTempRange[1]; temp += scale) {
+        buttons.push({
+          buttonName: 'h' + temp.toString(),
+          tag: type
+        })
+      }
+    }
+    return buttons
   }
 
   private async sendIrData (irData: Uint8Array, deviceId: string): Promise<Result<void, ApiError>> {
@@ -256,9 +306,10 @@ export class Api implements IApi {
     return await new Promise((resolve) => {
       const grpcReq = new AddRemoteRequest()
       const buttonsList = new Array<AddRemoteRequest.Button>()
+      const postButtonsReq = this.computeButtons(req)
       let errCode: ErrorCode = 'unknown'
 
-      for (const button of req.buttons) {
+      for (const button of postButtonsReq) {
         const req = new AddRemoteRequest.Button()
         req.setName(button.buttonName)
         req.setTag(button.tag)
@@ -266,7 +317,7 @@ export class Api implements IApi {
       }
       grpcReq.setDeviceId(req.deviceId)
       grpcReq.setName(req.remoteName)
-      grpcReq.setTag(req.tag)
+      grpcReq.setTag(req.remoteType)
       grpcReq.setButtonsList(buttonsList)
 
       this.aimClient.addRemote(grpcReq, {}, (err, res) => {
@@ -294,7 +345,7 @@ export class Api implements IApi {
             id: remoteId,
             name: req.remoteName,
             deviceId: req.deviceId,
-            tag: req.tag,
+            tag: req.remoteType,
             buttonIds: []
           }
         })

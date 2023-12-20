@@ -5,8 +5,7 @@ import { requestStateReducer } from './requestStateSlice'
 import { selectedRemoteReducer } from './selectedRemoteSlice'
 
 // actions
-export { fetchRemote } from './fetchStateSlice'
-export { postRemote, patchRemote, deleteRemote } from './requestStateSlice'
+export { fetchRemotes, patchRemote, deleteRemote } from './operations'
 export { remoteSelected } from './selectedRemoteSlice'
 
 // selector
@@ -16,9 +15,6 @@ export {
   remoteSelector,
   fetchRemoteStatusSelector
 } from './selector'
-
-// operations
-export { addRemotesListener } from './operations'
 
 // reducer
 export const remoteReducer = combineReducers({

@@ -5,10 +5,11 @@ import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { buttonsSelector } from '../../../ducks/buttons/selector'
 
-export function ButtonsGrid (): JSX.Element {
+export const ButtonsGrid = (): JSX.Element => {
   const { t } = useTranslation()
   const [isDeviceCanReceiveNotFound, setIsDeviceCanReceiveNotFound] = useState(false)
   const buttons = useSelector(buttonsSelector)
+
   const onClickReceiveButton = (id: string): void => {
     // openReceiveIrModal(id);
   }

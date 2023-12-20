@@ -1,7 +1,6 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { type ApiError } from '../../interfaces/api'
 import { type RequestStatus } from '../../utils/reqStatus'
-import { type IrData } from '../../type/irdata.type'
 
 interface RequestState {
   pushButtonStatus: Record<string, RequestStatus<ApiError> | undefined>
@@ -17,7 +16,7 @@ const requestStateSlice = createSlice({
   name: 'requestState.buttons',
   initialState,
   reducers: {
-    pushButton: (state, action: PayloadAction<{ buttonId: string }>) => {
+    pushButtonRequested: (state, action: PayloadAction<{ buttonId: string }>) => {
       const { buttonId } = action.payload
       state.pushButtonStatus[buttonId] = {
         isFailed: false,
@@ -41,7 +40,7 @@ const requestStateSlice = createSlice({
         error: undefined
       }
     },
-    leanIrData: (state, action: PayloadAction<{ buttonId: string, irData: IrData }>) => {
+    learnIrDataRequested: (state, action: PayloadAction<{ buttonId: string }>) => {
       const { buttonId } = action.payload
       state.learnIrDataStatus[buttonId] = {
         isFailed: false,
@@ -70,10 +69,10 @@ const requestStateSlice = createSlice({
 
 export const requestStateReducer = requestStateSlice.reducer
 export const {
-  pushButton,
+  pushButtonRequested,
   pushButtonFailure,
   pushButtonSuccess,
-  leanIrData,
+  learnIrDataRequested,
   learnIrDataFailure,
   learnIrDataSuccess
 } = requestStateSlice.actions

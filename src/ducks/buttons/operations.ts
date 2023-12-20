@@ -1,98 +1,94 @@
-import { type AppStartListening } from '../../app'
+import { type ThunkActionFunc } from '../../app'
+import { type IrData } from '../../type/irdata.type'
 import { remoteButtonsFetched } from '../remotes/domainSlice'
 import { buttonsFetched, irDataLearned } from './domainSlice'
-import { fetchButtons, fetchButtonsFailure, fetchButtonsSuccess } from './fetchStateSlice'
-import { leanIrData, learnIrDataFailure, learnIrDataSuccess, pushButton, pushButtonFailure, pushButtonSuccess } from './requestStateSlice'
+import { fetchButtonsFailure, fetchButtonsRequested, fetchButtonsSuccess } from './fetchStateSlice'
+import { learnIrDataFailure, learnIrDataRequested, learnIrDataSuccess, pushButtonFailure, pushButtonRequested, pushButtonSuccess } from './requestStateSlice'
 
-const addFetchButtonsListener = (startListening: AppStartListening): void => {
-  startListening({
-    actionCreator: fetchButtons,
-    effect: async (action, api) => {
-      const { remoteId } = action.payload
-      const result = await api.extra.api.getButtons({
-        remoteId
-      })
+export const fetchButtons = (payload: { remoteId: string }): ThunkActionFunc => {
+  return async (dispatch, _, extra) => {
+    const { remoteId } = payload
+    dispatch(fetchButtonsRequested({
+      remoteId
+    }))
+    const result = await extra.api.getButtons({
+      remoteId
+    })
 
-      if (result.isError) {
-        api.dispatch(fetchButtonsFailure({
-          remoteId,
-          error: result.error
-        }))
-        return
-      }
-      api.dispatch(fetchButtonsSuccess({
-        remoteId
-      }))
-      api.dispatch(buttonsFetched({
-        buttons: result.data
-      }))
-      api.dispatch(remoteButtonsFetched({
+    if (result.isError) {
+      dispatch(fetchButtonsFailure({
         remoteId,
-        buttonIds: result.data.map(buttons => buttons.id)
+        error: result.error
       }))
+      return
     }
-  })
+    dispatch(fetchButtonsSuccess({
+      remoteId
+    }))
+    dispatch(buttonsFetched({
+      buttons: result.data
+    }))
+    dispatch(remoteButtonsFetched({
+      remoteId,
+      buttonIds: result.data.map(buttons => buttons.id)
+    }))
+  }
 }
 
-const addPushButtonListener = (startListening: AppStartListening): void => {
-  startListening({
-    actionCreator: pushButton,
-    effect: async (action, api) => {
-      const { buttonId } = action.payload
-      const remoteId = api.getState().buttons.domain.byId[buttonId].remoteId
-      const deviceId = api.getState().remotes.domain.byId[remoteId].deviceId
-      const result = await api.extra.api.pushButton({
-        remoteId,
+export const pushButton = (payload: { buttonId: string }): ThunkActionFunc => {
+  return async (dispatch, getState, extra) => {
+    const { buttonId } = payload
+    const remoteId = getState().buttons.domain.byId[buttonId].remoteId
+    const deviceId = getState().remotes.domain.byId[remoteId].deviceId
+    dispatch(pushButtonRequested({
+      buttonId
+    }))
+    const result = await extra.api.pushButton({
+      remoteId,
+      buttonId,
+      deviceId
+    })
+
+    if (result.isError) {
+      dispatch(pushButtonFailure({
         buttonId,
-        deviceId
-      })
-      if (result.isError) {
-        api.dispatch(pushButtonFailure({
-          buttonId: action.payload.buttonId,
-          error: result.error
-        }))
-        return
-      }
-      api.dispatch(pushButtonSuccess({
-        buttonId: action.payload.buttonId
+        error: result.error
       }))
+      return
     }
-  })
+
+    dispatch(pushButtonSuccess({
+      buttonId
+    }))
+  }
 }
 
-const addLearnIrDataListener = (startListening: AppStartListening): void => {
-  startListening({
-    actionCreator: leanIrData,
-    effect: async (action, api) => {
-      const { buttonId, irData } = action.payload
-      const remoteId = api.getState().buttons.domain.byId[buttonId].remoteId
+export const leanIrData = (payload: { buttonId: string, irData: IrData }): ThunkActionFunc => {
+  return async (dispatch, getState, extra) => {
+    const { buttonId, irData } = payload
+    const remoteId = getState().buttons.domain.byId[buttonId].remoteId
+    dispatch(learnIrDataRequested({
+      buttonId
+    }))
+    const result = await extra.api.setIrData({
+      remoteId,
+      buttonId,
+      irData
+    })
 
-      const result = await api.extra.api.setIrData({
-        remoteId,
+    if (result.isError) {
+      dispatch(learnIrDataFailure({
         buttonId,
-        irData
-      })
-
-      if (result.isError) {
-        api.dispatch(learnIrDataFailure({
-          buttonId,
-          error: result.error
-        }))
-        return
-      }
-
-      api.dispatch(learnIrDataSuccess({
-        buttonId
+        error: result.error
       }))
-      api.dispatch(irDataLearned({
-        buttonId
-      }))
+      return
     }
-  })
-}
 
-export const addButtonsListener = (startListening: AppStartListening): void => {
-  addFetchButtonsListener(startListening)
-  addPushButtonListener(startListening)
-  addLearnIrDataListener(startListening)
+    dispatch(learnIrDataSuccess({
+      buttonId
+    }))
+    dispatch(irDataLearned({
+      buttonId
+    }))
+  }
 }

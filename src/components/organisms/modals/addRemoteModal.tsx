@@ -14,6 +14,7 @@ import { type AddRemoteReq } from '../../../interfaces/api'
 import { type FormEventHandler, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { addRemoteModalClosed, addRemoteModalStateSelector } from '../../../ducks/ui'
+import { devicesCanSendSelector } from '../../../ducks/devices'
 
 interface AddRemoteModalProps {
   devices?: Device[]
@@ -31,6 +32,7 @@ export function AddRemoteModal (props: AddRemoteModalProps): JSX.Element {
   const dispatch = useDispatch()
   const isOpen = useSelector(addRemoteModalStateSelector)
   const [remoteType, setRemoteType] = useState<RemoteType>(RemoteType.Button)
+  const devicesCanSend = useSelector(devicesCanSendSelector)
 
   const onClose = (): void => {
     dispatch(addRemoteModalClosed())
@@ -47,7 +49,7 @@ export function AddRemoteModal (props: AddRemoteModalProps): JSX.Element {
     setRemoteType(remoteType)
   }
 
-  const deviceMenu = props.devices?.map((device) => {
+  const deviceMenu = devicesCanSend.map((device) => {
     return (
       <MenuItem key={device.id} value={device.id}>{device.name}</MenuItem>
     )
@@ -99,7 +101,7 @@ export function AddRemoteModal (props: AddRemoteModalProps): JSX.Element {
             <FormControl>
               <FormLabel>{t('label.ir_sending_device')}</FormLabel>
               <Select
-                defaultValue={props.devices?.at(0)?.id ?? ''}
+                defaultValue={devicesCanSend.at(0)?.id ?? ''}
                 name="device_id"
                 onChange={(e) => {
                   // cahnged devices

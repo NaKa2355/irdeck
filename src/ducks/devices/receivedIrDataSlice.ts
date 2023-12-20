@@ -2,11 +2,11 @@ import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { type IrData } from '../../type/irdata.type'
 
 interface ReceivedIrData {
-  irData: IrData | undefined
+  irData: IrData
 }
 
 const initialState: ReceivedIrData = {
-  irData: undefined
+  irData: new Uint8Array()
 }
 
 const ReceivedIrDataSlice = createSlice({
