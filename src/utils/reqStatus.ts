@@ -1,6 +1,5 @@
 export interface RequestStatus<E> {
-  isPending: boolean
-  isFailed: boolean
+  status: 'idle' | 'pending' | 'success' | 'failed'
   error: E | undefined
 }
 

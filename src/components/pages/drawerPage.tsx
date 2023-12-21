@@ -1,7 +1,7 @@
-import { RemotesList } from '../organisms/lists/remotesList'
+import { RemotesList } from '../organisms/remotesList'
 import DrawerTemplate from '../templates/drawerTemplate'
-import { ButtonsGrid } from '../organisms/grids/buttonsGrid'
-import { AddRemoteModal } from '../organisms/modals/addRemoteModal'
+import { ButtonsGrid } from '../organisms/buttonsGrid'
+import { AddRemoteModal } from '../organisms/addRemoteModal'
 
 // atoms
 import { EditRemoteModal } from '../organisms/modals/editRemoteModal'

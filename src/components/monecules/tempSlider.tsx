@@ -5,7 +5,7 @@ interface TempSliderProps {
   name?: string
   color?: string
   tempRange: [number, number]
-  onChangeCommitted?: (value: number[]) => void
+  onChangeCommitted?: (value: [number, number]) => void
 }
 
 export function TempSlider (props: TempSliderProps): JSX.Element {
@@ -21,7 +21,7 @@ export function TempSlider (props: TempSliderProps): JSX.Element {
         disableSwap
         onChangeCommitted={(_, tempRange) => {
           if (typeof tempRange === 'object') {
-            props.onChangeCommitted?.(tempRange)
+            props.onChangeCommitted?.([tempRange[0], tempRange[1]])
           }
         }}
         onChange={(_, tempRange) => {

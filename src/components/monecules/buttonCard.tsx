@@ -1,8 +1,8 @@
 import { Avatar, Menu, MenuItem } from '@mui/material'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { AvatarTextCard } from '../../monecules/avatarTextCard'
-import { type Button } from '../../../type/button'
+import { AvatarTextCard } from './avatarTextCard'
+import { type Button } from '../../type/button'
 import { SignalWifi0Bar, Wifi } from '@mui/icons-material'
 
 interface ButtonCardProps {

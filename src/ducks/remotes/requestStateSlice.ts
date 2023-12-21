@@ -10,18 +10,15 @@ interface RequestState {
 
 const initialState: RequestState = {
   postRemoteStatus: {
-    isPending: false,
-    isFailed: false,
+    status: 'idle',
     error: undefined
   },
   patchRemoteStatus: {
-    isPending: false,
-    isFailed: false,
+    status: 'idle',
     error: undefined
   },
   deleteRemoteStatus: {
-    isPending: false,
-    isFailed: false,
+    status: 'idle',
     error: undefined
   }
 }
@@ -31,45 +28,48 @@ const requestStateSlice = createSlice({
   initialState,
   reducers: {
     postRemoteRequested: (state) => {
-      state.postRemoteStatus.isPending = true
+      state.postRemoteStatus.status = 'pending'
     },
     postRemoteFailure: (state, action: PayloadAction<{ error: ApiError }>) => {
       const { error } = action.payload
       state.postRemoteStatus.error = error
-      state.postRemoteStatus.isFailed = true
-      state.postRemoteStatus.isPending = false
+      state.postRemoteStatus.status = 'failed'
     },
     postRemoteSuccess: (state) => {
-      state.postRemoteStatus.isFailed = false
-      state.postRemoteStatus.isPending = false
+      state.postRemoteStatus.status = 'success'
+    },
+    clearPostRemoteStatus: (state) => {
+      state.postRemoteStatus.status = 'idle'
     },
 
     patchRemoteRequested: (state) => {
-      state.patchRemoteStatus.isPending = true
+      state.patchRemoteStatus.status = 'pending'
     },
     patchRemoteFailure: (state, action: PayloadAction<{ error: ApiError }>) => {
       const { error } = action.payload
       state.patchRemoteStatus.error = error
-      state.patchRemoteStatus.isFailed = true
-      state.patchRemoteStatus.isPending = false
+      state.patchRemoteStatus.status = 'failed'
     },
     patchRemoteSuccess: (state) => {
-      state.patchRemoteStatus.isFailed = false
-      state.patchRemoteStatus.isPending = false
+      state.patchRemoteStatus.status = 'success'
+    },
+    clearPatchRemoteStatus: (state) => {
+      state.patchRemoteStatus.status = 'idle'
     },
 
     deleteRemoteRequested: (state) => {
-      state.deleteRemoteStatus.isPending = true
+      state.deleteRemoteStatus.status = 'pending'
     },
     deleteRemoteFailure: (state, action: PayloadAction<{ error: ApiError }>) => {
       const { error } = action.payload
       state.deleteRemoteStatus.error = error
-      state.deleteRemoteStatus.isFailed = true
-      state.deleteRemoteStatus.isPending = false
+      state.deleteRemoteStatus.status = 'failed'
     },
     deleteRemoteSuccess: (state) => {
-      state.deleteRemoteStatus.isFailed = false
-      state.deleteRemoteStatus.isPending = false
+      state.deleteRemoteStatus.status = 'success'
+    },
+    clearDeleteRemoteStatus: (state) => {
+      state.deleteRemoteStatus.status = 'idle'
     }
   }
 })
@@ -78,12 +78,17 @@ export const {
   postRemoteRequested,
   postRemoteFailure,
   postRemoteSuccess,
+  clearPostRemoteStatus,
+
   patchRemoteRequested,
   patchRemoteFailure,
   patchRemoteSuccess,
+  clearPatchRemoteStatus,
+
   deleteRemoteRequested,
   deleteRemoteFailure,
-  deleteRemoteSuccess
+  deleteRemoteSuccess,
+  clearDeleteRemoteStatus
 } = requestStateSlice.actions
 
 export const requestStateReducer = requestStateSlice.reducer

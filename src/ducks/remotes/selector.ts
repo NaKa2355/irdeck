@@ -1,7 +1,7 @@
 import { type ApiError } from '../../interfaces/api'
 import { type RootStore } from '../../app/store'
 import { type Remote } from '../../type/remote'
-import { type FetchStatus } from '../../utils/reqStatus'
+import { type RequestStatus, type FetchStatus } from '../../utils/reqStatus'
 
 export const remotesSelector = (state: RootStore): Remote[] => {
   const remote = state.remotes.domain
@@ -18,4 +18,8 @@ export const selectedRemoteSelector = (state: RootStore): string | null => {
 
 export const remoteSelector = (state: RootStore, remoteId: string): Remote | null => {
   return state.remotes.domain.byId[remoteId]
+}
+
+export const postRemoteStatusSelector = (state: RootStore): RequestStatus<ApiError> => {
+  return state.remotes.request.postRemoteStatus
 }

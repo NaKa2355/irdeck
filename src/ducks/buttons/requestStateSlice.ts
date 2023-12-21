@@ -19,48 +19,56 @@ const requestStateSlice = createSlice({
     pushButtonRequested: (state, action: PayloadAction<{ buttonId: string }>) => {
       const { buttonId } = action.payload
       state.pushButtonStatus[buttonId] = {
-        isFailed: false,
-        isPending: true,
+        status: 'pending',
         error: undefined
       }
     },
     pushButtonFailure: (state, action: PayloadAction<{ buttonId: string, error: ApiError }>) => {
       const { buttonId, error } = action.payload
       state.pushButtonStatus[buttonId] = {
-        isFailed: true,
-        isPending: false,
+        status: 'failed',
         error
       }
     },
     pushButtonSuccess: (state, action: PayloadAction<{ buttonId: string }>) => {
       const { buttonId } = action.payload
       state.pushButtonStatus[buttonId] = {
-        isFailed: false,
-        isPending: false,
+        status: 'success',
+        error: undefined
+      }
+    },
+    clearPushButtonStatus: (state, action: PayloadAction<{ buttonId: string }>) => {
+      const { buttonId } = action.payload
+      state.pushButtonStatus[buttonId] = {
+        status: 'idle',
         error: undefined
       }
     },
     learnIrDataRequested: (state, action: PayloadAction<{ buttonId: string }>) => {
       const { buttonId } = action.payload
       state.learnIrDataStatus[buttonId] = {
-        isFailed: false,
-        isPending: true,
+        status: 'pending',
         error: undefined
       }
     },
     learnIrDataFailure: (state, action: PayloadAction<{ buttonId: string, error: ApiError }>) => {
       const { buttonId, error } = action.payload
       state.learnIrDataStatus[buttonId] = {
-        isFailed: true,
-        isPending: false,
+        status: 'failed',
         error
       }
     },
     learnIrDataSuccess: (state, action: PayloadAction<{ buttonId: string }>) => {
       const { buttonId } = action.payload
       state.learnIrDataStatus[buttonId] = {
-        isFailed: false,
-        isPending: false,
+        status: 'success',
+        error: undefined
+      }
+    },
+    clearLearnIrDataStatus: (state, action: PayloadAction<{ buttonId: string }>) => {
+      const { buttonId } = action.payload
+      state.learnIrDataStatus[buttonId] = {
+        status: 'idle',
         error: undefined
       }
     }
@@ -72,7 +80,9 @@ export const {
   pushButtonRequested,
   pushButtonFailure,
   pushButtonSuccess,
+  clearPushButtonStatus,
   learnIrDataRequested,
   learnIrDataFailure,
-  learnIrDataSuccess
+  learnIrDataSuccess,
+  clearLearnIrDataStatus
 } = requestStateSlice.actions

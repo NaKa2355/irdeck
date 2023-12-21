@@ -6,6 +6,7 @@ import { receivedIrDataReducer } from './receivedIrDataSlice'
 
 // actions
 export { tryIrData, receiveIr, fetchDevices } from './operations'
+export { clearReceiveIrStatus, clearTryIrDataStatus } from './requestStateSlice'
 
 // reducer
 export const devicesReducer = combineReducers({

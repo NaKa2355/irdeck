@@ -9,13 +9,11 @@ interface RequestState {
 
 const initialState: RequestState = {
   sendIrStatus: {
-    isFailed: false,
-    isPending: false,
+    status: 'idle',
     error: undefined
   },
   receiveIrStatus: {
-    isFailed: false,
-    isPending: false,
+    status: 'idle',
     error: undefined
   }
 }
@@ -25,30 +23,32 @@ const requestStateSlice = createSlice({
   initialState,
   reducers: {
     tryIrDataRequested: (state) => {
-      state.sendIrStatus.isPending = true
+      state.sendIrStatus.status = 'pending'
     },
     tryIrDataFailure: (state, action: PayloadAction<{ error: ApiError }>) => {
       const { error } = action.payload
       state.sendIrStatus.error = error
-      state.sendIrStatus.isFailed = true
-      state.sendIrStatus.isPending = false
+      state.sendIrStatus.status = 'failed'
     },
     tryIrDataSuccess: (state) => {
-      state.sendIrStatus.isPending = false
-      state.sendIrStatus.isFailed = false
+      state.sendIrStatus.status = 'success'
+    },
+    clearTryIrDataStatus: (state) => {
+      state.sendIrStatus.status = 'idle'
     },
     receiveIrRequested: (state) => {
-      state.receiveIrStatus.isPending = true
+      state.receiveIrStatus.status = 'pending'
     },
     receiveIrFailure: (state, action: PayloadAction<{ error: ApiError }>) => {
       const { error } = action.payload
-      state.receiveIrStatus.isPending = false
-      state.receiveIrStatus.isFailed = true
+      state.receiveIrStatus.status = 'failed'
       state.receiveIrStatus.error = error
     },
     receiveIrSuccess: (state) => {
-      state.receiveIrStatus.isFailed = false
-      state.receiveIrStatus.isPending = false
+      state.receiveIrStatus.status = 'success'
+    },
+    clearReceiveIrStatus: (state) => {
+      state.receiveIrStatus.status = 'idle'
     }
   }
 })
@@ -59,7 +59,9 @@ export const {
   tryIrDataRequested,
   tryIrDataFailure,
   tryIrDataSuccess,
+  clearTryIrDataStatus,
   receiveIrRequested,
   receiveIrFailure,
-  receiveIrSuccess
+  receiveIrSuccess,
+  clearReceiveIrStatus
 } = requestStateSlice.actions

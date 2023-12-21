@@ -5,6 +5,7 @@ import { fetchStateReducer } from './fetchStateSlice'
 
 // actions
 export { fetchButtons, pushButton, leanIrData } from './operations'
+export { clearLearnIrDataStatus, clearPushButtonStatus } from './requestStateSlice'
 
 // selector
 export { buttonsSelector } from './selector'

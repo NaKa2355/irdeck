@@ -1,9 +1,9 @@
 import { Alert, Box, Grid, Snackbar } from '@mui/material'
-import { ButtonCard } from './buttonCard'
+import { ButtonCard } from '../monecules/buttonCard'
 import { useTranslation } from 'react-i18next'
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
-import { buttonsSelector } from '../../../ducks/buttons/selector'
+import { buttonsSelector } from '../../ducks/buttons/selector'
 
 export const ButtonsGrid = (): JSX.Element => {
   const { t } = useTranslation()

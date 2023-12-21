@@ -1,5 +1,5 @@
 export type InputItemState<S, E> = {
-  isInVaild: false
+  isInvaild: false
   state: S
 } | {
   isInvaild: true

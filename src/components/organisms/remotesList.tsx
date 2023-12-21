@@ -1,10 +1,10 @@
 import { IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, SpeedDial } from '@mui/material'
-import { RemoteType } from '../../../type/remote'
+import { RemoteType } from '../../type/remote'
 import { Add, ModeEdit, Thermostat, ToggleOff, TouchApp } from '@mui/icons-material'
 import { useDispatch, useSelector } from 'react-redux'
-import { remoteSelected, remotesSelector, selectedRemoteSelector } from '../../../ducks/remotes'
-import { addRemoteModalOpened, editRemoteModalOpened } from '../../../ducks/ui'
-import { type AppDispatch } from '../../../app/thunk'
+import { remoteSelected, remotesSelector, selectedRemoteSelector } from '../../ducks/remotes'
+import { addRemoteModalOpened, editRemoteModalOpened } from '../../ducks/ui'
+import { type AppDispatch } from '../../app/thunk'
 
 const RemoteIcon = (props: { remoteType: RemoteType }): JSX.Element => {
   switch (props.remoteType) {

@@ -51,6 +51,7 @@ const remotesSlice = createSlice({
         tag,
         buttonIds: []
       }
+      state.ids.push(remoteId)
     },
 
     remoteEdited: (state, action: PayloadAction<RemoteEditedActionPayload>) => {
@@ -62,7 +63,7 @@ const remotesSlice = createSlice({
     },
 
     remoteDeleted: (state, action: PayloadAction<{ deletedRemoteId: string }>) => {
-      state.ids.filter((id) => id !== action.payload.deletedRemoteId)
+      state.ids = state.ids.filter((id) => id !== action.payload.deletedRemoteId)
     }
   }
 })

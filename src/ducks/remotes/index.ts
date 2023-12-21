@@ -7,13 +7,15 @@ import { selectedRemoteReducer } from './selectedRemoteSlice'
 // actions
 export { fetchRemotes, patchRemote, deleteRemote } from './operations'
 export { remoteSelected } from './selectedRemoteSlice'
+export { clearDeleteRemoteStatus, clearPatchRemoteStatus, clearPostRemoteStatus } from './requestStateSlice'
 
 // selector
 export {
   selectedRemoteSelector,
   remotesSelector,
   remoteSelector,
-  fetchRemoteStatusSelector
+  fetchRemoteStatusSelector,
+  postRemoteStatusSelector
 } from './selector'
 
 // reducer
