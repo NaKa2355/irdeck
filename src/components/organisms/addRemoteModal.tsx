@@ -1,23 +1,29 @@
 // types
 import { RemoteType } from '../../type/remote'
+import { type FormEventHandler } from 'react'
+import { type AppDispatch } from '../../app/thunk'
 
 // conmponents
-import { FormControl, FormLabel, Stack, Select, MenuItem, Grid, Button, type SelectChangeEvent, Alert, TextField, FormHelperText, Dialog, DialogTitle, DialogContent, Box } from '@mui/material'
+import { FormControl, FormLabel, Stack, Select, MenuItem, Grid, Button, Alert, TextField, FormHelperText, Dialog, DialogTitle, DialogContent } from '@mui/material'
+import { TempSlider } from '../monecules/tempSlider'
 
 // hooks
 import { useTranslation } from 'react-i18next'
-import { useState, type ChangeEvent } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useForm } from '../../hooks'
+
+// schemas
+import { remoteNameValidator } from '../../schemas/remoteName'
+
+// redux
 import { addRemoteModalClosed, addRemoteModalStateSelector } from '../../ducks/ui'
 import { devicesCanSendSelector } from '../../ducks/devices'
-import { TempSlider } from '../monecules/tempSlider'
-import { type InputItemState } from '../../utils/inputItemState'
-import { postRemote } from '../../ducks/remotes/operations'
-import { type AppDispatch } from '../../app/thunk'
 import { postRemoteStatusSelector } from '../../ducks/remotes'
+import { postRemote } from '../../ducks/remotes/operations'
+import { store } from '../../app'
 
 interface FormData {
-  remoteName: InputItemState<string, string>
+  remoteName: string
   remoteType: RemoteType
   deviceId: string
   scale: 0.5 | 1
@@ -29,10 +35,7 @@ const maxHeatTempRange: [number, number] = [0, 25]
 const maxCoolTempRange: [number, number] = [10, 35]
 
 const initialFormData: FormData = {
-  remoteName: {
-    state: '',
-    isInvaild: false
-  },
+  remoteName: '',
   remoteType: RemoteType.Button,
   deviceId: '',
   scale: 0.5,
@@ -40,82 +43,35 @@ const initialFormData: FormData = {
   heatTempRange: [0, 25]
 }
 
-export const AddRemoteModal = (): JSX.Element => {
+const AddRemoteForm = (): JSX.Element => {
   const { t } = useTranslation()
   const dispatch = useDispatch<AppDispatch>()
   const postStatus = useSelector(postRemoteStatusSelector)
-  const [formData, setFormData] = useState<FormData>(initialFormData)
-  const remoteNameValidation = {
-    isInvaild: formData.remoteName.isInvaild,
-    errorMessage: formData.remoteName.isInvaild ? formData.remoteName.errorMessage : ''
-  }
-  const isOpen = useSelector(addRemoteModalStateSelector)
   const devicesCanSend = useSelector(devicesCanSendSelector)
-
-  const onClose = (): void => {
-    dispatch(addRemoteModalClosed())
-  }
-
-  const onRemoteTypeChange = (e: SelectChangeEvent<RemoteType>): void => {
-    const newRemoteType = e.target.value as RemoteType
-    setFormData({
-      ...formData,
-      remoteType: newRemoteType
-    })
-  }
-
-  const onRemoteNameChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const remoteName: InputItemState<string, string> = {
-      isInvaild: false,
-      state: e.target.value
+  const [{ formData, validation }, { handleChange, handleChangeWithEvent, canSubmit }] = useForm<FormData>({
+    initialFormData: {
+      ...initialFormData,
+      deviceId: devicesCanSend.at(0)?.id ?? ''
+    },
+    validators: {
+      remoteName: remoteNameValidator
     }
-    setFormData({
-      ...formData,
-      remoteName
-    })
-  }
+  })
+  const isUnknownError = postStatus.error?.code === 'unknown'
 
-  const onDeviceChange = (e: SelectChangeEvent<string>): void => {
-    const newDeviceId = e.target.value
-    setFormData({
-      ...formData,
-      deviceId: newDeviceId
-    })
-  }
-
-  const onScalseChange = (e: SelectChangeEvent<0.5 | 1>): void => {
-    const newScale = e.target.value as 0.5 | 1
-    setFormData({
-      ...formData,
-      scale: newScale
-    })
-  }
-
-  const onCoolTempRangeChange = (value: [number, number]): void => {
-    setFormData({
-      ...formData,
-      coolTempRange: value
-    })
-  }
-
-  const onHeatTempRangeChange = (value: [number, number]): void => {
-    setFormData({
-      ...formData,
-      heatTempRange: value
-    })
-  }
-
-  const onSubmit = (): void => {
+  const onSubmit: FormEventHandler = (e): void => {
+    e.preventDefault()
+    console.log(canSubmit())
+    console.log(formData)
+    if (!canSubmit()) {
+      return
+    }
     void (async () => {
-      await dispatch(postRemote({
-        remoteName: formData.remoteName.state,
-        deviceId: formData.deviceId,
-        remoteType: formData.remoteType,
-        scale: formData.scale,
-        coolTempRange: formData.coolTempRange,
-        heatTempRange: formData.heatTempRange
-      }))
-      console.log(postStatus)
+      await dispatch(postRemote(formData))
+      const status = postRemoteStatusSelector(store.getState())
+      if (status.status === 'success') {
+        dispatch(addRemoteModalClosed())
+      }
     })()
   }
 
@@ -137,97 +93,112 @@ export const AddRemoteModal = (): JSX.Element => {
   })
 
   return (
+    <form onSubmit={onSubmit}>
+      <Stack spacing={2}>
+        {isUnknownError && (
+          <Alert severity="error">
+            {t('error.unknown')}
+          </Alert>
+        )}
+
+        <FormControl>
+          <FormLabel>{t('label.type')}</FormLabel>
+          <Select
+            name="type"
+            value={formData.remoteType}
+            onChange={handleChangeWithEvent('remoteType')}
+            defaultValue={formData.remoteType}>
+            {remoteTypesItems}
+          </Select>
+        </FormControl>
+
+        <FormControl error={validation.remoteName?.isInvailed}>
+          <FormLabel>{t('label.name')}</FormLabel>
+          <TextField
+            name="name"
+            error={validation.remoteName?.isInvailed}
+            placeholder={t('label.name') ?? ''}
+            onChange={handleChangeWithEvent('remoteName')}
+          />
+          <FormHelperText>
+            {t(validation.remoteName?.errorMessage ?? '')}
+          </FormHelperText>
+        </FormControl>
+
+        <FormControl>
+          <FormLabel>{t('label.ir_sending_device')}</FormLabel>
+          <Select
+            defaultValue={formData.deviceId}
+            name="device_id"
+            onChange={handleChangeWithEvent('deviceId')}
+          >
+            {deviceMenu}
+          </Select>
+        </FormControl>
+
+        {formData.remoteType === RemoteType.Thermostat &&
+          <Stack spacing={2}>
+            <FormControl>
+              <FormLabel>{t('label.scale')}</FormLabel>
+              <Select
+                name="scale"
+                defaultValue={formData.scale}
+                onChange={handleChangeWithEvent('scale')}
+              >
+                {scalesMenu}
+              </Select>
+            </FormControl>
+
+            <FormControl>
+              <FormLabel>{t('label.cool')}</FormLabel>
+              <TempSlider
+                name="cool_temp_range"
+                color="blue"
+                tempRange={maxCoolTempRange}
+                onChangeCommitted={handleChange('coolTempRange')}
+              />
+            </FormControl>
+
+            <FormControl>
+              <FormLabel>{t('label.heat')}</FormLabel>
+              <TempSlider
+                name="heat_temp_range"
+                color="red"
+                tempRange={maxHeatTempRange}
+                onChangeCommitted={handleChange('heatTempRange')}
+              />
+            </FormControl>
+          </Stack>
+        }
+
+        <Grid container direction="row" justifyContent="flex-end" alignItems="center">
+          <Grid item>
+            <Button
+              variant="contained"
+              type="submit"
+              onClick={onSubmit}
+            >
+              {t('button.add')}
+            </Button>
+          </Grid>
+        </Grid>
+      </Stack>
+    </form>
+  )
+}
+
+export const AddRemoteModal = (): JSX.Element => {
+  const isOpen = useSelector(addRemoteModalStateSelector)
+  const dispatch = useDispatch()
+  const { t } = useTranslation()
+  const onClose = (): void => {
+    dispatch(addRemoteModalClosed())
+  }
+  return (
     <Dialog open={isOpen} onClose={onClose} fullWidth>
       <DialogTitle>{t('header.add_remote')}</DialogTitle>
       <DialogContent>
-        <Box height={20}></Box>
-
-        <Stack spacing={2}>
-          {(false) && (
-            <Alert severity="error">
-              {t('error.unknown')}
-            </Alert>
-          )}
-
-          <FormControl>
-            <FormLabel>{t('label.type')}</FormLabel>
-            <Select
-              name="type"
-              value={formData.remoteType}
-              onChange={onRemoteTypeChange}
-              defaultValue={formData.remoteType}>
-              {remoteTypesItems}
-            </Select>
-          </FormControl>
-
-          <FormControl error={remoteNameValidation.isInvaild}>
-            <FormLabel>{t('label.name')}</FormLabel>
-            <TextField
-              name="name"
-              error={remoteNameValidation.isInvaild}
-              placeholder={t('label.name') ?? ''}
-              onChange={onRemoteNameChange}
-            />
-            <FormHelperText>
-              {t(remoteNameValidation.errorMessage)}
-            </FormHelperText>
-          </FormControl>
-
-          <FormControl>
-            <FormLabel>{t('label.ir_sending_device')}</FormLabel>
-            <Select
-              defaultValue={devicesCanSend.at(0)?.id ?? ''}
-              name="device_id"
-              onChange={onDeviceChange}
-            >
-              {deviceMenu}
-            </Select>
-          </FormControl>
-
-          {formData.remoteType === RemoteType.Thermostat &&
-            <Stack spacing={2}>
-              <FormControl>
-                <FormLabel>{t('label.scale')}</FormLabel>
-                <Select
-                  name="scale"
-                  defaultValue={0.5}
-                  onChange={onScalseChange}
-                >
-                  {scalesMenu}
-                </Select>
-              </FormControl>
-              <FormControl>
-                <FormLabel>{t('label.cool')}</FormLabel>
-                <TempSlider
-                  name="cool_temp_range"
-                  color="blue"
-                  tempRange={maxCoolTempRange}
-                  onChangeCommitted={onCoolTempRangeChange}
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>{t('label.heat')}</FormLabel>
-                <TempSlider
-                  name="heat_temp_range"
-                  color="red"
-                  tempRange={maxHeatTempRange}
-                  onChangeCommitted={onHeatTempRangeChange}
-                />
-              </FormControl>
-            </Stack>
-          }
-
-          <Grid container direction="row" justifyContent="flex-end" alignItems="center">
-            <Grid item>
-              <Button
-                variant="contained"
-                onClick={onSubmit}
-              >
-                {t('button.add')}
-              </Button>
-            </Grid>
-          </Grid>
-        </Stack>
+        <AddRemoteForm />
       </DialogContent>
     </Dialog>
   )

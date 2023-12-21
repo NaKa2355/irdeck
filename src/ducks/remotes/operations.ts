@@ -5,7 +5,7 @@ import { remoteAdded, remoteDeleted, remoteEdited, remotesFetched } from './doma
 import { fetchRemoteFailure, fetchRemoteRequested, fetchRemoteSuccess } from './fetchStateSlice'
 import { deleteRemoteFailure, deleteRemoteRequested, deleteRemoteSuccess, patchRemoteFailure, patchRemoteRequested, patchRemoteSuccess, postRemoteFailure, postRemoteRequested, postRemoteSuccess } from './requestStateSlice'
 import { remoteSelected } from './selectedRemoteSlice'
-import { selectedRemoteSelector } from './selector'
+import { remotesSelector, selectedRemoteSelector } from './selector'
 
 export const fetchRemotes: ActionCreator<
 ThunkActionFunc
@@ -75,7 +75,9 @@ export const patchRemote = (payload: { remoteId: string, remoteName: string, dev
 }
 
 export const deleteRemote = (payload: { remoteId: string }): ThunkActionFunc => {
-  return async (dispatch, _, extra) => {
+  return async (dispatch, getState, extra) => {
+    const selectedRemote = selectedRemoteSelector(getState())
+    const remotes = remotesSelector(getState())
     dispatch(deleteRemoteRequested())
     const result = await extra.api.deleteRemotes(payload)
     if (result.isError) {
@@ -88,5 +90,10 @@ export const deleteRemote = (payload: { remoteId: string }): ThunkActionFunc => 
     dispatch(remoteDeleted({
       deletedRemoteId: payload.remoteId
     }))
+    if (selectedRemote === payload.remoteId) {
+      dispatch(remoteSelected({
+        remoteId: remotes.at(0)?.id ?? null
+      }))
+    }
   }
 }

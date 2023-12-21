@@ -4,21 +4,26 @@ import { addRemoteModalReducer } from './addRemoteModal'
 import { editRemoteModalReducer } from './editRemoteModal'
 import { learnIrModalReducer } from './leanIrModal'
 
+// actions
 export {
   addRemoteModalClosed,
   addRemoteModalOpened
 } from './addRemoteModal'
-
 export {
   editRemoteModalClosed,
   editRemoteModalOpened
 } from './editRemoteModal'
+export {
+  snackBarHidden,
+  snackBarShown
+} from './snackBarSlice'
 
-// slices
+// selectors
 export {
   learnIrModalStateSelector,
   addRemoteModalStateSelector,
-  editRemoteModalStateSelector
+  editRemoteModalStateSelector,
+  snackbarSelector
 } from './selector'
 
 // reducer

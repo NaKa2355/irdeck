@@ -2,19 +2,23 @@ import { Alert, Box, Grid, Snackbar } from '@mui/material'
 import { ButtonCard } from '../monecules/buttonCard'
 import { useTranslation } from 'react-i18next'
 import { useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { buttonsSelector } from '../../ducks/buttons/selector'
+import { snackBarShown } from '../../ducks/ui'
 
 export const ButtonsGrid = (): JSX.Element => {
   const { t } = useTranslation()
   const [isDeviceCanReceiveNotFound, setIsDeviceCanReceiveNotFound] = useState(false)
   const buttons = useSelector(buttonsSelector)
-
+  const dispatch = useDispatch()
   const onClickReceiveButton = (id: string): void => {
     // openReceiveIrModal(id);
   }
   const onCardClick = (): void => {
-
+    dispatch(snackBarShown({
+      severity: 'error',
+      message: 'hello!'
+    }))
   }
   const cards = buttons?.map((button) => (
     <Grid item xs={1} key={button.id}>

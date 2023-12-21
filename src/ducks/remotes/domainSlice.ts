@@ -59,7 +59,7 @@ const remotesSlice = createSlice({
         return
       }
       state.byId[action.payload.remoteId].deviceId = action.payload.deviceId
-      state.byId[action.payload.deviceId].name = action.payload.remoteName
+      state.byId[action.payload.remoteId].name = action.payload.remoteName
     },
 
     remoteDeleted: (state, action: PayloadAction<{ deletedRemoteId: string }>) => {

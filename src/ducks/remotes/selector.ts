@@ -2,24 +2,45 @@ import { type ApiError } from '../../interfaces/api'
 import { type RootStore } from '../../app/store'
 import { type Remote } from '../../type/remote'
 import { type RequestStatus, type FetchStatus } from '../../utils/reqStatus'
+import { createSelector } from '@reduxjs/toolkit'
 
-export const remotesSelector = (state: RootStore): Remote[] => {
-  const remote = state.remotes.domain
-  return remote.ids.map(id => remote.byId[id])
-}
+const selectSelf = (state: RootStore): RootStore => state
 
-export const fetchRemoteStatusSelector = (state: RootStore): FetchStatus<ApiError> => {
-  return state.remotes.fetch.fetchStatus
-}
+export const remotesSelector = createSelector(selectSelf,
+  (state: RootStore): Remote[] => {
+    const remote = state.remotes.domain
+    return remote.ids.map(id => remote.byId[id])
+  }
+)
 
-export const selectedRemoteSelector = (state: RootStore): string | null => {
-  return state.remotes.selectedRemote.id
-}
+export const fetchRemoteStatusSelector = createSelector(
+  selectSelf,
+  (state: RootStore): FetchStatus<ApiError> => {
+    return state.remotes.fetch.fetchStatus
+  }
+)
+
+export const selectedRemoteSelector = createSelector(
+  selectSelf,
+  (state: RootStore): string | null => {
+    return state.remotes.selectedRemote.id
+  }
+)
 
 export const remoteSelector = (state: RootStore, remoteId: string): Remote | null => {
   return state.remotes.domain.byId[remoteId]
 }
 
-export const postRemoteStatusSelector = (state: RootStore): RequestStatus<ApiError> => {
-  return state.remotes.request.postRemoteStatus
-}
+export const postRemoteStatusSelector = createSelector(
+  selectSelf,
+  (state: RootStore): RequestStatus<ApiError> => {
+    return state.remotes.request.postRemoteStatus
+  }
+)
+
+export const patchRemoteStatusSelector = createSelector(
+  selectSelf,
+  (state: RootStore): RequestStatus<ApiError> => {
+    return state.remotes.request.patchRemoteStatus
+  }
+)

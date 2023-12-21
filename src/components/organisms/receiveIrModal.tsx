@@ -1,6 +1,6 @@
 import { IconAlertCircle, IconCheck, IconDeviceRemote, IconHourglassLow, IconWifi } from '@tabler/icons-react'
 import { useState } from 'react'
-import { type Device } from '../../../type/device.type'
+import { type Device } from '../../type/device.type'
 import { useTranslation } from 'react-i18next'
 import { Select, Button, FormControl, FormLabel, Grid, MenuItem, Stack, Typography, type SelectChangeEvent, CircularProgress, Box } from '@mui/material'
 

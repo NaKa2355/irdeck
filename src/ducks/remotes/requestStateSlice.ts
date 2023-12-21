@@ -39,6 +39,7 @@ const requestStateSlice = createSlice({
       state.postRemoteStatus.status = 'success'
     },
     clearPostRemoteStatus: (state) => {
+      state.postRemoteStatus.error = undefined
       state.postRemoteStatus.status = 'idle'
     },
 
@@ -54,6 +55,7 @@ const requestStateSlice = createSlice({
       state.patchRemoteStatus.status = 'success'
     },
     clearPatchRemoteStatus: (state) => {
+      state.patchRemoteStatus.error = undefined
       state.patchRemoteStatus.status = 'idle'
     },
 
@@ -69,6 +71,7 @@ const requestStateSlice = createSlice({
       state.deleteRemoteStatus.status = 'success'
     },
     clearDeleteRemoteStatus: (state) => {
+      state.deleteRemoteStatus.error = undefined
       state.deleteRemoteStatus.status = 'idle'
     }
   }

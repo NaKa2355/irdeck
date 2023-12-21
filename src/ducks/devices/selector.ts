@@ -1,19 +1,20 @@
+import { createSelector } from '@reduxjs/toolkit'
 import { type RootStore } from '../../app'
-import { type Device } from '../../type/device.type'
-import { type IrData } from '../../type/irdata.type'
 
-export const devicesCanSendSelector = (state: RootStore): Device[] => {
+const selectSelf = (state: RootStore): RootStore => state
+
+export const devicesCanSendSelector = createSelector(selectSelf, (state) => {
   const domain = state.devices.domain
   const devicesIdCanSend = domain.ids.filter(id => domain.byId[id].canSend)
   return devicesIdCanSend.map(id => domain.byId[id])
-}
+})
 
-export const devicesCanReceiveSelector = (state: RootStore): Device[] => {
+export const devicesCanReceiveSelector = createSelector(selectSelf, (state) => {
   const domain = state.devices.domain
   const devicesIdCanSend = domain.ids.filter(id => domain.byId[id].canReceive)
   return devicesIdCanSend.map(id => domain.byId[id])
-}
+})
 
-export const receivedIrDataSelector = (state: RootStore): IrData => {
+export const receivedIrDataSelector = createSelector(selectSelf, (state) => {
   return state.devices.receivedIrData.irData ?? new Uint8Array()
-}
+})

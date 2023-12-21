@@ -5,12 +5,14 @@ type SnackBarSeverity = 'error' | 'warning' | 'info' | 'success'
 interface UiState {
   snackBar: {
     severity: SnackBarSeverity
+    message: string
     isShown: boolean
   }
 }
 
 const initialState: UiState = {
   snackBar: {
+    message: '',
     severity: 'success',
     isShown: false
   }
@@ -20,9 +22,13 @@ const snackBarSlice = createSlice({
   name: 'ui.snackbar',
   initialState,
   reducers: {
-    snackBarShown: (state, action: PayloadAction<{ severity: SnackBarSeverity }>) => {
-      state.snackBar.severity = action.payload.severity
-      state.snackBar.isShown = true
+    snackBarShown: (state, action: PayloadAction<{ message: string, severity: SnackBarSeverity }>) => {
+      const { severity, message } = action.payload
+      state.snackBar = {
+        severity,
+        message,
+        isShown: true
+      }
     },
 
     snackBarHidden: (state) => {

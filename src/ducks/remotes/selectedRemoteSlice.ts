@@ -12,7 +12,7 @@ const selectedRemoteSlice = createSlice({
   name: 'appdata.selectedRemote',
   initialState,
   reducers: {
-    remoteSelected: (state, action: PayloadAction<{ remoteId: string }>) => {
+    remoteSelected: (state, action: PayloadAction<{ remoteId: string | null }>) => {
       const { remoteId } = action.payload
       state.id = remoteId
     }

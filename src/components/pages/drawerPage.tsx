@@ -1,17 +1,26 @@
-import { RemotesList } from '../organisms/remotesList'
+// templates
 import DrawerTemplate from '../templates/drawerTemplate'
+
+// organisms
+import { RemotesList } from '../organisms/remotesList'
 import { ButtonsGrid } from '../organisms/buttonsGrid'
 import { AddRemoteModal } from '../organisms/addRemoteModal'
+import { EditRemoteModal } from '../organisms/editRemoteModal'
 
-// atoms
-import { EditRemoteModal } from '../organisms/modals/editRemoteModal'
+// type
 import { type Remote } from '../../type/remote'
+import { type AppDispatch } from '../../app/thunk'
+
+// hooks
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+
+// redux
 import { fetchRemotes, selectedRemoteSelector } from '../../ducks/remotes'
 import { fetchDevices } from '../../ducks/devices'
-import { type AppDispatch } from '../../app/thunk'
 import { fetchButtons } from '../../ducks/buttons'
+import { snackBarHidden, snackbarSelector } from '../../ducks/ui'
+import { Alert, Snackbar } from '@mui/material'
 
 interface DrawerPageProps {
   selectedRemote?: Remote
@@ -22,6 +31,7 @@ interface DrawerPageProps {
 export const DrawerPage = (props: DrawerPageProps): JSX.Element => {
   const dispatch = useDispatch<AppDispatch>()
   const selectedRemote = useSelector(selectedRemoteSelector)
+  const snackbar = useSelector(snackbarSelector)
   useEffect(() => {
     void dispatch(fetchRemotes())
     void dispatch(fetchDevices())
@@ -30,6 +40,9 @@ export const DrawerPage = (props: DrawerPageProps): JSX.Element => {
     void dispatch(fetchButtons({ remoteId: selectedRemote ?? '' }))
   }, [selectedRemote])
 
+  const onSnackbarClose = (): void => {
+    dispatch(snackBarHidden())
+  }
   return (
     <div>
       <DrawerTemplate
@@ -39,12 +52,7 @@ export const DrawerPage = (props: DrawerPageProps): JSX.Element => {
         }
         contents={
           <div>
-            {props.remotes?.length !== 0 &&
-              <ButtonsGrid />
-            }
-            {(props.remotes?.length === 0 && !(props.isFetchingRemote ?? false)) &&
-              <p>No Remotes</p>
-            }
+            <ButtonsGrid />
           </div>
         }
       />
@@ -52,11 +60,17 @@ export const DrawerPage = (props: DrawerPageProps): JSX.Element => {
       <AddRemoteModal />
       <EditRemoteModal />
 
-      {/* <Snackbar open={snackBar.state.isOpen} onClose={snackBar.close} autoHideDuration={6000}>
-        <Alert onClose={snackBar.close} severity={snackBar.state.severity} sx={{ width: '100%' }}>
-          {snackBar.state.message}
+      <Snackbar
+        open={snackbar.isShown}
+        onClose={onSnackbarClose}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        autoHideDuration={6000}>
+        <Alert onClose={onSnackbarClose}
+          severity={snackbar.severity}
+          sx={{ width: '100%' }}>
+          {snackbar.message}
         </Alert>
-      </Snackbar> */}
+      </Snackbar>
     </div>
   )
 }
