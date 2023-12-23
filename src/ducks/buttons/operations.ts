@@ -1,9 +1,8 @@
 import { type ThunkAsyncActionFunc } from '../../app'
-import { type IrData } from '../../type/irdata.type'
 import { remoteButtonsFetched } from '../remotes/domainSlice'
-import { buttonsFetched, irDataLearned } from './domainSlice'
+import { buttonsFetched } from './domainSlice'
 import { fetchButtonsFailure, fetchButtonsRequested, fetchButtonsSuccess } from './fetchStateSlice'
-import { learnIrDataFailure, learnIrDataRequested, learnIrDataSuccess, pushButtonFailure, pushButtonRequested, pushButtonSuccess } from './requestStateSlice'
+import { pushButtonFailure, pushButtonRequested, pushButtonSuccess } from './requestStateSlice'
 
 export const fetchButtons = (payload: { remoteId: string }): ThunkAsyncActionFunc => {
   return async (dispatch, _, extra) => {
@@ -58,36 +57,6 @@ export const pushButton = (payload: { buttonId: string }): ThunkAsyncActionFunc 
     }
 
     dispatch(pushButtonSuccess({
-      buttonId
-    }))
-  }
-}
-
-export const leanIrData = (payload: { buttonId: string, irData: IrData }): ThunkAsyncActionFunc => {
-  return async (dispatch, getState, extra) => {
-    const { buttonId, irData } = payload
-    const remoteId = getState().buttons.domain.byId[buttonId].remoteId
-    dispatch(learnIrDataRequested({
-      buttonId
-    }))
-    const result = await extra.api.setIrData({
-      remoteId,
-      buttonId,
-      irData
-    })
-
-    if (result.isError) {
-      dispatch(learnIrDataFailure({
-        buttonId,
-        error: result.error
-      }))
-      return
-    }
-
-    dispatch(learnIrDataSuccess({
-      buttonId
-    }))
-    dispatch(irDataLearned({
       buttonId
     }))
   }

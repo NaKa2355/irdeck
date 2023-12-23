@@ -15,17 +15,14 @@ interface Props {
   title?: string
   contents?: JSX.Element
   drawer?: JSX.Element
+  isDrawerOpen?: boolean
+  onIconClick?: () => void
+  onDrawerClose?: () => void
   window?: () => Window
 }
 
 export default function DrawerTemplate (props: Props): JSX.Element {
   const { window } = props
-  const [mobileOpen, setMobileOpen] = React.useState(false)
-
-  const handleDrawerToggle = (): void => {
-    setMobileOpen(!mobileOpen)
-  }
-
   const drawer = (
     <div>
       <Toolbar/>
@@ -53,7 +50,7 @@ export default function DrawerTemplate (props: Props): JSX.Element {
             color="inherit"
             aria-label="open drawer"
             edge="start"
-            onClick={handleDrawerToggle}
+            onClick={props.onIconClick}
             sx={{ mr: 2, display: { sm: 'none' } }}
           >
             <ArrowBackIos />
@@ -72,8 +69,8 @@ export default function DrawerTemplate (props: Props): JSX.Element {
         <Drawer
           container={container}
           variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
+          open={props.isDrawerOpen}
+          onClose={props.onDrawerClose}
           ModalProps={{
             keepMounted: true // Better open performance on mobile.
           }}

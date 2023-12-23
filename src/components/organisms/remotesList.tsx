@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 // redux
 import { clearDeleteRemoteStatus, clearPatchRemoteStatus, clearPostRemoteStatus, remoteSelected, remotesSelector, selectedRemoteSelector } from '../../ducks/remotes'
-import { addRemoteModalOpened, editRemoteModalOpened } from '../../ducks/ui'
+import { addRemoteModalOpened, drawerClosed, editRemoteModalOpened } from '../../ducks/ui'
 
 const RemoteIcon = (props: { remoteType: RemoteType }): JSX.Element => {
   switch (props.remoteType) {
@@ -37,6 +37,7 @@ export const RemotesList = (): JSX.Element => {
     dispatch(editRemoteModalOpened({ remoteId }))
   }
   const onClick = (remoteId: string): void => {
+    dispatch(drawerClosed())
     dispatch(remoteSelected({ remoteId }))
   }
 
@@ -63,7 +64,7 @@ export const RemotesList = (): JSX.Element => {
             }
           >
             <ListItemButton
-              selected={selectedRemote === remote.id}
+              selected={selectedRemote?.id === remote.id}
               onClick={() => { onClick(remote.id) }}
             >
               <ListItemIcon>

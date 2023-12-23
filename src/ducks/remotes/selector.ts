@@ -22,8 +22,12 @@ export const fetchRemoteStatusSelector = createSelector(
 
 export const selectedRemoteSelector = createSelector(
   selectSelf,
-  (state: RootStore): string | null => {
-    return state.remotes.selectedRemote.id
+  (state: RootStore): Remote | null => {
+    const remoteId = state.remotes.selectedRemote.id
+    if (remoteId === null) {
+      return null
+    }
+    return state.remotes.domain.byId[remoteId]
   }
 )
 

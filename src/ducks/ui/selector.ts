@@ -37,3 +37,10 @@ export const snackbarSelector = createSelector(
     return state.ui.snackBar.snackBar
   }
 )
+
+export const drawerSelector = createSelector(
+  selectSelf,
+  (state) => {
+    return state.ui.drawer.isOpen
+  }
+)

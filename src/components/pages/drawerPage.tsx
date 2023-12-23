@@ -8,7 +8,6 @@ import { AddRemoteModal } from '../organisms/addRemoteModal'
 import { EditRemoteModal } from '../organisms/editRemoteModal'
 
 // type
-import { type Remote } from '../../type/remote'
 import { type AppDispatch } from '../../app/thunk'
 
 // hooks
@@ -19,40 +18,49 @@ import { useDispatch, useSelector } from 'react-redux'
 import { fetchRemotes, selectedRemoteSelector } from '../../ducks/remotes'
 import { fetchDevices } from '../../ducks/devices'
 import { fetchButtons } from '../../ducks/buttons'
-import { snackBarHidden, snackbarSelector } from '../../ducks/ui'
+import { drawerClosed, drawerOpened, snackBarHidden, snackbarSelector } from '../../ducks/ui'
 import { Alert, Snackbar } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import { ReceiveIrModal } from '../organisms/receiveIrModal'
+import { drawerSelector } from '../../ducks/ui/selector'
 
-interface DrawerPageProps {
-  selectedRemote?: Remote
-  remotes?: Remote[]
-  isFetchingRemote?: boolean
-}
-
-export const DrawerPage = (props: DrawerPageProps): JSX.Element => {
+export const DrawerPage = (): JSX.Element => {
   const dispatch = useDispatch<AppDispatch>()
   const selectedRemote = useSelector(selectedRemoteSelector)
   const snackbar = useSelector(snackbarSelector)
   const { t } = useTranslation()
+  const isDrawerOpen = useSelector(drawerSelector)
   useEffect(() => {
     void dispatch(fetchRemotes())
     void dispatch(fetchDevices())
   }, [])
+
   useEffect(() => {
-    void dispatch(fetchButtons({ remoteId: selectedRemote ?? '' }))
+    void dispatch(fetchButtons({ remoteId: selectedRemote?.id ?? '' }))
   }, [selectedRemote])
 
   const onSnackbarClose = (): void => {
     dispatch(snackBarHidden())
   }
+
+  const onDrawerClose = (): void => {
+    dispatch(drawerClosed())
+  }
+
+  const onIconClick = (): void => {
+    dispatch(drawerOpened())
+  }
+
   return (
     <div>
       <DrawerTemplate
-        title={props.selectedRemote?.name}
+        title={selectedRemote?.name}
+        isDrawerOpen={isDrawerOpen}
         drawer={
           <RemotesList />
         }
+        onIconClick={onIconClick}
+        onDrawerClose={onDrawerClose}
         contents={
           <div>
             <ButtonsGrid />

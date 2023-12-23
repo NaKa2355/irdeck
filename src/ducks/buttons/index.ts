@@ -4,8 +4,8 @@ import { requestStateReducer } from './requestStateSlice'
 import { fetchStateReducer } from './fetchStateSlice'
 
 // actions
-export { fetchButtons, pushButton, leanIrData } from './operations'
-export { clearLearnIrDataStatus, clearPushButtonStatus } from './requestStateSlice'
+export { fetchButtons, pushButton } from './operations'
+export { clearPushButtonStatus } from './requestStateSlice'
 export { irDataLearned } from './domainSlice'
 
 // selector

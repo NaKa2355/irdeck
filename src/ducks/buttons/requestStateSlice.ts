@@ -4,12 +4,10 @@ import { type RequestStatus } from '../../utils/reqStatus'
 
 interface RequestState {
   pushButtonStatus: Record<string, RequestStatus<ApiError> | undefined>
-  learnIrDataStatus: Record<string, RequestStatus<ApiError> | undefined>
 }
 
 const initialState: RequestState = {
-  pushButtonStatus: {},
-  learnIrDataStatus: {}
+  pushButtonStatus: {}
 }
 
 const requestStateSlice = createSlice({
@@ -43,34 +41,6 @@ const requestStateSlice = createSlice({
         status: 'idle',
         error: undefined
       }
-    },
-    learnIrDataRequested: (state, action: PayloadAction<{ buttonId: string }>) => {
-      const { buttonId } = action.payload
-      state.learnIrDataStatus[buttonId] = {
-        status: 'pending',
-        error: undefined
-      }
-    },
-    learnIrDataFailure: (state, action: PayloadAction<{ buttonId: string, error: ApiError }>) => {
-      const { buttonId, error } = action.payload
-      state.learnIrDataStatus[buttonId] = {
-        status: 'failed',
-        error
-      }
-    },
-    learnIrDataSuccess: (state, action: PayloadAction<{ buttonId: string }>) => {
-      const { buttonId } = action.payload
-      state.learnIrDataStatus[buttonId] = {
-        status: 'success',
-        error: undefined
-      }
-    },
-    clearLearnIrDataStatus: (state, action: PayloadAction<{ buttonId: string }>) => {
-      const { buttonId } = action.payload
-      state.learnIrDataStatus[buttonId] = {
-        status: 'idle',
-        error: undefined
-      }
     }
   }
 })
@@ -80,9 +50,5 @@ export const {
   pushButtonRequested,
   pushButtonFailure,
   pushButtonSuccess,
-  clearPushButtonStatus,
-  learnIrDataRequested,
-  learnIrDataFailure,
-  learnIrDataSuccess,
-  clearLearnIrDataStatus
+  clearPushButtonStatus
 } = requestStateSlice.actions

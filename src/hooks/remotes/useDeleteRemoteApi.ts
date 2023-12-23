@@ -42,7 +42,7 @@ export const useDeleteRemoteApi = (deps: Dependencies = defaultDep):
         error: undefined
       })
 
-      if (req.remoteId === selectedRemote) {
+      if (req.remoteId === selectedRemote?.id) {
         dispatch(remoteSelected({
           remoteId: remotes.at(0)?.id ?? null
         }))
