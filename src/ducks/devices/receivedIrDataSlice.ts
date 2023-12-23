@@ -2,20 +2,20 @@ import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { type IrData } from '../../type/irdata.type'
 
 interface ReceivedIrData {
-  irData: IrData
+  irData: Record<string, IrData | undefined>
 }
 
 const initialState: ReceivedIrData = {
-  irData: new Uint8Array()
+  irData: {}
 }
 
 const ReceivedIrDataSlice = createSlice({
   name: 'appData.receivedIrData',
   initialState,
   reducers: {
-    irDataReceived: (state, action: PayloadAction<{ irData: IrData }>) => {
-      const { irData } = action.payload
-      state.irData = irData
+    irDataReceived: (state, action: PayloadAction<{ deviceId: string, irData: IrData }>) => {
+      const { deviceId, irData } = action.payload
+      state.irData[deviceId] = irData
     }
   }
 })

@@ -7,10 +7,9 @@ import { SignalWifi0Bar, Wifi } from '@mui/icons-material'
 
 interface ButtonCardProps {
   button: Button
-  remoteId: string
   isLoading: boolean
   onClick?: (id: string) => void
-  onClickReceive?: (id: string) => void
+  onClickReceive?: (remoteId: string, buttonId: string) => void
 }
 
 export function ButtonCard (props: ButtonCardProps): JSX.Element {
@@ -27,11 +26,12 @@ export function ButtonCard (props: ButtonCardProps): JSX.Element {
   }
 
   const onClick = (): void => {
-    props.onClick?.(props.remoteId)
+    props.onClick?.(props.button.id)
   }
 
   const onReceive = (): void => {
-    props.onClickReceive?.(props.remoteId)
+    handleClose()
+    props.onClickReceive?.(props.button.remoteId, props.button.id)
   }
 
   const menu = (

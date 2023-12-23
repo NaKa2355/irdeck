@@ -22,6 +22,7 @@ import { fetchButtons } from '../../ducks/buttons'
 import { snackBarHidden, snackbarSelector } from '../../ducks/ui'
 import { Alert, Snackbar } from '@mui/material'
 import { useTranslation } from 'react-i18next'
+import { ReceiveIrModal } from '../organisms/receiveIrModal'
 
 interface DrawerPageProps {
   selectedRemote?: Remote
@@ -61,6 +62,7 @@ export const DrawerPage = (props: DrawerPageProps): JSX.Element => {
 
       <AddRemoteModal />
       <EditRemoteModal />
+      <ReceiveIrModal />
 
       <Snackbar
         open={snackbar.isShown}

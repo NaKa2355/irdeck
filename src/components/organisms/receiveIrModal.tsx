@@ -1,15 +1,31 @@
+// components
 import { IconAlertCircle, IconCheck, IconDeviceRemote, IconHourglassLow, IconWifi } from '@tabler/icons-react'
+import { Select, Button, FormControl, FormLabel, Grid, MenuItem, Stack, Typography, type SelectChangeEvent, CircularProgress, Box, Dialog, DialogTitle, DialogContent } from '@mui/material'
+
+// redux
+import { learnIrModalClosed } from '../../ducks/ui/leanIrModal'
+import { learnIrModalStateSelector } from '../../ducks/ui'
+import { devicesCanReceiveSelector, receiveIr } from '../../ducks/devices'
+import { receiveIrDataStatusSelector, receivedIrDataSelector } from '../../ducks/devices/selector'
+
+// hooks
 import { useState } from 'react'
-import { type Device } from '../../type/device.type'
 import { useTranslation } from 'react-i18next'
-import { Select, Button, FormControl, FormLabel, Grid, MenuItem, Stack, Typography, type SelectChangeEvent, CircularProgress, Box } from '@mui/material'
+import { useDispatch, useSelector } from 'react-redux'
+
+// types
+import { type RequestStatus } from '../../utils/reqStatus'
+import { type ApiError } from '../../interfaces/api'
+import { type Device } from '../../type/device.type'
+import { type AppDispatch } from '../../app/thunk'
+import { useLearnIrDataApi } from '../../hooks/buttons/useLearnIrDataApi'
 
 interface ReceiveIrErrorViewProps {
   onCancel: () => void
   onRetry: () => void
 }
 
-function ReceiveIrErrorView (props: ReceiveIrErrorViewProps): JSX.Element {
+const ReceiveIrErrorView = (props: ReceiveIrErrorViewProps): JSX.Element => {
   const { t } = useTranslation()
 
   return (
@@ -33,7 +49,7 @@ interface ReceivingIrViewProps {
   onCancel: () => void
 }
 
-function ReceivingIrView (props: ReceivingIrViewProps): JSX.Element {
+const ReceivingIrView = (props: ReceivingIrViewProps): JSX.Element => {
   const { t } = useTranslation()
   return (
     <Stack spacing={2}>
@@ -60,7 +76,7 @@ interface ReceiveIRSuccessfulViewProps {
   onDone: () => void
 }
 
-function ReceiveIRSuccessfulView (props: ReceiveIRSuccessfulViewProps): JSX.Element {
+const ReceiveIRSuccessfulView = (props: ReceiveIRSuccessfulViewProps): JSX.Element => {
   const { t } = useTranslation()
 
   return (
@@ -102,7 +118,7 @@ interface ReceiveIrTimeOutViewProps {
   onRetry: () => void
 }
 
-function ReceiveIrTimeOutView (props: ReceiveIrTimeOutViewProps): JSX.Element {
+const ReceiveIrTimeOutView = (props: ReceiveIrTimeOutViewProps): JSX.Element => {
   const { t } = useTranslation()
 
   return (
@@ -131,27 +147,24 @@ function ReceiveIrTimeOutView (props: ReceiveIrTimeOutViewProps): JSX.Element {
 interface ReceiveIrViewProps {
   devicesCanReceive: Device[]
   onCancel: () => void
-  onReceive: (deviceId: string) => void
+  onDeviceComitted: (deviceId: string) => void
 }
 
-function ReceiveIrView (props: ReceiveIrViewProps): JSX.Element {
+const SelectDeviceView = (props: ReceiveIrViewProps): JSX.Element => {
   const { t } = useTranslation()
-  const [deviceId, setDeviceId] = useState<string | undefined>(props.devicesCanReceive.at(0)?.id)
-
-  const receive = (): void => {
-    if (deviceId !== undefined) {
-      props.onReceive(deviceId)
-    }
-  }
-
-  const onDeviceSelected = (e: SelectChangeEvent): void => {
-    const deviceId = e.target.value
-    setDeviceId(deviceId)
-  }
-
+  const initialDeviceId = props.devicesCanReceive.at(0)?.id ?? ''
+  const [selectedDevice, selectDevice] = useState(initialDeviceId)
   const devicesItem = props.devicesCanReceive.map((device) => {
     return (<MenuItem key={device.id} value={device.id}>{device.name}</MenuItem>)
   })
+
+  const onDeviceIdCommited = (): void => {
+    props.onDeviceComitted(selectedDevice)
+  }
+
+  const onDeviceIdChange = (e: SelectChangeEvent): void => {
+    selectDevice(e.target.value)
+  }
 
   return (
     <Stack spacing={2}>
@@ -168,8 +181,8 @@ function ReceiveIrView (props: ReceiveIrViewProps): JSX.Element {
       <FormControl>
         <FormLabel>{t('label.ir_receiving_device')}</FormLabel>
         <Select
-          value={deviceId ?? ''}
-          onChange={onDeviceSelected}
+          defaultValue={selectedDevice}
+          onChange={onDeviceIdChange}
         >
           {devicesItem}
         </Select>
@@ -180,70 +193,122 @@ function ReceiveIrView (props: ReceiveIrViewProps): JSX.Element {
 
       <Button
         variant="contained"
-        onClick={receive}>
+        onClick={onDeviceIdCommited}>
         {t('button.receive')}
       </Button>
     </Stack>
   )
 }
 
-interface ReceiveIrModalProps {
-  devicesCanReceive: Device[]
-  state: 'standby' | 'receiving' | 'timeout' | 'failed' | 'success'
-  onCancel: () => void
-  onClose: () => void
-  onDone: () => void
-  onSendIr: () => void
-  onRetry: () => void
-  onReceiveIr: () => void
+const computeStatus = (deviceId: string | null, status: RequestStatus<ApiError> | undefined):
+'standby' | 'success' | 'failed' | 'timeout' | 'receiving' => {
+  if (deviceId === null) {
+    return 'standby'
+  }
+  if (status?.status === 'pending') {
+    return 'receiving'
+  }
+  if (status?.status === 'failed') {
+    if (status.error?.code === 'timeout') {
+      return 'timeout'
+    }
+    return 'failed'
+  }
+  if (status?.status === 'success') {
+    return 'success'
+  }
+  return 'standby'
 }
 
-export function ReceiveIrModal (props: ReceiveIrModalProps): JSX.Element {
-  const cancel = (): void => {
-    props.onClose()
+export const ReceiveIrView = (): JSX.Element => {
+  const [deviceId, setDeviceId] = useState<string | null>(null)
+  const dispatch = useDispatch<AppDispatch>()
+  const receivedIrData = useSelector(receivedIrDataSelector(deviceId ?? ''))
+  const [, { learnIrData }] = useLearnIrDataApi()
+  const modalState = useSelector(learnIrModalStateSelector)
+  const devicesCanReceive = useSelector(devicesCanReceiveSelector)
+  const receiveIrDataStatus = useSelector(receiveIrDataStatusSelector(deviceId ?? ''))
+  const status = computeStatus(deviceId, receiveIrDataStatus)
+
+  const onDeviceComitted = (deviceId: string): void => {
+    setDeviceId(deviceId)
+    void dispatch(receiveIr({ deviceId }))
+  }
+
+  const onCancel = (): void => {
+    dispatch(learnIrModalClosed())
+  }
+
+  const onRetry = (): void => {
+    void dispatch(receiveIr({
+      deviceId: deviceId ?? ''
+    }))
+  }
+
+  const onDone = (): void => {
+    void learnIrData({
+      remoteId: modalState.remoteId ?? '',
+      buttonId: modalState.buttonId ?? '',
+      irData: receivedIrData
+    })
   }
 
   return (
     <Box>
-      {props.state === 'standby' && (
-        <ReceiveIrView
-          devicesCanReceive={props.devicesCanReceive}
-          onCancel={cancel}
-          onReceive={() => {
-            props.onReceiveIr()
-          }}
+      {status === 'standby' && (
+        <SelectDeviceView
+          devicesCanReceive={devicesCanReceive}
+          onCancel={onCancel}
+          onDeviceComitted={onDeviceComitted}
         />
       )}
 
-      {props.state === 'receiving' && (
+      {status === 'receiving' && (
         <ReceivingIrView
-          onCancel={cancel}
+          onCancel={onCancel}
         />
       )}
 
-      {props.state === 'success' && (
+      {status === 'success' && (
         <ReceiveIRSuccessfulView
-          onDone={props.onDone}
-          onRetry={props.onRetry}
-          onTest={async () => {
-            props.onSendIr()
-          }} />
+          onDone={onDone}
+          onRetry={onRetry}
+          onTest={async () => { }} />
       )}
 
-      {props.state === 'failed' && (
+      {status === 'failed' && (
         <ReceiveIrErrorView
-          onCancel={cancel}
-          onRetry={props.onRetry}
+          onCancel={onCancel}
+          onRetry={onRetry}
         />
 
       )}
 
-      {props.state === 'timeout' && (
+      {status === 'timeout' && (
         <ReceiveIrTimeOutView
-          onCancel={cancel}
-          onRetry={props.onRetry}
+          onCancel={onCancel}
+          onRetry={onRetry}
         />
       )}
     </Box>
+  )
+}
+
+export const ReceiveIrModal = (): JSX.Element => {
+  const { t } = useTranslation()
+  const modalState = useSelector(learnIrModalStateSelector)
+  const dispatch = useDispatch()
+  const onClose = (): void => {
+    dispatch(learnIrModalClosed())
+  }
+
+  return (
+    <Dialog open={modalState.isOpen} onClose={onClose} fullWidth>
+      <DialogTitle>{t('header.add_remote')}</DialogTitle>
+      <DialogContent>
+        <Box height={20}></Box>
+        <ReceiveIrView />
+      </DialogContent>
+    </Dialog>
   )
 }

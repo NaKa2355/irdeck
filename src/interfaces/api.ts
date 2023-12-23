@@ -64,7 +64,7 @@ export class ApiError extends Error {
 
 export const success = new ApiError('success', '')
 
-export interface SetIrDataReq {
+export interface LearnIrDataReq {
   remoteId: string
   buttonId: string
   irData: IrData
@@ -80,7 +80,7 @@ export interface IApi {
   receiveIr: (req: ReceiveIrReq) => Promise<Result<IrData, ApiError>>
   pushButton: (req: PushButtonReq) => Promise<Result<void, ApiError>>
   sendIr: (req: SendIrReq) => Promise<Result<void, ApiError>>
-  setIrData: (req: SetIrDataReq) => Promise<Result<void, ApiError>>
+  learnIrData: (req: LearnIrDataReq) => Promise<Result<void, ApiError>>
   fetchRemotes: () => Promise<Result<Remote[], ApiError>>
   createRemote: (req: CreateRemoteReq) => Promise<Result<Remote, ApiError>>
   updateRemotes: (req: UpdateRemoteReq) => Promise<Result<void, ApiError>>

@@ -1,4 +1,4 @@
-import { type CreateRemoteReq, ApiError, type DeleteRemoteReq, type UpdateRemoteReq, type ErrorCode, type GetButtonsReq, type IApi, type ReceiveIrReq, type SendIrReq, type SetIrDataReq, type PushButtonReq } from '../interfaces/api'
+import { type CreateRemoteReq, ApiError, type DeleteRemoteReq, type UpdateRemoteReq, type ErrorCode, type GetButtonsReq, type IApi, type ReceiveIrReq, type SendIrReq, type LearnIrDataReq, type PushButtonReq } from '../interfaces/api'
 import { type Device } from '../type/device.type'
 import { type Result } from '../type/result'
 import * as pirem from 'irdeck-proto/gen/js/pirem/api/v1/irdata_pb'
@@ -184,6 +184,13 @@ export class Api implements IApi {
 
       apiReq.setDeviceId(req.deviceId)
       this.piremClient.receiveIr(apiReq, {}, (err, res) => {
+        if (err === null) {
+          resolve({
+            isError: false,
+            data: res.getIrData()?.serializeBinary() ?? new Uint8Array()
+          })
+          return
+        }
         switch (err.code) {
           case StatusCode.DEADLINE_EXCEEDED:
             errCode = 'timeout'
@@ -204,13 +211,7 @@ export class Api implements IApi {
               err.message
             )
           })
-          return
         }
-
-        resolve({
-          isError: false,
-          data: res.getIrData()?.serializeBinary() ?? new Uint8Array()
-        })
       })
     })
   }
@@ -230,7 +231,7 @@ export class Api implements IApi {
     return await this.sendIrData(req.irData, req.deviceId)
   }
 
-  async setIrData (req: SetIrDataReq): Promise<Result<void, ApiError>> {
+  async learnIrData (req: LearnIrDataReq): Promise<Result<void, ApiError>> {
     return await new Promise((resolve) => {
       const apiReq = new SetIRDataRequest()
       const any = new Any()

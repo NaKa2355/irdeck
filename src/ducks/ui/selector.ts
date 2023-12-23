@@ -27,7 +27,7 @@ export const learnIrModalStateSelector = createSelector(
   selectSelf,
   (state) => {
     const modalState = state.ui.leanIrModal
-    return modalState.isOpen
+    return modalState
   }
 )
 

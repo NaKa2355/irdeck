@@ -5,8 +5,7 @@ import { Api } from '../../api/api'
 import { url } from '../../constatnts'
 import { type Result } from '../../type/result'
 import { useDispatch, useSelector } from 'react-redux'
-import { remoteDeleted } from '../../ducks/remotes/domainSlice'
-import { remoteSelected, remotesSelector, selectedRemoteSelector } from '../../ducks/remotes'
+import { remoteSelected, remotesSelector, selectedRemoteSelector, remoteDeleted } from '../../ducks/remotes'
 import { editRemoteModalClosed } from '../../ducks/ui'
 
 interface Dependencies {

@@ -2,8 +2,7 @@ import { type ThunkAsyncActionFunc } from '../../app'
 import { devicesFetched } from './domainSlice'
 import { fetchDevicesFailure, fetchDevicesRequested, fetchDevicesSuccess } from './fechStateSlice'
 import { irDataReceived } from './receivedIrDataSlice'
-import { receiveIrFailure, receiveIrRequested, receiveIrSuccess, tryIrDataFailure, tryIrDataRequested, tryIrDataSuccess } from './requestStateSlice'
-import { receivedIrDataSelector } from './selector'
+import { receiveIrFailure, receiveIrRequested, receiveIrSuccess } from './requestStateSlice'
 
 export const fetchDevices = (): ThunkAsyncActionFunc => {
   return async (dispatch, _, extra) => {
@@ -23,39 +22,23 @@ export const fetchDevices = (): ThunkAsyncActionFunc => {
   }
 }
 
-export const tryIrData = (payload: { deviceId: string }): ThunkAsyncActionFunc => {
-  return async (dispatch, getstate, extra) => {
-    const irData = receivedIrDataSelector(getstate())
-    dispatch(tryIrDataRequested())
-    const result = await extra.api.sendIr({
-      irData,
-      deviceId: payload.deviceId
-    })
-    if (result.isError) {
-      dispatch(tryIrDataFailure({
-        error: result.error
-      }))
-      return
-    }
-
-    dispatch(tryIrDataSuccess())
-  }
-}
-
 export const receiveIr = (payload: { deviceId: string }): ThunkAsyncActionFunc => {
   return async (dispatch, _, extra) => {
-    dispatch(receiveIrRequested())
+    const { deviceId } = payload
+    dispatch(receiveIrRequested({ deviceId }))
     const result = await extra.api.receiveIr({
-      deviceId: payload.deviceId
+      deviceId
     })
     if (result.isError) {
       dispatch(receiveIrFailure({
+        deviceId,
         error: result.error
       }))
       return
     }
-    dispatch(receiveIrSuccess())
+    dispatch(receiveIrSuccess({ deviceId }))
     dispatch(irDataReceived({
+      deviceId,
       irData: result.data
     }))
   }

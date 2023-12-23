@@ -5,14 +5,18 @@ import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { buttonsSelector } from '../../ducks/buttons/selector'
 import { snackBarShown } from '../../ducks/ui'
+import { learnIrModalOpened } from '../../ducks/ui/leanIrModal'
 
 export const ButtonsGrid = (): JSX.Element => {
   const { t } = useTranslation()
   const [isDeviceCanReceiveNotFound, setIsDeviceCanReceiveNotFound] = useState(false)
   const buttons = useSelector(buttonsSelector)
   const dispatch = useDispatch()
-  const onClickReceiveButton = (id: string): void => {
-    // openReceiveIrModal(id);
+  const onClickReceiveButton = (remoteId: string, buttonId: string): void => {
+    dispatch(learnIrModalOpened({
+      remoteId,
+      buttonId
+    }))
   }
   const onCardClick = (): void => {
     dispatch(snackBarShown({
@@ -24,7 +28,6 @@ export const ButtonsGrid = (): JSX.Element => {
     <Grid item xs={1} key={button.id}>
       <ButtonCard
         button={button}
-        remoteId={''}
         onClick={onCardClick}
         onClickReceive={onClickReceiveButton}
         isLoading={false}

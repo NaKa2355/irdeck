@@ -5,8 +5,8 @@ import { Api } from '../../api/api'
 import { url } from '../../constatnts'
 import { type Result } from '../../type/result'
 import { useDispatch } from 'react-redux'
-import { remoteDeleted, remoteEdited } from '../../ducks/remotes/domainSlice'
 import { editRemoteModalClosed, snackBarShown } from '../../ducks/ui'
+import { remoteDeleted, remoteEdited } from '../../ducks/remotes'
 
 interface Dependencies {
   api: IApi
@@ -54,7 +54,6 @@ export const useUpdateRemoteApi = (deps: Dependencies = defaultDep):
       status: 'failed',
       error: result.error
     })
-    console.log(result.error.code)
 
     if (result.error.code === 'remote_not_found') {
       dispatch(remoteDeleted({
