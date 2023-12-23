@@ -1,6 +1,6 @@
 import { type ActionCreator } from 'redux'
-import { type ThunkActionFunc } from '../../app'
-import { type AddRemoteReq } from '../../interfaces/api'
+import { type ThunkAsyncActionFunc } from '../../app'
+import { type CreateRemoteReq } from '../../interfaces/api'
 import { remoteAdded, remoteDeleted, remoteEdited, remotesFetched } from './domainSlice'
 import { fetchRemoteFailure, fetchRemoteRequested, fetchRemoteSuccess } from './fetchStateSlice'
 import { deleteRemoteFailure, deleteRemoteRequested, deleteRemoteSuccess, patchRemoteFailure, patchRemoteRequested, patchRemoteSuccess, postRemoteFailure, postRemoteRequested, postRemoteSuccess } from './requestStateSlice'
@@ -8,11 +8,11 @@ import { remoteSelected } from './selectedRemoteSlice'
 import { remotesSelector, selectedRemoteSelector } from './selector'
 
 export const fetchRemotes: ActionCreator<
-ThunkActionFunc
+ThunkAsyncActionFunc
 > = () => {
   return async (dispatch, getState, extra) => {
     dispatch(fetchRemoteRequested())
-    const result = await extra.api.getRemotes()
+    const result = await extra.api.fetchRemotes()
     if (result.isError) {
       dispatch(fetchRemoteFailure({
         error: result.error
@@ -36,10 +36,10 @@ ThunkActionFunc
   }
 }
 
-export const postRemote = (req: AddRemoteReq): ThunkActionFunc => {
+export const postRemote = (req: CreateRemoteReq): ThunkAsyncActionFunc => {
   return async (dispatch, _, extra) => {
     dispatch(postRemoteRequested())
-    const result = await extra.api.addRemote(req)
+    const result = await extra.api.createRemote(req)
     if (result.isError) {
       dispatch(postRemoteFailure({
         error: result.error
@@ -57,10 +57,10 @@ export const postRemote = (req: AddRemoteReq): ThunkActionFunc => {
   }
 }
 
-export const patchRemote = (payload: { remoteId: string, remoteName: string, deviceId: string }): ThunkActionFunc => {
+export const patchRemote = (payload: { remoteId: string, remoteName: string, deviceId: string }): ThunkAsyncActionFunc => {
   return async (dispatch, _, extra) => {
     dispatch(patchRemoteRequested())
-    const result = await extra.api.editRemotes(payload)
+    const result = await extra.api.updateRemotes(payload)
     if (result.isError) {
       dispatch(patchRemoteFailure({
         error: result.error
@@ -74,7 +74,7 @@ export const patchRemote = (payload: { remoteId: string, remoteName: string, dev
   }
 }
 
-export const deleteRemote = (payload: { remoteId: string }): ThunkActionFunc => {
+export const deleteRemote = (payload: { remoteId: string }): ThunkAsyncActionFunc => {
   return async (dispatch, getState, extra) => {
     const selectedRemote = selectedRemoteSelector(getState())
     const remotes = remotesSelector(getState())

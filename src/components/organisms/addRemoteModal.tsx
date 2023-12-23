@@ -1,16 +1,15 @@
 // types
 import { RemoteType } from '../../type/remote'
 import { type FormEventHandler } from 'react'
-import { type AppDispatch } from '../../app/thunk'
 
 // conmponents
-import { FormControl, FormLabel, Stack, Select, MenuItem, Grid, Button, Alert, TextField, FormHelperText, Dialog, DialogTitle, DialogContent } from '@mui/material'
+import { FormControl, FormLabel, Stack, Select, MenuItem, Grid, Button, Alert, TextField, FormHelperText, Dialog, DialogTitle, DialogContent, Box } from '@mui/material'
 import { TempSlider } from '../monecules/tempSlider'
 
 // hooks
 import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'react-redux'
-import { useForm } from '../../hooks'
+import { useCreateRemoteApi, useForm } from '../../hooks'
 
 // schemas
 import { remoteNameValidator } from '../../schemas/remoteName'
@@ -18,9 +17,6 @@ import { remoteNameValidator } from '../../schemas/remoteName'
 // redux
 import { addRemoteModalClosed, addRemoteModalStateSelector } from '../../ducks/ui'
 import { devicesCanSendSelector } from '../../ducks/devices'
-import { postRemoteStatusSelector } from '../../ducks/remotes'
-import { postRemote } from '../../ducks/remotes/operations'
-import { store } from '../../app'
 
 interface FormData {
   remoteName: string
@@ -45,10 +41,9 @@ const initialFormData: FormData = {
 
 const AddRemoteForm = (): JSX.Element => {
   const { t } = useTranslation()
-  const dispatch = useDispatch<AppDispatch>()
-  const postStatus = useSelector(postRemoteStatusSelector)
+  const [postStatus, { createRemote }] = useCreateRemoteApi()
   const devicesCanSend = useSelector(devicesCanSendSelector)
-  const [{ formData, validation }, { handleChange, handleChangeWithEvent, canSubmit }] = useForm<FormData>({
+  const [{ formData, validation }, { handleChange, handleChangeWithEvent, canSubmit, setValidationError }] = useForm<FormData>({
     initialFormData: {
       ...initialFormData,
       deviceId: devicesCanSend.at(0)?.id ?? ''
@@ -61,16 +56,13 @@ const AddRemoteForm = (): JSX.Element => {
 
   const onSubmit: FormEventHandler = (e): void => {
     e.preventDefault()
-    console.log(canSubmit())
-    console.log(formData)
     if (!canSubmit()) {
       return
     }
     void (async () => {
-      await dispatch(postRemote(formData))
-      const status = postRemoteStatusSelector(store.getState())
-      if (status.status === 'success') {
-        dispatch(addRemoteModalClosed())
+      const result = await createRemote(formData)
+      if (result.isError && result.error.code === 'remote_name_already_exists') {
+        setValidationError('remoteName', 'error.remote_name_already_exists')
       }
     })()
   }
@@ -198,6 +190,7 @@ export const AddRemoteModal = (): JSX.Element => {
     <Dialog open={isOpen} onClose={onClose} fullWidth>
       <DialogTitle>{t('header.add_remote')}</DialogTitle>
       <DialogContent>
+        <Box height={20}></Box>
         <AddRemoteForm />
       </DialogContent>
     </Dialog>

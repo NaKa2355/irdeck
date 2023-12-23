@@ -1,17 +1,17 @@
-import { type ThunkActionFunc } from '../../app'
+import { type ThunkAsyncActionFunc } from '../../app'
 import { type IrData } from '../../type/irdata.type'
 import { remoteButtonsFetched } from '../remotes/domainSlice'
 import { buttonsFetched, irDataLearned } from './domainSlice'
 import { fetchButtonsFailure, fetchButtonsRequested, fetchButtonsSuccess } from './fetchStateSlice'
 import { learnIrDataFailure, learnIrDataRequested, learnIrDataSuccess, pushButtonFailure, pushButtonRequested, pushButtonSuccess } from './requestStateSlice'
 
-export const fetchButtons = (payload: { remoteId: string }): ThunkActionFunc => {
+export const fetchButtons = (payload: { remoteId: string }): ThunkAsyncActionFunc => {
   return async (dispatch, _, extra) => {
     const { remoteId } = payload
     dispatch(fetchButtonsRequested({
       remoteId
     }))
-    const result = await extra.api.getButtons({
+    const result = await extra.api.fetchButtons({
       remoteId
     })
 
@@ -35,7 +35,7 @@ export const fetchButtons = (payload: { remoteId: string }): ThunkActionFunc => 
   }
 }
 
-export const pushButton = (payload: { buttonId: string }): ThunkActionFunc => {
+export const pushButton = (payload: { buttonId: string }): ThunkAsyncActionFunc => {
   return async (dispatch, getState, extra) => {
     const { buttonId } = payload
     const remoteId = getState().buttons.domain.byId[buttonId].remoteId
@@ -63,7 +63,7 @@ export const pushButton = (payload: { buttonId: string }): ThunkActionFunc => {
   }
 }
 
-export const leanIrData = (payload: { buttonId: string, irData: IrData }): ThunkActionFunc => {
+export const leanIrData = (payload: { buttonId: string, irData: IrData }): ThunkAsyncActionFunc => {
   return async (dispatch, getState, extra) => {
     const { buttonId, irData } = payload
     const remoteId = getState().buttons.domain.byId[buttonId].remoteId

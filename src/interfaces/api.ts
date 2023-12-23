@@ -26,7 +26,7 @@ export interface PushButtonReq {
   deviceId: string
 }
 
-export type AddRemoteReq = {
+export type CreateRemoteReq = {
   remoteName: string
   deviceId: string
   remoteType: 'button' | 'toggle'
@@ -39,7 +39,7 @@ export type AddRemoteReq = {
   scale: 0.5 | 1
 }
 
-export interface EditRemoteReq {
+export interface UpdateRemoteReq {
   remoteId: string
   remoteName: string
   deviceId: string
@@ -76,14 +76,14 @@ export interface SendIrReq {
 }
 
 export interface IApi {
-  getDevices: () => Promise<Result<Device[], ApiError>>
+  fetchDevices: () => Promise<Result<Device[], ApiError>>
   receiveIr: (req: ReceiveIrReq) => Promise<Result<IrData, ApiError>>
   pushButton: (req: PushButtonReq) => Promise<Result<void, ApiError>>
   sendIr: (req: SendIrReq) => Promise<Result<void, ApiError>>
   setIrData: (req: SetIrDataReq) => Promise<Result<void, ApiError>>
-  getRemotes: () => Promise<Result<Remote[], ApiError>>
-  addRemote: (req: AddRemoteReq) => Promise<Result<Remote, ApiError>>
-  editRemotes: (req: EditRemoteReq) => Promise<Result<void, ApiError>>
+  fetchRemotes: () => Promise<Result<Remote[], ApiError>>
+  createRemote: (req: CreateRemoteReq) => Promise<Result<Remote, ApiError>>
+  updateRemotes: (req: UpdateRemoteReq) => Promise<Result<void, ApiError>>
   deleteRemotes: (req: DeleteRemoteReq) => Promise<Result<void, ApiError>>
-  getButtons: (req: GetButtonsReq) => Promise<Result<Button[], ApiError>>
+  fetchButtons: (req: GetButtonsReq) => Promise<Result<Button[], ApiError>>
 }

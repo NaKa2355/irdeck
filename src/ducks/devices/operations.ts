@@ -1,14 +1,14 @@
-import { type ThunkActionFunc } from '../../app'
+import { type ThunkAsyncActionFunc } from '../../app'
 import { devicesFetched } from './domainSlice'
 import { fetchDevicesFailure, fetchDevicesRequested, fetchDevicesSuccess } from './fechStateSlice'
 import { irDataReceived } from './receivedIrDataSlice'
 import { receiveIrFailure, receiveIrRequested, receiveIrSuccess, tryIrDataFailure, tryIrDataRequested, tryIrDataSuccess } from './requestStateSlice'
 import { receivedIrDataSelector } from './selector'
 
-export const fetchDevices = (): ThunkActionFunc => {
+export const fetchDevices = (): ThunkAsyncActionFunc => {
   return async (dispatch, _, extra) => {
     dispatch(fetchDevicesRequested())
-    const result = await extra.api.getDevices()
+    const result = await extra.api.fetchDevices()
     if (result.isError) {
       dispatch(fetchDevicesFailure({
         error: result.error
@@ -23,7 +23,7 @@ export const fetchDevices = (): ThunkActionFunc => {
   }
 }
 
-export const tryIrData = (payload: { deviceId: string }): ThunkActionFunc => {
+export const tryIrData = (payload: { deviceId: string }): ThunkAsyncActionFunc => {
   return async (dispatch, getstate, extra) => {
     const irData = receivedIrDataSelector(getstate())
     dispatch(tryIrDataRequested())
@@ -42,7 +42,7 @@ export const tryIrData = (payload: { deviceId: string }): ThunkActionFunc => {
   }
 }
 
-export const receiveIr = (payload: { deviceId: string }): ThunkActionFunc => {
+export const receiveIr = (payload: { deviceId: string }): ThunkAsyncActionFunc => {
   return async (dispatch, _, extra) => {
     dispatch(receiveIrRequested())
     const result = await extra.api.receiveIr({

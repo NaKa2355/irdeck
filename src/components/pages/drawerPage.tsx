@@ -21,6 +21,7 @@ import { fetchDevices } from '../../ducks/devices'
 import { fetchButtons } from '../../ducks/buttons'
 import { snackBarHidden, snackbarSelector } from '../../ducks/ui'
 import { Alert, Snackbar } from '@mui/material'
+import { useTranslation } from 'react-i18next'
 
 interface DrawerPageProps {
   selectedRemote?: Remote
@@ -32,6 +33,7 @@ export const DrawerPage = (props: DrawerPageProps): JSX.Element => {
   const dispatch = useDispatch<AppDispatch>()
   const selectedRemote = useSelector(selectedRemoteSelector)
   const snackbar = useSelector(snackbarSelector)
+  const { t } = useTranslation()
   useEffect(() => {
     void dispatch(fetchRemotes())
     void dispatch(fetchDevices())
@@ -68,7 +70,7 @@ export const DrawerPage = (props: DrawerPageProps): JSX.Element => {
         <Alert onClose={onSnackbarClose}
           severity={snackbar.severity}
           sx={{ width: '100%' }}>
-          {snackbar.message}
+          {t(snackbar.message)}
         </Alert>
       </Snackbar>
     </div>

@@ -13,5 +13,6 @@ export const reduxThunkMiddleware = withExtraArgument<RootStore, any, ThunkMiddl
   api: new Api(url)
 })
 
-export type ThunkActionFunc = ThunkAction<Promise<void>, RootStore, ThunkMiddlewareArg, any>
+export type ThunkSyncActionFunc = ThunkAction<void, RootStore, ThunkMiddlewareArg, any>
+export type ThunkAsyncActionFunc = ThunkAction<Promise<void>, RootStore, ThunkMiddlewareArg, any>
 export type AppDispatch = ThunkDispatch<RootStore, ThunkMiddlewareArg, any>

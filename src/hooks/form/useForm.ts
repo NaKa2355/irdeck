@@ -8,9 +8,26 @@ export type Validator = <V>(value: V) => Validation
 type Handler = (name: string) => (value: any) => void
 
 export const useForm = <F>(props: { initialFormData: F, validators: Record<string, Validator | undefined> }):
-[{ formData: F, validation: Record<string, Validation | undefined> }, { handleChange: Handler, handleChangeWithEvent: Handler, canSubmit: () => boolean }] => {
+[
+  { formData: F, validation: Record<string, Validation | undefined> },
+  {
+    handleChange: Handler
+    handleChangeWithEvent: Handler
+    canSubmit: () => boolean
+    setValidationError: (name: string, errorMessage: string) => void
+  }] => {
   const [formData, setFormData] = useState<F>(props.initialFormData)
   const [validation, setValidation] = useState<Record<string, Validation | undefined>>({})
+
+  const setValidationError = (name: string, errorMessage: string): void => {
+    setValidation({
+      ...validation,
+      [name]: {
+        isInvailed: true,
+        errorMessage
+      }
+    })
+  }
 
   const canSubmit = (): boolean => {
     let canSubmit = true
@@ -39,5 +56,5 @@ export const useForm = <F>(props: { initialFormData: F, validators: Record<strin
     }
   }
 
-  return [{ formData, validation }, { handleChange, handleChangeWithEvent, canSubmit }]
+  return [{ formData, validation }, { handleChange, handleChangeWithEvent, canSubmit, setValidationError }]
 }
