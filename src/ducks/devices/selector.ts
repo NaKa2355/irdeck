@@ -26,6 +26,6 @@ export const receivedIrDataSelector = (deviceId: string): (state: RootStore) => 
 
 export const receiveIrDataStatusSelector = (deviceId: string): (state: RootStore) => RequestStatus<ApiError> | undefined => {
   return createSelector(selectSelf, (state) => {
-    return state.devices.requestState[deviceId]?.receiveIrStatus
+    return state.devices.requestState.receiveIrStatus[deviceId]
   })
 }

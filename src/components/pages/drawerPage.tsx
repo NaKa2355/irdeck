@@ -15,14 +15,15 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 // redux
-import { fetchRemotes, selectedRemoteSelector } from '../../ducks/remotes'
-import { fetchDevices } from '../../ducks/devices'
-import { fetchButtons } from '../../ducks/buttons'
+import { selectedRemoteSelector } from '../../ducks/remotes'
+
 import { drawerClosed, drawerOpened, snackBarHidden, snackbarSelector } from '../../ducks/ui'
 import { Alert, Snackbar } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import { ReceiveIrModal } from '../organisms/receiveIrModal'
 import { drawerSelector } from '../../ducks/ui/selector'
+import { fetchRemoteRequested } from '../../ducks/remotes/fetchStateSlice'
+import { fetchDevicesRequested } from '../../ducks/devices'
 
 export const DrawerPage = (): JSX.Element => {
   const dispatch = useDispatch<AppDispatch>()
@@ -31,13 +32,9 @@ export const DrawerPage = (): JSX.Element => {
   const { t } = useTranslation()
   const isDrawerOpen = useSelector(drawerSelector)
   useEffect(() => {
-    void dispatch(fetchRemotes())
-    void dispatch(fetchDevices())
+    void dispatch(fetchDevicesRequested())
+    void dispatch(fetchRemoteRequested())
   }, [])
-
-  useEffect(() => {
-    void dispatch(fetchButtons({ remoteId: selectedRemote?.id ?? '' }))
-  }, [selectedRemote])
 
   const onSnackbarClose = (): void => {
     dispatch(snackBarHidden())
@@ -63,7 +60,12 @@ export const DrawerPage = (): JSX.Element => {
         onDrawerClose={onDrawerClose}
         contents={
           <div>
-            <ButtonsGrid />
+            {selectedRemote !== null &&
+              <ButtonsGrid />
+            }
+            {selectedRemote === null &&
+              <p>no remotes</p>
+            }
           </div>
         }
       />

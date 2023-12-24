@@ -5,7 +5,7 @@ import { Select, Button, FormControl, FormLabel, Grid, MenuItem, Stack, Typograp
 // redux
 import { learnIrModalClosed } from '../../ducks/ui/leanIrModal'
 import { learnIrModalStateSelector } from '../../ducks/ui'
-import { devicesCanReceiveSelector, receiveIr } from '../../ducks/devices'
+import { devicesCanReceiveSelector, receiveIrRequested } from '../../ducks/devices'
 import { receiveIrDataStatusSelector, receivedIrDataSelector } from '../../ducks/devices/selector'
 
 // hooks
@@ -232,7 +232,7 @@ export const ReceiveIrView = (): JSX.Element => {
 
   const onDeviceComitted = (deviceId: string): void => {
     setDeviceId(deviceId)
-    void dispatch(receiveIr({ deviceId }))
+    void dispatch(receiveIrRequested({ deviceId }))
   }
 
   const onCancel = (): void => {
@@ -240,7 +240,7 @@ export const ReceiveIrView = (): JSX.Element => {
   }
 
   const onRetry = (): void => {
-    void dispatch(receiveIr({
+    void dispatch(receiveIrRequested({
       deviceId: deviceId ?? ''
     }))
   }

@@ -1,6 +1,6 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { type RequestStatus } from '../../utils/reqStatus'
-import { type ApiError } from '../../interfaces/api'
+import { type CreateRemoteReq, type ApiError, type UpdateRemoteReq } from '../../interfaces/api'
 
 interface RequestState {
   postRemoteStatus: RequestStatus<ApiError>
@@ -27,7 +27,7 @@ const requestStateSlice = createSlice({
   name: 'requestState.remotes',
   initialState,
   reducers: {
-    postRemoteRequested: (state) => {
+    postRemoteRequested: (state, action: PayloadAction<CreateRemoteReq>) => {
       state.postRemoteStatus.status = 'pending'
     },
     postRemoteFailure: (state, action: PayloadAction<{ error: ApiError }>) => {
@@ -43,7 +43,7 @@ const requestStateSlice = createSlice({
       state.postRemoteStatus.status = 'idle'
     },
 
-    patchRemoteRequested: (state) => {
+    patchRemoteRequested: (state, action: PayloadAction<UpdateRemoteReq>) => {
       state.patchRemoteStatus.status = 'pending'
     },
     patchRemoteFailure: (state, action: PayloadAction<{ error: ApiError }>) => {
@@ -59,7 +59,7 @@ const requestStateSlice = createSlice({
       state.patchRemoteStatus.status = 'idle'
     },
 
-    deleteRemoteRequested: (state) => {
+    deleteRemoteRequested: (state, action: PayloadAction<{ remoteId: string }>) => {
       state.deleteRemoteStatus.status = 'pending'
     },
     deleteRemoteFailure: (state, action: PayloadAction<{ error: ApiError }>) => {

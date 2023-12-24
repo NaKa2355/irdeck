@@ -5,8 +5,15 @@ import { requestStateReducer } from './requestStateSlice'
 import { receivedIrDataReducer } from './receivedIrDataSlice'
 
 // actions
-export { receiveIr, fetchDevices } from './operations'
-export { clearReceiveIrStatus } from './requestStateSlice'
+export {
+  sendIrDataRequested,
+  clearSendIrDataStatus,
+  receiveIrRequested,
+  clearReceiveIrStatus
+} from './requestStateSlice'
+export {
+  fetchDevicesRequested
+} from './fechStateSlice'
 
 // reducer
 export const devicesReducer = combineReducers({

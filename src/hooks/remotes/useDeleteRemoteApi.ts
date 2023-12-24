@@ -4,9 +4,9 @@ import { type IApi, type ApiError, type DeleteRemoteReq } from '../../interfaces
 import { Api } from '../../api/api'
 import { url } from '../../constatnts'
 import { type Result } from '../../type/result'
-import { useDispatch, useSelector } from 'react-redux'
-import { remoteSelected, remotesSelector, selectedRemoteSelector, remoteDeleted } from '../../ducks/remotes'
+import { useDispatch } from 'react-redux'
 import { editRemoteModalClosed } from '../../ducks/ui'
+import { remoteDeleted } from '../../ducks/remotes'
 
 interface Dependencies {
   api: IApi
@@ -27,8 +27,6 @@ export const useDeleteRemoteApi = (deps: Dependencies = defaultDep):
     error: undefined
   })
   const dispatch = useDispatch()
-  const selectedRemote = useSelector(selectedRemoteSelector)
-  const remotes = useSelector(remotesSelector)
 
   const deleteRemote = async (req: DeleteRemoteReq): Promise<Result<void, ApiError>> => {
     setStatus({
@@ -42,14 +40,10 @@ export const useDeleteRemoteApi = (deps: Dependencies = defaultDep):
         error: undefined
       })
 
-      if (req.remoteId === selectedRemote?.id) {
-        dispatch(remoteSelected({
-          remoteId: remotes.at(0)?.id ?? null
-        }))
-      }
       dispatch(remoteDeleted({
         deletedRemoteId: req.remoteId
       }))
+
       dispatch(editRemoteModalClosed())
       return {
         isError: false,

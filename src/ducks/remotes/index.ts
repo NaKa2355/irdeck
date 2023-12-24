@@ -5,9 +5,15 @@ import { requestStateReducer } from './requestStateSlice'
 import { selectedRemoteReducer } from './selectedRemoteSlice'
 
 // actions
-export { fetchRemotes } from './operations'
 export { remoteSelected } from './selectedRemoteSlice'
-export { clearDeleteRemoteStatus, clearPatchRemoteStatus, clearPostRemoteStatus } from './requestStateSlice'
+export {
+  deleteRemoteRequested,
+  clearDeleteRemoteStatus,
+  patchRemoteRequested,
+  clearPatchRemoteStatus,
+  postRemoteRequested,
+  clearPostRemoteStatus
+} from './requestStateSlice'
 export { remoteAdded, remoteEdited, remoteDeleted } from './domainSlice'
 
 // selector

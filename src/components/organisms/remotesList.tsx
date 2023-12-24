@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux'
 // redux
 import { clearDeleteRemoteStatus, clearPatchRemoteStatus, clearPostRemoteStatus, remoteSelected, remotesSelector, selectedRemoteSelector } from '../../ducks/remotes'
 import { addRemoteModalOpened, drawerClosed, editRemoteModalOpened } from '../../ducks/ui'
+import { useEffect } from 'react'
 
 const RemoteIcon = (props: { remoteType: RemoteType }): JSX.Element => {
   switch (props.remoteType) {
@@ -30,6 +31,16 @@ export const RemotesList = (): JSX.Element => {
   const remotes = useSelector(remotesSelector)
   const dispatch = useDispatch<AppDispatch>()
   const selectedRemote = useSelector(selectedRemoteSelector)
+
+  useEffect(() => {
+    if (selectedRemote !== null) {
+      if (!remotes.includes(selectedRemote)) {
+        dispatch(remoteSelected({
+          remoteId: remotes.at(0)?.id ?? null
+        }))
+      }
+    }
+  }, [dispatch, remotes])
 
   const onEdit = (remoteId: string): void => {
     dispatch(clearPatchRemoteStatus())
