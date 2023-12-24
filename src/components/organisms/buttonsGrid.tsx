@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { buttonsSelector, pushButtonStateSelector } from '../../ducks/buttons/selector'
 import { learnIrModalOpened } from '../../ducks/ui/leanIrModal'
 import { pushButtonRequested } from '../../ducks/buttons'
-import { type AppDispatch } from '../../app/thunk'
 import { type Button } from '../../type/button'
 import { AvatarTextCard } from '../monecules/avatarTextCard'
 import { SignalWifi0Bar, Wifi } from '@mui/icons-material'
@@ -17,7 +16,7 @@ interface ButtonCardProps {
 const ButtonCard = (props: ButtonCardProps): JSX.Element => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const menuOpend = Boolean(anchorEl)
-  const dispatch = useDispatch<AppDispatch>()
+  const dispatch = useDispatch()
   const pushButtonStatus = useSelector(pushButtonStateSelector(props.button.id))
   const isLoading = pushButtonStatus?.status === 'pending'
   const { t } = useTranslation()

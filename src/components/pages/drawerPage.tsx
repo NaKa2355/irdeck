@@ -7,9 +7,6 @@ import { ButtonsGrid } from '../organisms/buttonsGrid'
 import { AddRemoteModal } from '../organisms/addRemoteModal'
 import { EditRemoteModal } from '../organisms/editRemoteModal'
 
-// type
-import { type AppDispatch } from '../../app/thunk'
-
 // hooks
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -26,7 +23,7 @@ import { fetchRemoteRequested } from '../../ducks/remotes/fetchStateSlice'
 import { fetchDevicesRequested } from '../../ducks/devices'
 
 export const DrawerPage = (): JSX.Element => {
-  const dispatch = useDispatch<AppDispatch>()
+  const dispatch = useDispatch()
   const selectedRemote = useSelector(selectedRemoteSelector)
   const snackbar = useSelector(snackbarSelector)
   const { t } = useTranslation()

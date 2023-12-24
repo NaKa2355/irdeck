@@ -1,8 +1,9 @@
 import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
+import { PluginOption, defineConfig } from 'vite';
+import { visualizer } from 'rollup-plugin-visualizer'
 
 export default defineConfig({
-    plugins: [react()],
+    plugins: [react(), visualizer() as PluginOption],
     resolve: {
         alias: [{ find: "irdeck-proto", replacement: "/node_modules/irdeck-proto" }],
     },

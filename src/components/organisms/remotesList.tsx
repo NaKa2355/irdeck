@@ -1,6 +1,5 @@
 // types
 import { RemoteType } from '../../type/remote'
-import { type AppDispatch } from '../../app/thunk'
 
 // components
 import { IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, SpeedDial } from '@mui/material'
@@ -29,7 +28,7 @@ const RemoteIcon = (props: { remoteType: RemoteType }): JSX.Element => {
 
 export const RemotesList = (): JSX.Element => {
   const remotes = useSelector(remotesSelector)
-  const dispatch = useDispatch<AppDispatch>()
+  const dispatch = useDispatch()
   const selectedRemote = useSelector(selectedRemoteSelector)
 
   useEffect(() => {

@@ -3,7 +3,6 @@ import { addRemoteListener, remoteReducer } from '../ducks/remotes/'
 import { addButtonsListener, buttonsReducer } from '../ducks/buttons'
 import { addDeviceListener, devicesReducer } from '../ducks/devices'
 import { UiReducer, addUiListener } from '../ducks/ui'
-import { reduxThunkMiddleware } from './thunk'
 import { listenerMiddleware } from './listener'
 import { addLogicalListener } from '../ducks/logic/operations'
 
@@ -18,7 +17,7 @@ export type RootStore = ReturnType<typeof rootReducer>
 
 export const store = configureStore({
   reducer: rootReducer,
-  middleware: [reduxThunkMiddleware, listenerMiddleware.middleware]
+  middleware: [listenerMiddleware.middleware]
 })
 
 addRemoteListener(listenerMiddleware.startListening)

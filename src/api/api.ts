@@ -57,13 +57,13 @@ export class Api implements IApi {
       })
       for (let temp = coolTempRange[0]; temp <= coolTempRange[1]; temp += scale) {
         buttons.push({
-          buttonName: 'h' + temp.toString(),
+          buttonName: 'h' + temp.toFixed(1).toString(),
           tag: type
         })
       }
       for (let temp = heatTempRange[0]; temp <= heatTempRange[1]; temp += scale) {
         buttons.push({
-          buttonName: 'h' + temp.toString(),
+          buttonName: 'h' + temp.toFixed(1).toString(),
           tag: type
         })
       }

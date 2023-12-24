@@ -17,7 +17,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { type RequestStatus } from '../../utils/reqStatus'
 import { type ApiError } from '../../interfaces/api'
 import { type Device } from '../../type/device.type'
-import { type AppDispatch } from '../../app/thunk'
 import { clearLearnIrDataStatus, learnIrDataRequested } from '../../ducks/buttons/requestStateSlice'
 
 interface ReceiveIrErrorViewProps {
@@ -223,7 +222,7 @@ const computeStatus = (deviceId: string | null, status: RequestStatus<ApiError> 
 
 export const ReceiveIrView = (): JSX.Element => {
   const [deviceId, setDeviceId] = useState<string | null>(null)
-  const dispatch = useDispatch<AppDispatch>()
+  const dispatch = useDispatch()
   const receivedIrData = useSelector(receivedIrDataSelector(deviceId ?? ''))
   const modalState = useSelector(learnIrModalStateSelector)
   const devicesCanReceive = useSelector(devicesCanReceiveSelector)
