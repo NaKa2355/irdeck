@@ -1,13 +1,19 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { type ApiError } from '../../interfaces/api'
 import { type RequestStatus } from '../../utils/reqStatus'
+import { type IrData } from '../../type/irdata.type'
 
 interface RequestState {
   pushButtonStatus: Record<string, RequestStatus<ApiError> | undefined>
+  learnIrDataStatus: RequestStatus<ApiError>
 }
 
 const initialState: RequestState = {
-  pushButtonStatus: {}
+  pushButtonStatus: {},
+  learnIrDataStatus: {
+    status: 'idle',
+    error: undefined
+  }
 }
 
 const requestStateSlice = createSlice({
@@ -41,6 +47,31 @@ const requestStateSlice = createSlice({
         status: 'idle',
         error: undefined
       }
+    },
+
+    learnIrDataRequested: (state, action: PayloadAction<{ remoteId: string, buttonId: string, irData: IrData }>) => {
+      state.learnIrDataStatus = {
+        status: 'pending',
+        error: undefined
+      }
+    },
+    learnIrDataFailure: (state, action: PayloadAction<{ error: ApiError }>) => {
+      state.learnIrDataStatus = {
+        status: 'failed',
+        error: action.payload.error
+      }
+    },
+    learnIrDataSuccess: (state) => {
+      state.learnIrDataStatus = {
+        status: 'success',
+        error: undefined
+      }
+    },
+    clearLearnIrDataStatus: (state) => {
+      state.learnIrDataStatus = {
+        status: 'idle',
+        error: undefined
+      }
     }
   }
 })
@@ -50,5 +81,9 @@ export const {
   pushButtonRequested,
   pushButtonFailure,
   pushButtonSuccess,
-  clearPushButtonStatus
+  clearPushButtonStatus,
+  learnIrDataRequested,
+  learnIrDataFailure,
+  learnIrDataSuccess,
+  clearLearnIrDataStatus
 } = requestStateSlice.actions

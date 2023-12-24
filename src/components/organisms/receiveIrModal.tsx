@@ -5,7 +5,7 @@ import { Select, Button, FormControl, FormLabel, Grid, MenuItem, Stack, Typograp
 // redux
 import { learnIrModalClosed } from '../../ducks/ui/leanIrModal'
 import { learnIrModalStateSelector } from '../../ducks/ui'
-import { devicesCanReceiveSelector, receiveIrRequested } from '../../ducks/devices'
+import { devicesCanReceiveSelector, receiveIrRequested, sendIrDataRequested } from '../../ducks/devices'
 import { receiveIrDataStatusSelector, receivedIrDataSelector } from '../../ducks/devices/selector'
 
 // hooks
@@ -18,7 +18,7 @@ import { type RequestStatus } from '../../utils/reqStatus'
 import { type ApiError } from '../../interfaces/api'
 import { type Device } from '../../type/device.type'
 import { type AppDispatch } from '../../app/thunk'
-import { useLearnIrDataApi } from '../../hooks/buttons/useLearnIrDataApi'
+import { clearLearnIrDataStatus, learnIrDataRequested } from '../../ducks/buttons/requestStateSlice'
 
 interface ReceiveIrErrorViewProps {
   onCancel: () => void
@@ -71,7 +71,7 @@ const ReceivingIrView = (props: ReceivingIrViewProps): JSX.Element => {
 }
 
 interface ReceiveIRSuccessfulViewProps {
-  onTest: () => Promise<void>
+  onTest: () => void
   onRetry: () => void
   onDone: () => void
 }
@@ -94,6 +94,7 @@ const ReceiveIRSuccessfulView = (props: ReceiveIRSuccessfulViewProps): JSX.Eleme
         <Button
           fullWidth
           variant="outlined"
+          onClick={props.onTest}
         >
           {t('button.receiving_test')}
         </Button>
@@ -224,7 +225,6 @@ export const ReceiveIrView = (): JSX.Element => {
   const [deviceId, setDeviceId] = useState<string | null>(null)
   const dispatch = useDispatch<AppDispatch>()
   const receivedIrData = useSelector(receivedIrDataSelector(deviceId ?? ''))
-  const [, { learnIrData }] = useLearnIrDataApi()
   const modalState = useSelector(learnIrModalStateSelector)
   const devicesCanReceive = useSelector(devicesCanReceiveSelector)
   const receiveIrDataStatus = useSelector(receiveIrDataStatusSelector(deviceId ?? ''))
@@ -232,7 +232,8 @@ export const ReceiveIrView = (): JSX.Element => {
 
   const onDeviceComitted = (deviceId: string): void => {
     setDeviceId(deviceId)
-    void dispatch(receiveIrRequested({ deviceId }))
+    dispatch(receiveIrRequested({ deviceId }))
+    dispatch(clearLearnIrDataStatus())
   }
 
   const onCancel = (): void => {
@@ -240,17 +241,23 @@ export const ReceiveIrView = (): JSX.Element => {
   }
 
   const onRetry = (): void => {
-    void dispatch(receiveIrRequested({
+    dispatch(receiveIrRequested({
       deviceId: deviceId ?? ''
     }))
   }
 
   const onDone = (): void => {
-    void learnIrData({
-      remoteId: modalState.remoteId ?? '',
-      buttonId: modalState.buttonId ?? '',
+    dispatch(learnIrDataRequested({
+      remoteId: modalState.remote?.id ?? '',
+      buttonId: modalState.button?.id ?? '',
       irData: receivedIrData
-    })
+    }))
+  }
+
+  const onTest = (): void => {
+    dispatch(sendIrDataRequested({
+      deviceId: modalState.remote?.deviceId ?? ''
+    }))
   }
 
   return (
@@ -273,7 +280,7 @@ export const ReceiveIrView = (): JSX.Element => {
         <ReceiveIRSuccessfulView
           onDone={onDone}
           onRetry={onRetry}
-          onTest={async () => { }} />
+          onTest={onTest} />
       )}
 
       {status === 'failed' && (

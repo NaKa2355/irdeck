@@ -1,13 +1,10 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
-import { remoteReducer } from '../ducks/remotes/'
-import { buttonsReducer } from '../ducks/buttons'
-import { devicesReducer } from '../ducks/devices'
-import { UiReducer } from '../ducks/ui'
+import { addRemoteListener, remoteReducer } from '../ducks/remotes/'
+import { addButtonsListener, buttonsReducer } from '../ducks/buttons'
+import { addDeviceListener, devicesReducer } from '../ducks/devices'
+import { UiReducer, addUiListener } from '../ducks/ui'
 import { reduxThunkMiddleware } from './thunk'
 import { listenerMiddleware } from './listener'
-import { addButtonsListener } from '../ducks/buttons/operations'
-import { addRemoteListener } from '../ducks/remotes/operations'
-import { addDeviceListener } from '../ducks/devices/operations'
 import { addLogicalListener } from '../ducks/logic/operations'
 
 const rootReducer = combineReducers({
@@ -28,3 +25,4 @@ addRemoteListener(listenerMiddleware.startListening)
 addButtonsListener(listenerMiddleware.startListening)
 addDeviceListener(listenerMiddleware.startListening)
 addLogicalListener(listenerMiddleware.startListening)
+addUiListener(listenerMiddleware.startListening)

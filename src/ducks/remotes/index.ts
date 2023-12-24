@@ -33,3 +33,7 @@ export const remoteReducer = combineReducers({
   request: requestStateReducer,
   selectedRemote: selectedRemoteReducer
 })
+
+export {
+  addRemoteListener
+} from './operations'

@@ -39,3 +39,7 @@ export const UiReducer = combineReducers({
   snackBar: snackBarReducer,
   drawer: drawerReducer
 })
+
+export {
+  addUiListener
+} from './operations'

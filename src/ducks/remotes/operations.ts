@@ -2,11 +2,14 @@ import { type AppStartListening } from '../../app'
 import { remoteAdded, remoteDeleted, remoteEdited, remotesFetched } from './domainSlice'
 import { fetchRemoteFailure, fetchRemoteRequested, fetchRemoteSuccess } from './fetchStateSlice'
 import { deleteRemoteFailure, deleteRemoteRequested, deleteRemoteSuccess, patchRemoteFailure, patchRemoteRequested, patchRemoteSuccess, postRemoteFailure, postRemoteRequested, postRemoteSuccess } from './requestStateSlice'
+import { remoteSelected } from './selectedRemoteSlice'
+import { remotesSelector, selectedRemoteSelector } from './selector'
 
 const addFetchRemoteListener = (startListening: AppStartListening): void => {
   startListening({
     actionCreator: fetchRemoteRequested,
     effect: async (_, listenerApi) => {
+      const selectedRemote = selectedRemoteSelector(listenerApi.getState())
       const result = await listenerApi.extra.api.fetchRemotes()
       if (result.isError) {
         listenerApi.dispatch(fetchRemoteFailure({
@@ -18,6 +21,11 @@ const addFetchRemoteListener = (startListening: AppStartListening): void => {
       listenerApi.dispatch(remotesFetched({
         remotes: result.data
       }))
+      if (selectedRemote === null) {
+        listenerApi.dispatch(remoteSelected({
+          remoteId: result.data.at(0)?.id ?? null
+        }))
+      }
     }
   })
 }
@@ -34,6 +42,9 @@ const addPostRemoteListener = (startListening: AppStartListening): void => {
         return
       }
       listenerApi.dispatch(postRemoteSuccess())
+      listenerApi.dispatch(remoteSelected({
+        remoteId: result.data.id
+      }))
       listenerApi.dispatch(remoteAdded({
         remoteId: result.data.id,
         remoteName: result.data.name,
@@ -82,6 +93,14 @@ const addDeleteRemoteListener = (startListening: AppStartListening): void => {
       listenerApi.dispatch(remoteDeleted({
         deletedRemoteId: remoteId
       }))
+
+      const remotes = remotesSelector(listenerApi.getState())
+      const selectedRemote = selectedRemoteSelector(listenerApi.getState())
+      if (selectedRemote?.id === remoteId) {
+        listenerApi.dispatch(remoteSelected({
+          remoteId: remotes.at(0)?.id ?? null
+        }))
+      }
     }
   })
 }

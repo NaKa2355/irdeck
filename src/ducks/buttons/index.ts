@@ -20,3 +20,7 @@ export const buttonsReducer = combineReducers({
   requestState: requestStateReducer,
   fetchState: fetchStateReducer
 })
+
+export {
+  addButtonsListener
+} from './operations'

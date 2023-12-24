@@ -30,3 +30,7 @@ export {
   receiveIrDataStatusSelector,
   receivedIrDataSelector
 } from './selector'
+
+export {
+  addDeviceListener
+} from './operations'

@@ -9,7 +9,7 @@ import { TempSlider } from '../monecules/tempSlider'
 // hooks
 import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'react-redux'
-import { useCreateRemoteApi, useForm } from '../../hooks'
+import { useForm } from '../../hooks'
 
 // schemas
 import { remoteNameValidator } from '../../schemas/remoteName'
@@ -17,6 +17,7 @@ import { remoteNameValidator } from '../../schemas/remoteName'
 // redux
 import { addRemoteModalClosed, addRemoteModalStateSelector } from '../../ducks/ui'
 import { devicesCanSendSelector } from '../../ducks/devices'
+import { clearPostRemoteStatus, postRemoteRequested, postRemoteStatusSelector } from '../../ducks/remotes'
 
 interface FormData {
   remoteName: string
@@ -41,15 +42,25 @@ const initialFormData: FormData = {
 
 const AddRemoteForm = (): JSX.Element => {
   const { t } = useTranslation()
-  const [postStatus, { createRemote }] = useCreateRemoteApi()
+  const dispatch = useDispatch()
+  const postStatus = useSelector(postRemoteStatusSelector)
   const devicesCanSend = useSelector(devicesCanSendSelector)
-  const [{ formData, validation }, { handleChange, handleChangeWithEvent, canSubmit, setValidationError }] = useForm<FormData>({
+  const [{ formData, validation }, { handleChange, handleChangeWithEvent, canSubmit }] = useForm<FormData>({
     initialFormData: {
       ...initialFormData,
       deviceId: devicesCanSend.at(0)?.id ?? ''
     },
     validators: {
       remoteName: remoteNameValidator
+    },
+    serverSideValidation: {
+      remoteName: {
+        isInvailed: postStatus.status === 'failed',
+        errorMessage: postStatus.error?.code === 'remote_name_already_exists' ? 'error.remote_name_already_exists' : '',
+        onCleanup: () => {
+          dispatch(clearPostRemoteStatus())
+        }
+      }
     }
   })
   const isUnknownError = postStatus.error?.code === 'unknown'
@@ -59,12 +70,7 @@ const AddRemoteForm = (): JSX.Element => {
     if (!canSubmit()) {
       return
     }
-    void (async () => {
-      const result = await createRemote(formData)
-      if (result.isError && result.error.code === 'remote_name_already_exists') {
-        setValidationError('remoteName', 'error.remote_name_already_exists')
-      }
-    })()
+    dispatch(postRemoteRequested(formData))
   }
 
   const deviceMenu = devicesCanSend.map((device) => {

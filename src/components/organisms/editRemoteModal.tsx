@@ -7,7 +7,6 @@ import { Alert, Box, Button, Dialog, DialogContent, DialogTitle, FormControl, Fo
 // hooks
 import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'react-redux'
-import { useUpdateRemoteApi, useDeleteRemoteApi } from '../../hooks/'
 import { useForm } from '../../hooks'
 
 // redux
@@ -16,6 +15,7 @@ import { devicesCanSendSelector } from '../../ducks/devices'
 
 // schemas
 import { remoteNameValidator } from '../../schemas/remoteName'
+import { clearPatchRemoteStatus, deleteRemoteRequested, patchRemoteRequested, patchRemoteStatusSelector } from '../../ducks/remotes'
 
 interface FormData {
   remoteName: string
@@ -24,27 +24,34 @@ interface FormData {
 
 const EditRemoteForm = (): JSX.Element => {
   const { t } = useTranslation()
+  const dispatch = useDispatch()
   const { editingRemote } = useSelector(editRemoteModalStateSelector)
   const devicesCanSend = useSelector(devicesCanSendSelector)
-  const [,{ deleteRemote }] = useDeleteRemoteApi()
-  const [patchStatus, { updateRemote }] = useUpdateRemoteApi()
+  const patchStatus = useSelector(patchRemoteStatusSelector)
   const isUnknownError = patchStatus.error?.code === 'unknown'
-  const [{ formData, validation }, { handleChangeWithEvent, canSubmit, setValidationError }] = useForm<FormData>({
+  const [{ formData, validation }, { handleChangeWithEvent, canSubmit }] = useForm<FormData>({
     initialFormData: {
       remoteName: editingRemote?.name ?? '',
       deviceId: editingRemote?.deviceId ?? ''
     },
     validators: {
       remoteName: remoteNameValidator
+    },
+    serverSideValidation: {
+      remoteName: {
+        isInvailed: patchStatus.status === 'failed',
+        errorMessage: patchStatus.error?.code === 'remote_name_already_exists' ? 'error.remote_name_already_exists' : '',
+        onCleanup: () => {
+          dispatch(clearPatchRemoteStatus())
+        }
+      }
     }
   })
 
   const onDeleteRemote = (): void => {
-    void (async () => {
-      await deleteRemote({
-        remoteId: editingRemote?.id ?? ''
-      })
-    })()
+    dispatch(deleteRemoteRequested({
+      remoteId: editingRemote?.id ?? ''
+    }))
   }
 
   const onSubmit: FormEventHandler = (e): void => {
@@ -52,15 +59,10 @@ const EditRemoteForm = (): JSX.Element => {
     if (!canSubmit()) {
       return
     }
-    void (async () => {
-      const result = await updateRemote({
-        remoteId: editingRemote?.id ?? '',
-        ...formData
-      })
-      if (result.isError && result.error.code === 'remote_name_already_exists') {
-        setValidationError('remoteName', 'error.remote_name_already_exists')
-      }
-    })()
+    dispatch(patchRemoteRequested({
+      remoteId: editingRemote?.id ?? '',
+      ...formData
+    }))
   }
 
   const deviceMenu = devicesCanSend.map((device) => {

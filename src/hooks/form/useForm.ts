@@ -7,9 +7,14 @@ interface Validation {
 export type Validator = <V>(value: V) => Validation
 type Handler = (name: string) => (value: any) => void
 
-export const useForm = <F>(props: { initialFormData: F, validators: Record<string, Validator | undefined> }):
-[
-  { formData: F, validation: Record<string, Validation | undefined> },
+export const useForm = <F extends object>(props: {
+  initialFormData: F
+  validators: Record<string, Validator | undefined>
+  serverSideValidation?: Record<string, Validation & { onCleanup: () => void } | undefined>
+}): [{
+    formData: F
+    validation: Record<string, Validation | undefined>
+  },
   {
     handleChange: Handler
     handleChangeWithEvent: Handler
@@ -17,11 +22,30 @@ export const useForm = <F>(props: { initialFormData: F, validators: Record<strin
     setValidationError: (name: string, errorMessage: string) => void
   }] => {
   const [formData, setFormData] = useState<F>(props.initialFormData)
-  const [validation, setValidation] = useState<Record<string, Validation | undefined>>({})
+  const [clientSideValidations, setValidation] = useState<Record<string, Validation | undefined>>({})
+
+  const computeValidation = (): Record<string, Validation | undefined> => {
+    const validation: Record<string, Validation | undefined> = {}
+    for (const key of Object.keys(clientSideValidations)) {
+      const clientSideValidation = clientSideValidations[key]
+      const serverSideValidation = props.serverSideValidation?.[key]
+      const isClientSideInvailed = clientSideValidation?.isInvailed ?? false
+      const isServerSideInvailed = serverSideValidation?.isInvailed ?? false
+      const clientSideErrorMessage = clientSideValidation?.errorMessage ?? ''
+      const serveSideErrorMessage = serverSideValidation?.errorMessage ?? ''
+      validation[key] = {
+        isInvailed: isClientSideInvailed || isServerSideInvailed,
+        errorMessage: (clientSideErrorMessage !== '') ? clientSideErrorMessage : serveSideErrorMessage
+      }
+    }
+    return validation
+  }
+
+  const validation = computeValidation()
 
   const setValidationError = (name: string, errorMessage: string): void => {
     setValidation({
-      ...validation,
+      ...clientSideValidations,
       [name]: {
         isInvailed: true,
         errorMessage
@@ -31,16 +55,20 @@ export const useForm = <F>(props: { initialFormData: F, validators: Record<strin
 
   const canSubmit = (): boolean => {
     let canSubmit = true
-    for (const key of Object.keys(props.validators)) {
+    for (const key of Object.keys(formData)) {
       canSubmit = canSubmit && !(props.validators[key]?.((formData as Record<string, any>)[key]).isInvailed ?? false)
     }
     return canSubmit
   }
 
-  const handleChange = (name: string) => {
+  const handleChange = (name: string): (value: any) => void => {
     return (value: any) => {
+      const serverSideValidation = props.serverSideValidation?.[name]
+      if (serverSideValidation?.isInvailed ?? false) {
+        serverSideValidation?.onCleanup()
+      }
       setValidation({
-        ...validation,
+        ...clientSideValidations,
         [name]: props.validators[name]?.(value)
       })
       setFormData({

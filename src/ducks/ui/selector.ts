@@ -26,8 +26,20 @@ export const editRemoteModalStateSelector = createSelector(
 export const learnIrModalStateSelector = createSelector(
   selectSelf,
   (state) => {
-    const modalState = state.ui.leanIrModal
-    return modalState
+    const buttonId = state.ui.leanIrModal.buttonId
+    const remoteId = state.ui.leanIrModal.remoteId
+    if (buttonId === null || remoteId === null) {
+      return {
+        isOpen: state.ui.leanIrModal.isOpen,
+        button: null,
+        remote: null
+      }
+    }
+    return {
+      isOpen: state.ui.leanIrModal.isOpen,
+      button: state.buttons.domain.byId[buttonId],
+      remote: state.remotes.domain.byId[remoteId]
+    }
   }
 )
 
