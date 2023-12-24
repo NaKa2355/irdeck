@@ -22,6 +22,20 @@ const ButtonCard = (props: ButtonCardProps): JSX.Element => {
   const isLoading = pushButtonStatus?.status === 'pending'
   const { t } = useTranslation()
 
+  const translateButtonName = (name: string): string => {
+    const tempRegex = /^(?<type>h|c)(?<temp>[0-9]+\.?[0-9]?)/
+    if (name === 'push' || name === 'on' || name === 'off') {
+      return t('button.' + name)
+    }
+    if (tempRegex.test(name)) {
+      const result = tempRegex.exec(name)
+      const type = result?.groups?.type
+      const temp = result?.groups?.temp
+      return t('button.' + type, { temp })
+    }
+    return name
+  }
+
   const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>): void => {
     setAnchorEl(event.currentTarget)
   }
@@ -56,14 +70,14 @@ const ButtonCard = (props: ButtonCardProps): JSX.Element => {
       }}
     >
       <MenuItem onClick={onReceive}>
-        {t('button.lean')}
+        {t('button.learn')}
       </MenuItem>
     </Menu>
   )
 
   return (
     <AvatarTextCard
-      title={props.button.name}
+      title={translateButtonName(props.button.name)}
       isLoading={isLoading}
       menu={menu}
       avatar={

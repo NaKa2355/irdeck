@@ -311,7 +311,7 @@ export const ReceiveIrModal = (): JSX.Element => {
 
   return (
     <Dialog open={modalState.isOpen} onClose={onClose} fullWidth>
-      <DialogTitle>{t('header.add_remote')}</DialogTitle>
+      <DialogTitle>{t('header.learn_ir')}</DialogTitle>
       <DialogContent>
         <Box height={20}></Box>
         <ReceiveIrView />

@@ -3,7 +3,7 @@
         "remotes": "リモコン一覧",
         "add_remote": "リモコンを追加",
         "edit": "編集",
-        "receive_ir": "赤外線を受信"
+        "learn_ir": "赤外線を学習"
     },
     
     "remote_types": {
@@ -26,7 +26,9 @@
         "push": "ボタン",
         "on": "オン",
         "off": "オフ",
-        "lean": "学習"
+        "h": "暖房 {{temp}}℃",
+        "c": "冷房 {{temp}}℃",
+        "learn": "学習"
     },
 
     "label": {

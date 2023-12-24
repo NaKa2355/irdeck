@@ -3,7 +3,7 @@
         "remotes": "Remotes",
         "add_remote": "Add Remote",
         "edit": "Edit",
-        "receive_ir": "Receive IR"
+        "learn_ir": "Learn IR Remote"
     },
     
     "remote_types": {
@@ -25,8 +25,10 @@
         "receiving_test": "Test",
         "push": "Push",
         "on": "ON",
+        "h": "Heating {{temp}}℃",
+        "c": "Cooling {{temp}}℃",
         "off": "OFF",
-        "lean": "Lean"
+        "learn": "Lean"
     },
 
     "label": {
