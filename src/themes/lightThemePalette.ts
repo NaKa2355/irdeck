@@ -7,7 +7,6 @@ export const lightThemePalette = createTheme({
       secondary: '#797f88'
     },
     background: {
-      // Purple and green play nicely together.
       default: '#f7f8fc',
       paper: '#ffffff'
     }

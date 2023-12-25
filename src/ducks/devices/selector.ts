@@ -29,3 +29,9 @@ export const receiveIrDataStatusSelector = (deviceId: string): (state: RootStore
     return state.devices.requestState.receiveIrStatus[deviceId]
   })
 }
+
+export const sendIrDataStatusSelector = (deviceId: string): (state: RootStore) => RequestStatus<ApiError> | undefined => {
+  return createSelector(selectSelf, (state) => {
+    return state.devices.requestState.sendIrStatus[deviceId]
+  })
+}

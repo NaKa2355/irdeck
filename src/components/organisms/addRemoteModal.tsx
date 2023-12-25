@@ -3,8 +3,9 @@ import { RemoteType } from '../../type/remote'
 import { type FormEventHandler } from 'react'
 
 // conmponents
-import { FormControl, FormLabel, Stack, Select, MenuItem, Grid, Button, Alert, TextField, FormHelperText, Dialog, DialogTitle, DialogContent, Box } from '@mui/material'
+import { FormControl, FormLabel, Stack, Select, MenuItem, Grid, Alert, TextField, FormHelperText, Dialog, DialogTitle, DialogContent, Box } from '@mui/material'
 import { TempSlider } from '../monecules/tempSlider'
+import { LoadingButton } from '../atom/loadingButton'
 
 // hooks
 import { useTranslation } from 'react-i18next'
@@ -171,13 +172,14 @@ const AddRemoteForm = (): JSX.Element => {
 
         <Grid container direction="row" justifyContent="flex-end" alignItems="center">
           <Grid item>
-            <Button
+            <LoadingButton
               variant="contained"
               type="submit"
+              loading={postStatus.status === 'pending'}
               onClick={onSubmit}
             >
               {t('button.add')}
-            </Button>
+            </LoadingButton>
           </Grid>
         </Grid>
       </Stack>

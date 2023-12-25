@@ -48,3 +48,10 @@ export const patchRemoteStatusSelector = createSelector(
     return state.remotes.request.patchRemoteStatus
   }
 )
+
+export const deleteRemoteStatusSelector = createSelector(
+  selectSelf,
+  (state: RootStore): RequestStatus<ApiError> => {
+    return state.remotes.request.deleteRemoteStatus
+  }
+)

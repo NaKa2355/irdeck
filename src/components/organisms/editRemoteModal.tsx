@@ -2,7 +2,8 @@
 import { type FormEventHandler } from 'react'
 
 // components
-import { Alert, Box, Button, Dialog, DialogContent, DialogTitle, FormControl, FormHelperText, FormLabel, MenuItem, Select, Stack, TextField } from '@mui/material'
+import { Alert, Box, Dialog, DialogContent, DialogTitle, FormControl, FormHelperText, FormLabel, MenuItem, Select, Stack, TextField } from '@mui/material'
+import { LoadingButton } from '../atom/loadingButton'
 
 // hooks
 import { useTranslation } from 'react-i18next'
@@ -15,7 +16,7 @@ import { devicesCanSendSelector } from '../../ducks/devices'
 
 // schemas
 import { remoteNameValidator } from '../../schemas/remoteName'
-import { clearPatchRemoteStatus, deleteRemoteRequested, patchRemoteRequested, patchRemoteStatusSelector } from '../../ducks/remotes'
+import { clearPatchRemoteStatus, deleteRemoteRequested, deleteRemoteStatusSelector, patchRemoteRequested, patchRemoteStatusSelector } from '../../ducks/remotes'
 
 interface FormData {
   remoteName: string
@@ -27,8 +28,9 @@ const EditRemoteForm = (): JSX.Element => {
   const dispatch = useDispatch()
   const { editingRemote } = useSelector(editRemoteModalStateSelector)
   const devicesCanSend = useSelector(devicesCanSendSelector)
+  const deleteStatus = useSelector(deleteRemoteStatusSelector)
   const patchStatus = useSelector(patchRemoteStatusSelector)
-  const isUnknownError = patchStatus.error?.code === 'unknown'
+  const isUnknownError = patchStatus.error?.code === 'unknown' || deleteStatus.error?.code === 'unknown'
   const [{ formData, validation }, { handleChangeWithEvent, canSubmit }] = useForm<FormData>({
     initialFormData: {
       remoteName: editingRemote?.name ?? '',
@@ -109,19 +111,21 @@ const EditRemoteForm = (): JSX.Element => {
           alignItems="center"
           spacing={2}
         >
-          <Button
+          <LoadingButton
             variant="contained"
             onClick={onDeleteRemote}
             color="error"
+            loading={deleteStatus.status === 'pending'}
           >
             {t('button.delete')}
-          </Button>
-          <Button
+          </LoadingButton>
+          <LoadingButton
             variant="contained"
             type="submit"
+            loading={patchStatus.status === 'pending'}
           >
             {t('button.done')}
-          </Button>
+          </LoadingButton>
         </Stack>
       </Stack>
     </form>

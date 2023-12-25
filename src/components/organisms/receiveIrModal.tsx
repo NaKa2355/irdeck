@@ -6,10 +6,10 @@ import { Select, Button, FormControl, FormLabel, Grid, MenuItem, Stack, Typograp
 import { learnIrModalClosed } from '../../ducks/ui/leanIrModal'
 import { learnIrModalStateSelector } from '../../ducks/ui'
 import { devicesCanReceiveSelector, receiveIrRequested, sendIrDataRequested } from '../../ducks/devices'
-import { receiveIrDataStatusSelector, receivedIrDataSelector } from '../../ducks/devices/selector'
+import { receiveIrDataStatusSelector, receivedIrDataSelector, sendIrDataStatusSelector } from '../../ducks/devices/selector'
 
 // hooks
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -18,6 +18,7 @@ import { type RequestStatus } from '../../utils/reqStatus'
 import { type ApiError } from '../../interfaces/api'
 import { type Device } from '../../type/device.type'
 import { clearLearnIrDataStatus, learnIrDataRequested } from '../../ducks/buttons/requestStateSlice'
+import { LoadingButton } from '../atom/loadingButton'
 
 interface ReceiveIrErrorViewProps {
   onCancel: () => void
@@ -73,6 +74,7 @@ interface ReceiveIRSuccessfulViewProps {
   onTest: () => void
   onRetry: () => void
   onDone: () => void
+  isSending?: boolean
 }
 
 const ReceiveIRSuccessfulView = (props: ReceiveIRSuccessfulViewProps): JSX.Element => {
@@ -90,21 +92,22 @@ const ReceiveIRSuccessfulView = (props: ReceiveIRSuccessfulViewProps): JSX.Eleme
       <Typography align="center" fontWeight="bold">{t('label.success')}</Typography>
 
       <Stack direction="row" spacing={2}>
-        <Button
+        <LoadingButton
           fullWidth
+          loading={props.isSending}
           variant="outlined"
           onClick={props.onTest}
         >
           {t('button.receiving_test')}
-        </Button>
+        </LoadingButton>
 
-        <Button
+        <LoadingButton
           fullWidth
           variant="outlined"
           onClick={props.onRetry}
         >
           {t('button.retry')}
-        </Button>
+        </LoadingButton>
       </Stack>
       <Button variant="contained" onClick={props.onDone}>
         {t('button.done')}
@@ -227,7 +230,12 @@ export const ReceiveIrView = (): JSX.Element => {
   const modalState = useSelector(learnIrModalStateSelector)
   const devicesCanReceive = useSelector(devicesCanReceiveSelector)
   const receiveIrDataStatus = useSelector(receiveIrDataStatusSelector(deviceId ?? ''))
+  const sendIrDataStatus = useSelector(sendIrDataStatusSelector(modalState.remote?.deviceId ?? ''))
   const status = computeStatus(deviceId, receiveIrDataStatus)
+
+  useEffect(() => {
+    console.log(sendIrDataStatus)
+  }, [sendIrDataStatus])
 
   const onDeviceComitted = (deviceId: string): void => {
     setDeviceId(deviceId)
@@ -277,6 +285,7 @@ export const ReceiveIrView = (): JSX.Element => {
 
       {status === 'success' && (
         <ReceiveIRSuccessfulView
+          isSending={sendIrDataStatus?.status === 'pending'}
           onDone={onDone}
           onRetry={onRetry}
           onTest={onTest} />

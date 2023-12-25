@@ -23,7 +23,8 @@ export {
   remoteSelector,
   fetchRemoteStatusSelector,
   postRemoteStatusSelector,
-  patchRemoteStatusSelector
+  patchRemoteStatusSelector,
+  deleteRemoteStatusSelector
 } from './selector'
 
 // reducer
