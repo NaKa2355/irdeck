@@ -3,7 +3,7 @@ import { RemoteType } from '../../type/remote'
 
 // components
 import { IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, SpeedDial } from '@mui/material'
-import { Add, ModeEdit, Thermostat, ToggleOff, TouchApp } from '@mui/icons-material'
+import { Add, ModeEditOutlineOutlined, ThermostatOutlined, ToggleOffOutlined, TouchAppOutlined } from '@mui/icons-material'
 
 // hooks
 import { useDispatch, useSelector } from 'react-redux'
@@ -16,11 +16,11 @@ import { useEffect } from 'react'
 const RemoteIcon = (props: { remoteType: RemoteType }): JSX.Element => {
   switch (props.remoteType) {
     case RemoteType.Button:
-      return (<TouchApp />)
+      return (<TouchAppOutlined sx={{ fontWeight: 3, color: 'text.secondary' }} />)
     case RemoteType.Toggle:
-      return (<ToggleOff />)
+      return (<ToggleOffOutlined sx={{ color: 'text.secondary' }} />)
     case RemoteType.Thermostat:
-      return (<Thermostat />)
+      return (<ThermostatOutlined sx={{ color: 'text.secondary' }} />)
     default:
       return (<></>)
   }
@@ -61,6 +61,10 @@ export const RemotesList = (): JSX.Element => {
       <List>
         {remotes.map((remote) => (
           <ListItem
+            sx={{
+              padding: '5px',
+              paddingLeft: 0
+            }}
             key={remote.id}
             disablePadding
             secondaryAction={
@@ -69,7 +73,7 @@ export const RemotesList = (): JSX.Element => {
                   onEdit(remote.id)
                 }}
                 edge="end">
-                <ModeEdit />
+                <ModeEditOutlineOutlined />
               </IconButton>
             }
           >
@@ -77,7 +81,7 @@ export const RemotesList = (): JSX.Element => {
               selected={selectedRemote?.id === remote.id}
               onClick={() => { onClick(remote.id) }}
             >
-              <ListItemIcon>
+              <ListItemIcon style={{ minWidth: '40px' }}>
                 <RemoteIcon remoteType={remote.tag as RemoteType} />
               </ListItemIcon>
               <ListItemText primary={remote.name} />

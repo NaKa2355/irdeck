@@ -2,7 +2,6 @@ import * as React from 'react'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
 import CssBaseline from '@mui/material/CssBaseline'
-import Divider from '@mui/material/Divider'
 import Drawer from '@mui/material/Drawer'
 import IconButton from '@mui/material/IconButton'
 import Toolbar from '@mui/material/Toolbar'
@@ -26,7 +25,7 @@ export default function DrawerTemplate (props: Props): JSX.Element {
   const drawer = (
     <div>
       <Toolbar/>
-      <Divider />
+      <Box height={10}/>
       {props.drawer}
     </div>
   )
@@ -37,6 +36,7 @@ export default function DrawerTemplate (props: Props): JSX.Element {
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar
+        elevation={0}
         position="fixed"
         sx={{
           backgroundColor: 'background.paper',

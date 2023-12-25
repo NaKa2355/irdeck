@@ -85,9 +85,7 @@ const ButtonCard = (props: ButtonCardProps): JSX.Element => {
             width: 30,
             height: 30,
             color: 'text.secondary',
-            backgroundColor: 'background.default',
-            border: 1,
-            borderColor: 'divider'
+            backgroundColor: 'background.default'
           }}
         >
           {props.button.hasIrData ? <Wifi /> : <SignalWifi0Bar />}
