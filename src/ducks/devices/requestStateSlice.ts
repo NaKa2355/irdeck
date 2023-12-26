@@ -1,10 +1,11 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { type ApiError } from '../../interfaces/api'
 import { type RequestStatus } from '../../utils/reqStatus'
+import { type DeviceId } from '../../type/device.type'
 
 interface RequestState {
-  receiveIrStatus: Record<string, RequestStatus<ApiError>>
-  sendIrStatus: Record<string, RequestStatus<ApiError>>
+  receiveIrStatus: Record<DeviceId, RequestStatus<ApiError>>
+  sendIrStatus: Record<DeviceId, RequestStatus<ApiError>>
 }
 
 const initialState: RequestState = {
@@ -16,28 +17,28 @@ const requestStateSlice = createSlice({
   name: 'resuestState.devices',
   initialState,
   reducers: {
-    sendIrDataRequested: (state, action: PayloadAction<{ deviceId: string }>) => {
+    sendIrDataRequested: (state, action: PayloadAction<{ deviceId: DeviceId }>) => {
       const { deviceId } = action.payload
       state.sendIrStatus[deviceId] = {
         status: 'pending',
         error: undefined
       }
     },
-    sendIrDataFailure: (state, action: PayloadAction<{ deviceId: string, error: ApiError }>) => {
+    sendIrDataFailure: (state, action: PayloadAction<{ deviceId: DeviceId, error: ApiError }>) => {
       const { deviceId, error } = action.payload
       state.sendIrStatus[deviceId] = {
         status: 'failed',
         error
       }
     },
-    sendIrDataSuccess: (state, action: PayloadAction<{ deviceId: string }>) => {
+    sendIrDataSuccess: (state, action: PayloadAction<{ deviceId: DeviceId }>) => {
       const { deviceId } = action.payload
       state.sendIrStatus[deviceId] = {
         status: 'success',
         error: undefined
       }
     },
-    clearSendIrDataStatus: (state, action: PayloadAction<{ deviceId: string }>) => {
+    clearSendIrDataStatus: (state, action: PayloadAction<{ deviceId: DeviceId }>) => {
       const { deviceId } = action.payload
       state.sendIrStatus[deviceId] = {
         status: 'idle',
@@ -45,28 +46,28 @@ const requestStateSlice = createSlice({
       }
     },
 
-    receiveIrRequested: (state, action: PayloadAction<{ deviceId: string }>) => {
+    receiveIrRequested: (state, action: PayloadAction<{ deviceId: DeviceId }>) => {
       const { deviceId } = action.payload
       state.receiveIrStatus[deviceId] = {
         status: 'pending',
         error: undefined
       }
     },
-    receiveIrFailure: (state, action: PayloadAction<{ deviceId: string, error: ApiError }>) => {
+    receiveIrFailure: (state, action: PayloadAction<{ deviceId: DeviceId, error: ApiError }>) => {
       const { deviceId, error } = action.payload
       state.receiveIrStatus[deviceId] = {
         status: 'failed',
         error
       }
     },
-    receiveIrSuccess: (state, action: PayloadAction<{ deviceId: string }>) => {
+    receiveIrSuccess: (state, action: PayloadAction<{ deviceId: DeviceId }>) => {
       const { deviceId } = action.payload
       state.receiveIrStatus[deviceId] = {
         status: 'success',
         error: undefined
       }
     },
-    clearReceiveIrStatus: (state, action: PayloadAction<{ deviceId: string }>) => {
+    clearReceiveIrStatus: (state, action: PayloadAction<{ deviceId: DeviceId }>) => {
       const { deviceId } = action.payload
       state.receiveIrStatus[deviceId] = {
         status: 'idle',

@@ -1,9 +1,10 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { type FetchStatus } from '../../utils/reqStatus'
 import { type ApiError } from '../../interfaces/api'
+import { type RemoteId } from '../../type/remote'
 
 interface FetchState {
-  fetchStatus: Record<string, FetchStatus<ApiError> | undefined>
+  fetchStatus: Record<RemoteId, FetchStatus<ApiError> | undefined>
 }
 
 const initialState: FetchState = {
@@ -14,7 +15,7 @@ const fetchStateSlice = createSlice({
   name: 'fetchState.buttons',
   initialState,
   reducers: {
-    fetchButtonsRequested: (state, action: PayloadAction<{ remoteId: string }>) => {
+    fetchButtonsRequested: (state, action: PayloadAction<{ remoteId: RemoteId }>) => {
       const { remoteId } = action.payload
       const status = state.fetchStatus[remoteId]
       if (status === undefined) {
@@ -28,7 +29,7 @@ const fetchStateSlice = createSlice({
       }
       status.isFetching = true
     },
-    fetchButtonsFailure: (state, action: PayloadAction<{ remoteId: string, error: ApiError }>) => {
+    fetchButtonsFailure: (state, action: PayloadAction<{ remoteId: RemoteId, error: ApiError }>) => {
       const { remoteId, error } = action.payload
       const status = state.fetchStatus[remoteId]
       if (status === undefined) {
@@ -38,7 +39,7 @@ const fetchStateSlice = createSlice({
       status.fetchError = error
       status.isFetching = false
     },
-    fetchButtonsSuccess: (state, action: PayloadAction<{ remoteId: string, updatedAt: number }>) => {
+    fetchButtonsSuccess: (state, action: PayloadAction<{ remoteId: RemoteId, updatedAt: number }>) => {
       const { remoteId, updatedAt } = action.payload
       const status = state.fetchStatus[remoteId]
       if (status === undefined) {

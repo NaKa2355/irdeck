@@ -60,10 +60,10 @@ export const DrawerTemplate = (props: Props): JSX.Element => {
             sx={{ mr: 2, display: { sm: 'none' } }}
           >
             <ArrowBackIos />
+            <Typography variant="h6" noWrap component="div" fontWeight='bold'>
+              {props.title}
+            </Typography>
           </IconButton>
-          <Typography variant="h6" noWrap component="div" fontWeight='bold'>
-            {props.title}
-          </Typography>
         </Toolbar>
       </AppBar>
       <Box

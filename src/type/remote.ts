@@ -1,3 +1,5 @@
+import { type DeviceId } from './device.type'
+
 export enum RemoteType {
   //    Custom = "custom",
   Button = 'button',
@@ -9,8 +11,8 @@ export type RemoteId = string
 export type RemoteName = string
 
 export interface Remote {
-  name: string
-  id: string
-  deviceId: string
+  name: RemoteName
+  id: RemoteId
+  deviceId: DeviceId
   tag: string
 }

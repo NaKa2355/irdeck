@@ -2,9 +2,11 @@ import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { type ApiError } from '../../interfaces/api'
 import { type RequestStatus } from '../../utils/reqStatus'
 import { type IrData } from '../../type/irdata.type'
+import { type ButtonId } from '../../type/button'
+import { type RemoteId } from '../../type/remote'
 
 interface RequestState {
-  pushButtonStatus: Record<string, RequestStatus<ApiError> | undefined>
+  pushButtonStatus: Record<ButtonId, RequestStatus<ApiError> | undefined>
   learnIrDataStatus: RequestStatus<ApiError>
 }
 
@@ -20,28 +22,28 @@ const requestStateSlice = createSlice({
   name: 'requestState.buttons',
   initialState,
   reducers: {
-    pushButtonRequested: (state, action: PayloadAction<{ buttonId: string }>) => {
+    pushButtonRequested: (state, action: PayloadAction<{ buttonId: ButtonId }>) => {
       const { buttonId } = action.payload
       state.pushButtonStatus[buttonId] = {
         status: 'pending',
         error: undefined
       }
     },
-    pushButtonFailure: (state, action: PayloadAction<{ buttonId: string, error: ApiError }>) => {
+    pushButtonFailure: (state, action: PayloadAction<{ buttonId: ButtonId, error: ApiError }>) => {
       const { buttonId, error } = action.payload
       state.pushButtonStatus[buttonId] = {
         status: 'failed',
         error
       }
     },
-    pushButtonSuccess: (state, action: PayloadAction<{ buttonId: string }>) => {
+    pushButtonSuccess: (state, action: PayloadAction<{ buttonId: ButtonId }>) => {
       const { buttonId } = action.payload
       state.pushButtonStatus[buttonId] = {
         status: 'success',
         error: undefined
       }
     },
-    clearPushButtonStatus: (state, action: PayloadAction<{ buttonId: string }>) => {
+    clearPushButtonStatus: (state, action: PayloadAction<{ buttonId: ButtonId }>) => {
       const { buttonId } = action.payload
       state.pushButtonStatus[buttonId] = {
         status: 'idle',
@@ -49,7 +51,7 @@ const requestStateSlice = createSlice({
       }
     },
 
-    learnIrDataRequested: (state, action: PayloadAction<{ remoteId: string, buttonId: string, irData: IrData }>) => {
+    learnIrDataRequested: (state, _: PayloadAction<{ remoteId: RemoteId, buttonId: ButtonId, irData: IrData }>) => {
       state.learnIrDataStatus = {
         status: 'pending',
         error: undefined

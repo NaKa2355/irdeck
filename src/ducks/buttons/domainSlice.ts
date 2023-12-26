@@ -1,9 +1,10 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
-import { type Button } from '../../type/button'
+import { type ButtonId, type Button } from '../../type/button'
+import { type RemoteId } from '../../type/remote'
 
 interface ButtonsState {
-  byId: Record<string, Button>
-  ids: Record<string, string[] | undefined>
+  byId: Record<ButtonId, Button>
+  ids: Record<RemoteId, string[] | undefined>
 }
 
 const initialState: ButtonsState = {
@@ -15,14 +16,14 @@ const buttonsSlice = createSlice({
   name: 'domain.buttons',
   initialState,
   reducers: {
-    buttonsFetched: (state, action: PayloadAction<{ buttons: Button[], remoteId: string }>) => {
+    buttonsFetched: (state, action: PayloadAction<{ buttons: Button[], remoteId: RemoteId }>) => {
       const { remoteId, buttons } = action.payload
       buttons.forEach((device) => {
         state.byId[device.id] = device
       })
       state.ids[remoteId] = buttons.map(buttons => buttons.id)
     },
-    irDataLearned: (state, action: PayloadAction<{ buttonId: string }>) => {
+    irDataLearned: (state, action: PayloadAction<{ buttonId: ButtonId }>) => {
       const { buttonId } = action.payload
       state.byId[buttonId].hasIrData = true
     }
