@@ -9,7 +9,7 @@ import { devicesCanReceiveSelector, receiveIrRequested, sendIrDataRequested } fr
 import { receiveIrDataStatusSelector, receivedIrDataSelector, sendIrDataStatusSelector } from '../../ducks/devices/selector'
 
 // hooks
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -232,10 +232,6 @@ export const ReceiveIrView = (): JSX.Element => {
   const receiveIrDataStatus = useSelector(receiveIrDataStatusSelector(deviceId ?? ''))
   const sendIrDataStatus = useSelector(sendIrDataStatusSelector(modalState.remote?.deviceId ?? ''))
   const status = computeStatus(deviceId, receiveIrDataStatus)
-
-  useEffect(() => {
-    console.log(sendIrDataStatus)
-  }, [sendIrDataStatus])
 
   const onDeviceComitted = (deviceId: string): void => {
     setDeviceId(deviceId)

@@ -1,4 +1,3 @@
-import * as React from 'react'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
 import CssBaseline from '@mui/material/CssBaseline'
@@ -15,18 +14,25 @@ interface Props {
   contents?: JSX.Element
   drawer?: JSX.Element
   isDrawerOpen?: boolean
+  isDrawerLoading?: boolean
+  isContentLoading?: boolean
   onIconClick?: () => void
   onDrawerClose?: () => void
   window?: () => Window
 }
 
-export default function DrawerTemplate (props: Props): JSX.Element {
+export const DrawerTemplate = (props: Props): JSX.Element => {
   const { window } = props
   const drawer = (
     <div>
-      <Toolbar/>
-      <Box height={10}/>
-      {props.drawer}
+      <Toolbar />
+      <Box height={10} />
+      {(props.isDrawerLoading ?? false) &&
+        <p>Loading</p>
+      }
+      {!(props.isDrawerLoading ?? false) &&
+        props.drawer
+      }
     </div>
   )
 
@@ -55,7 +61,7 @@ export default function DrawerTemplate (props: Props): JSX.Element {
           >
             <ArrowBackIos />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
+          <Typography variant="h6" noWrap component="div" fontWeight='bold'>
             {props.title}
           </Typography>
         </Toolbar>
@@ -97,7 +103,12 @@ export default function DrawerTemplate (props: Props): JSX.Element {
         sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
       >
         <Toolbar />
-        {props.contents}
+        {(props.isContentLoading ?? false) &&
+          <p>Loading</p>
+        }
+        {!(props.isContentLoading ?? false) &&
+          props.contents
+        }
       </Box>
     </Box >
   )

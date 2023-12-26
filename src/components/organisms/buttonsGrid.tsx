@@ -7,7 +7,7 @@ import { learnIrModalOpened } from '../../ducks/ui/leanIrModal'
 import { pushButtonRequested } from '../../ducks/buttons'
 import { type Button } from '../../type/button'
 import { AvatarTextCard } from '../monecules/avatarTextCard'
-import { SignalWifi0Bar, Wifi } from '@mui/icons-material'
+import { IconWifi, IconWifiOff } from '@tabler/icons-react'
 
 interface ButtonCardProps {
   button: Button
@@ -85,10 +85,10 @@ const ButtonCard = (props: ButtonCardProps): JSX.Element => {
             width: 30,
             height: 30,
             color: 'text.secondary',
-            backgroundColor: 'background.default'
+            backgroundColor: 'background.paper'
           }}
         >
-          {props.button.hasIrData ? <Wifi /> : <SignalWifi0Bar />}
+          {props.button.hasIrData ? <IconWifi /> : <IconWifiOff />}
         </Avatar>
       }
       onCardClicked={onClick}
@@ -111,7 +111,7 @@ export const ButtonsGrid = (): JSX.Element => {
 
   return (
     <Box>
-      <Grid container spacing={2} columns={{ xs: 2, md: 3, xl: 4 }}>
+      <Grid container spacing={2} columns={{ xs: 2, md: 3, lg: 5, xl: 5 }}>
         {cards}
       </Grid>
 

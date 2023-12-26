@@ -5,10 +5,12 @@ export enum RemoteType {
   Thermostat = 'thermostat',
 }
 
+export type RemoteId = string
+export type RemoteName = string
+
 export interface Remote {
   name: string
   id: string
   deviceId: string
   tag: string
-  buttonIds: string[]
 }

@@ -1,9 +1,9 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
-import { type Device } from '../../type/device.type'
+import { type DeviceId, type Device } from '../../type/device.type'
 
 interface DevicesState {
-  ids: string[]
-  byId: Record<string, Device>
+  ids: DeviceId[]
+  byId: Record<DeviceId, Device>
 }
 
 const initialState: DevicesState = {

@@ -2,8 +2,8 @@
 import { RemoteType } from '../../type/remote'
 
 // components
-import { IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, SpeedDial } from '@mui/material'
-import { Add, ModeEditOutlineOutlined, ThermostatOutlined, ToggleOffOutlined, TouchAppOutlined } from '@mui/icons-material'
+import { IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, SpeedDial, Typography } from '@mui/material'
+import { Add } from '@mui/icons-material'
 
 // hooks
 import { useDispatch, useSelector } from 'react-redux'
@@ -12,18 +12,29 @@ import { useDispatch, useSelector } from 'react-redux'
 import { clearDeleteRemoteStatus, clearPatchRemoteStatus, clearPostRemoteStatus, remoteSelected, remotesSelector, selectedRemoteSelector } from '../../ducks/remotes'
 import { addRemoteModalOpened, drawerClosed, editRemoteModalOpened } from '../../ducks/ui'
 import { useEffect } from 'react'
+import { IconAirConditioningDisabled, IconCircuitPushbutton, IconEdit, IconToggleLeft } from '@tabler/icons-react'
 
 const RemoteIcon = (props: { remoteType: RemoteType }): JSX.Element => {
+  let icon: JSX.Element
   switch (props.remoteType) {
     case RemoteType.Button:
-      return (<TouchAppOutlined sx={{ fontWeight: 3, color: 'text.secondary' }} />)
+      icon = <IconCircuitPushbutton />
+      break
     case RemoteType.Toggle:
-      return (<ToggleOffOutlined sx={{ color: 'text.secondary' }} />)
+      icon = <IconToggleLeft />
+      break
     case RemoteType.Thermostat:
-      return (<ThermostatOutlined sx={{ color: 'text.secondary' }} />)
+      icon = <IconAirConditioningDisabled />
+      break
     default:
-      return (<></>)
+      icon = <></>
+      break
   }
+  return (
+    <Typography color='text.secondary'>
+      {icon}
+    </Typography>
+  )
 }
 
 export const RemotesList = (): JSX.Element => {
@@ -72,8 +83,11 @@ export const RemotesList = (): JSX.Element => {
                 onClick={() => {
                   onEdit(remote.id)
                 }}
-                edge="end">
-                <ModeEditOutlineOutlined />
+                edge="end"
+              >
+                <Typography color='text.secondary'>
+                  <IconEdit size='1.2em' />
+                </Typography>
               </IconButton>
             }
           >

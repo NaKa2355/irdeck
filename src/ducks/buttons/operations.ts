@@ -1,8 +1,8 @@
 import { type AppStartListening } from '../../app'
-import { remoteButtonsFetched } from '../remotes/domainSlice'
 import { buttonsFetched, irDataLearned } from './domainSlice'
 import { fetchButtonsFailure, fetchButtonsRequested, fetchButtonsSuccess } from './fetchStateSlice'
 import { learnIrDataFailure, learnIrDataRequested, learnIrDataSuccess, pushButtonFailure, pushButtonRequested, pushButtonSuccess } from './requestStateSlice'
+import { fetchButtonsStatusSelector } from './selector'
 
 const addFetchButtonsListener = (startListening: AppStartListening): void => {
   startListening({
@@ -12,6 +12,16 @@ const addFetchButtonsListener = (startListening: AppStartListening): void => {
       if (remoteId === null) {
         return
       }
+      const status = fetchButtonsStatusSelector(remoteId)(listenerApi.getState())
+
+      if (status !== undefined) {
+        const now = Date.now()
+        // 前回のfetchから3分以内であればfetchしない
+        if (status.isCached && (now - (status.lastUpdatedAt ?? 0) < 3 * 60000)) {
+          return
+        }
+      }
+
       const result = await listenerApi.extra.api.fetchButtons({ remoteId })
       if (result.isError) {
         listenerApi.dispatch(fetchButtonsFailure({
@@ -20,13 +30,11 @@ const addFetchButtonsListener = (startListening: AppStartListening): void => {
         }))
         return
       }
-      listenerApi.dispatch(fetchButtonsSuccess({ remoteId }))
-      listenerApi.dispatch(remoteButtonsFetched({
-        remoteId,
-        buttonIds: result.data.map((buttons) => buttons.id)
-      }))
+      const now = Date.now()
+      listenerApi.dispatch(fetchButtonsSuccess({ remoteId, updatedAt: now }))
       listenerApi.dispatch(buttonsFetched({
-        buttons: result.data
+        buttons: result.data,
+        remoteId
       }))
     }
   })

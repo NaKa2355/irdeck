@@ -9,9 +9,6 @@ export const customTheme = (palette: Palette): Theme => {
       MuiDialogTitle: {
         styleOverrides: {
           root: {
-            borderBottom: 'solid',
-            borderBottomWidth: 1,
-            borderBottomColor: palette.divider,
             backgroundColor: palette.background.default
           }
         }
@@ -46,14 +43,6 @@ export const customTheme = (palette: Palette): Theme => {
       MuiButtonBase: {
         defaultProps: {
           disableRipple: true
-        }
-      },
-
-      MuiListItem: {
-        styleOverrides: {
-          selected: {
-            background: 'red'
-          }
         }
       },
 
@@ -97,6 +86,14 @@ export const customTheme = (palette: Palette): Theme => {
         styleOverrides: {
           root: {
             borderWidth: 0
+          }
+        }
+      },
+
+      MuiListItemIcon: {
+        styleOverrides: {
+          root: {
+            minWidth: 0
           }
         }
       },

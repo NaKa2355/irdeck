@@ -17,11 +17,10 @@ const addFetchRemoteListener = (startListening: AppStartListening): void => {
         }))
         return
       }
+      const remotes = result.data
       listenerApi.dispatch(fetchRemoteSuccess())
-      listenerApi.dispatch(remotesFetched({
-        remotes: result.data
-      }))
-      if (selectedRemote === null) {
+      listenerApi.dispatch(remotesFetched({ remotes }))
+      if (selectedRemote === null || !remotes.some(remotes => remotes.id === (selectedRemote.id ?? ''))) {
         listenerApi.dispatch(remoteSelected({
           remoteId: result.data.at(0)?.id ?? null
         }))

@@ -1,5 +1,5 @@
 // templates
-import DrawerTemplate from '../templates/drawerTemplate'
+import { DrawerTemplate } from '../templates/drawerTemplate'
 
 // organisms
 import { RemotesList } from '../organisms/remotesList'
@@ -8,19 +8,17 @@ import { AddRemoteModal } from '../organisms/addRemoteModal'
 import { EditRemoteModal } from '../organisms/editRemoteModal'
 
 // hooks
-import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 // redux
-import { selectedRemoteSelector } from '../../ducks/remotes'
+import { fetchRemoteStatusSelector, selectedRemoteSelector } from '../../ducks/remotes'
 
 import { drawerClosed, drawerOpened, snackBarHidden, snackbarSelector } from '../../ducks/ui'
 import { Alert, Snackbar } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import { ReceiveIrModal } from '../organisms/receiveIrModal'
 import { drawerSelector } from '../../ducks/ui/selector'
-import { fetchRemoteRequested } from '../../ducks/remotes/fetchStateSlice'
-import { fetchDevicesRequested } from '../../ducks/devices'
+import { fetchButtonsStatusSelector } from '../../ducks/buttons/selector'
 
 export const DrawerPage = (): JSX.Element => {
   const dispatch = useDispatch()
@@ -28,10 +26,11 @@ export const DrawerPage = (): JSX.Element => {
   const snackbar = useSelector(snackbarSelector)
   const { t } = useTranslation()
   const isDrawerOpen = useSelector(drawerSelector)
-  useEffect(() => {
-    void dispatch(fetchDevicesRequested())
-    void dispatch(fetchRemoteRequested())
-  }, [])
+  const fetchRemotesStatus = useSelector(fetchRemoteStatusSelector)
+  const fetchButtonsStatus = useSelector(fetchButtonsStatusSelector(selectedRemote?.id ?? ''))
+  const isRemoteLoading = fetchRemotesStatus.isFetching && !fetchRemotesStatus.isCached
+  const isButtonLoading = (fetchButtonsStatus?.isFetching ?? true) && (!(fetchButtonsStatus?.isCached ?? false))
+  const isContentLoading = isRemoteLoading && isButtonLoading
 
   const onSnackbarClose = (): void => {
     dispatch(snackBarHidden())
@@ -48,6 +47,8 @@ export const DrawerPage = (): JSX.Element => {
   return (
     <div>
       <DrawerTemplate
+        isContentLoading={isContentLoading}
+        isDrawerLoading={isRemoteLoading}
         title={selectedRemote?.name}
         isDrawerOpen={isDrawerOpen}
         drawer={

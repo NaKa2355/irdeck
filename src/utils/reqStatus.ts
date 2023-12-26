@@ -8,4 +8,5 @@ export interface FetchStatus<E> {
   isFetchFailed: boolean
   isCached: boolean
   fetchError: E | undefined
+  lastUpdatedAt?: number
 }

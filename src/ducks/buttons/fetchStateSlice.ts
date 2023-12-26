@@ -38,8 +38,8 @@ const fetchStateSlice = createSlice({
       status.fetchError = error
       status.isFetching = false
     },
-    fetchButtonsSuccess: (state, action: PayloadAction<{ remoteId: string }>) => {
-      const { remoteId } = action.payload
+    fetchButtonsSuccess: (state, action: PayloadAction<{ remoteId: string, updatedAt: number }>) => {
+      const { remoteId, updatedAt } = action.payload
       const status = state.fetchStatus[remoteId]
       if (status === undefined) {
         return
@@ -47,6 +47,7 @@ const fetchStateSlice = createSlice({
       status.isFetchFailed = true
       status.isCached = true
       status.isFetching = false
+      status.lastUpdatedAt = updatedAt
     }
   }
 })
