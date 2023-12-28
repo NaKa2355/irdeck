@@ -1,5 +1,5 @@
 // types
-import { type ReactNode, type FormEventHandler } from 'react'
+import React, { type FormEventHandler } from 'react'
 
 // components
 import { Alert, Box, Dialog, DialogContent, DialogTitle, FormControl, FormHelperText, FormLabel, MenuItem, Select, Stack, TextField } from '@mui/material'
@@ -23,7 +23,7 @@ interface FormData {
   deviceId: string
 }
 
-const EditRemoteForm = (): ReactNode => {
+const EditRemoteForm: React.FC = () => {
   const { t } = useTranslation()
   const dispatch = useDispatch()
   const { editingRemote } = useSelector(editRemoteModalStateSelector)
@@ -132,7 +132,7 @@ const EditRemoteForm = (): ReactNode => {
   )
 }
 
-export const EditRemoteModal = (): JSX.Element => {
+export const EditRemoteModal: React.FC = () => {
   const { t } = useTranslation()
   const { isOpen } = useSelector(editRemoteModalStateSelector)
   const dispatch = useDispatch()

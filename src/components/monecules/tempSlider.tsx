@@ -1,6 +1,5 @@
 import { Box, Grid, Slider, Typography } from '@mui/material'
-import { useState } from 'react'
-import { type ReactNode } from 'react'
+import React, { useState } from 'react'
 
 interface TempSliderProps {
   name?: string
@@ -9,7 +8,7 @@ interface TempSliderProps {
   onChangeCommitted?: (value: [number, number]) => void
 }
 
-export function TempSlider (props: TempSliderProps): ReactNode {
+export const TempSlider: React.FC<TempSliderProps> = (props) => {
   const [tempRange, setTemp] = useState<number[]>(props.tempRange)
 
   return (

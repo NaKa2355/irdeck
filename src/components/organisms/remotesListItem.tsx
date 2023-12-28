@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react'
+import React, { type ReactNode } from 'react'
 
 // types
 import { type Remote, type RemoteId, RemoteType } from '../../type/remote'
@@ -14,7 +14,7 @@ import { clearDeleteRemoteStatus, clearPatchRemoteStatus, remoteSelected } from 
 import { drawerClosed, editRemoteModalOpened } from '../../ducks/ui'
 import { IconAirConditioningDisabled, IconCircuitPushbutton, IconEdit, IconToggleLeft } from '@tabler/icons-react'
 
-const RemoteIcon = (props: { remoteType: RemoteType }): ReactNode => {
+const RemoteIcon: React.FC<{ remoteType: RemoteType }> = (props) => {
   let icon: ReactNode
   switch (props.remoteType) {
     case RemoteType.Button:
@@ -43,7 +43,7 @@ interface RemotesListItemProps {
   key: string
 }
 
-export const RemotesListItem = (props: RemotesListItemProps): ReactNode => {
+export const RemotesListItem: React.FC<RemotesListItemProps> = (props) => {
   const dispatch = useDispatch()
 
   const onEdit = (remoteId: string): void => {

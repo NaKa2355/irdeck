@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react'
+import React, { type ReactNode } from 'react'
 import { type Theme } from '@emotion/react'
 import { BottomNavigation, BottomNavigationAction, Box, Drawer, List, ListItem, ListItemButton, Toolbar, type SxProps, Tooltip, Typography } from '@mui/material'
 
@@ -33,7 +33,7 @@ interface NavigatorTemplateProps {
   children?: ReactNode
 }
 
-export const NavigatorTemplate = (props: NavigatorTemplateProps): ReactNode => {
+export const NavigatorTemplate: React.FC<NavigatorTemplateProps> = (props) => {
   const navItems = props.items?.map((item) => {
     return (
       <BottomNavigationAction key={item.value} value={item.value} label={item.label} icon={item.icon} />

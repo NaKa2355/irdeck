@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react'
+import React, { type ReactNode } from 'react'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
 import CssBaseline from '@mui/material/CssBaseline'
@@ -34,7 +34,7 @@ interface Props {
   window?: () => Window
 }
 
-export const LearnRemotesTemplate = (props: Props): ReactNode => {
+export const LearnRemotesTemplate: React.FC<Props> = (props) => {
   const { window } = props
   const drawer = (
     <div>

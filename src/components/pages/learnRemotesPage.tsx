@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react'
+import React from 'react'
 
 // templates
 import { LearnRemotesTemplate } from '../templates/learnRemotesTemplate'
@@ -17,7 +17,7 @@ import { drawerSelector } from '../../ducks/ui/selector'
 import { buttonsSelector, fetchButtonsStatusSelector } from '../../ducks/buttons/selector'
 import { ButtonsGrid } from '../organisms/buttonsGrid'
 
-export const LearnRemotesPage = (): ReactNode => {
+export const LearnRemotesPage: React.FC = () => {
   const dispatch = useDispatch()
   const selectedRemote = useSelector(selectedRemoteSelector)
   const { t } = useTranslation()

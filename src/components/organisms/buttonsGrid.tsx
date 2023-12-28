@@ -1,6 +1,6 @@
 import { Avatar, Grid, Menu, MenuItem } from '@mui/material'
 import { useTranslation } from 'react-i18next'
-import { type ReactNode, useState, useMemo } from 'react'
+import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { pushButtonStateSelector } from '../../ducks/buttons/selector'
 import { learnIrModalOpened } from '../../ducks/ui/leanIrModal'
@@ -13,7 +13,7 @@ interface ButtonCardProps {
   button: Button
 }
 
-const ButtonCard = (props: ButtonCardProps): ReactNode => {
+const ButtonCard: React.FC<ButtonCardProps> = (props) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const menuOpend = Boolean(anchorEl)
   const dispatch = useDispatch()
@@ -101,12 +101,14 @@ interface ButtonsGridProps {
   buttons?: Button[]
 }
 
-export const ButtonsGrid = (props: ButtonsGridProps): ReactNode => {
-  const cards = useMemo(() => props.buttons?.map((button) => {
+export const ButtonsGrid: React.FC<ButtonsGridProps> = (props) => {
+  const cards = props.buttons?.map((button) => {
     return (
-      <ButtonCard key={button.id} button={button} />
+      <Grid item xs={1} key={button.id} >
+        <ButtonCard button={button} />
+      </Grid>
     )
-  }), [props.buttons])
+  })
 
   return (
     <Grid container spacing={2} columns={{ xs: 2, sm: 3, md: 2, lg: 5, xl: 5 }}>

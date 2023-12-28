@@ -2,8 +2,9 @@ import { Alert, Snackbar } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import { snackBarHidden, snackbarSelector } from '../../ducks/ui'
 import { useTranslation } from 'react-i18next'
+import React from 'react'
 
-export const AppSnackbar = (): JSX.Element => {
+export const AppSnackbar: React.FC = () => {
   const { t } = useTranslation()
   const snackbar = useSelector(snackbarSelector)
   const dispatch = useDispatch()

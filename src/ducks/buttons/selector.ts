@@ -8,7 +8,7 @@ import { type RemoteId } from '../../type/remote'
 const selectSelf = (state: RootStore): RootStore => state
 
 export const buttonsSelector = (remoteId: RemoteId | undefined): (state: RootStore) => Button[] | undefined => {
-  return (state) => {
+  return createSelector(selectSelf, (state) => {
     if (remoteId === undefined) {
       return undefined
     }
@@ -21,7 +21,7 @@ export const buttonsSelector = (remoteId: RemoteId | undefined): (state: RootSto
       buttons[i] = state.buttons.domain.byId[buttonIds[i]]
     }
     return buttons
-  }
+  })
 }
 
 export const fetchButtonsStatusSelector = (remoteId: RemoteId): (state: RootStore) => FetchStatus<ApiError> | undefined => {

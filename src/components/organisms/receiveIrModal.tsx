@@ -9,7 +9,7 @@ import { devicesCanReceiveSelector, receiveIrRequested, sendIrDataRequested } fr
 import { receiveIrDataStatusSelector, receivedIrDataSelector, sendIrDataStatusSelector } from '../../ducks/devices/selector'
 
 // hooks
-import { type ReactNode, useState } from 'react'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -25,7 +25,7 @@ interface ReceiveIrErrorViewProps {
   onRetry: () => void
 }
 
-const ReceiveIrErrorView = (props: ReceiveIrErrorViewProps): ReactNode => {
+const ReceiveIrErrorView: React.FC<ReceiveIrErrorViewProps> = (props) => {
   const { t } = useTranslation()
 
   return (
@@ -49,7 +49,7 @@ interface ReceivingIrViewProps {
   onCancel: () => void
 }
 
-const ReceivingIrView = (props: ReceivingIrViewProps): ReactNode => {
+const ReceivingIrView: React.FC<ReceivingIrViewProps> = (props) => {
   const { t } = useTranslation()
   return (
     <Stack spacing={2}>
@@ -77,7 +77,7 @@ interface ReceiveIRSuccessfulViewProps {
   isSending?: boolean
 }
 
-const ReceiveIRSuccessfulView = (props: ReceiveIRSuccessfulViewProps): ReactNode => {
+const ReceiveIRSuccessfulView: React.FC<ReceiveIRSuccessfulViewProps> = (props) => {
   const { t } = useTranslation()
 
   return (
@@ -121,7 +121,7 @@ interface ReceiveIrTimeOutViewProps {
   onRetry: () => void
 }
 
-const ReceiveIrTimeOutView = (props: ReceiveIrTimeOutViewProps): ReactNode => {
+const ReceiveIrTimeOutView: React.FC<ReceiveIrTimeOutViewProps> = (props) => {
   const { t } = useTranslation()
 
   return (
@@ -153,7 +153,7 @@ interface ReceiveIrViewProps {
   onDeviceComitted: (deviceId: string) => void
 }
 
-const SelectDeviceView = (props: ReceiveIrViewProps): ReactNode => {
+const SelectDeviceView: React.FC<ReceiveIrViewProps> = (props) => {
   const { t } = useTranslation()
   const initialDeviceId = props.devicesCanReceive.at(0)?.id ?? ''
   const [selectedDevice, selectDevice] = useState(initialDeviceId)
@@ -223,7 +223,7 @@ const computeStatus = (deviceId: string | null, status: RequestStatus<ApiError> 
   return 'standby'
 }
 
-export const ReceiveIrView = (): ReactNode => {
+export const ReceiveIrView: React.FC = () => {
   const [deviceId, setDeviceId] = useState<string | null>(null)
   const dispatch = useDispatch()
   const receivedIrData = useSelector(receivedIrDataSelector(deviceId ?? ''))
@@ -305,7 +305,7 @@ export const ReceiveIrView = (): ReactNode => {
   )
 }
 
-export const ReceiveIrModal = (): ReactNode => {
+export const ReceiveIrModal: React.FC = () => {
   const { t } = useTranslation()
   const modalState = useSelector(learnIrModalStateSelector)
   const dispatch = useDispatch()

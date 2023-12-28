@@ -1,9 +1,8 @@
 import { Box, Card, CardActionArea, CardContent, CardHeader, CircularProgress, Grid, IconButton, Typography } from '@mui/material'
 import { IconDots } from '@tabler/icons-react'
 import React from 'react'
-import { type ReactNode } from 'react'
 
-const LoadingLayer = (props: { loading?: boolean }): ReactNode => {
+const LoadingLayer: React.FC<{ loading?: boolean }> = (props) => {
   return (
     <Box sx={{
       position: 'absolute',
@@ -45,7 +44,7 @@ interface AvatarTextCardProps {
   onCardClicked?: () => void
 }
 
-export const AvatarTextCard = (props: AvatarTextCardProps): JSX.Element => {
+export const AvatarTextCard: React.FC<AvatarTextCardProps> = (props) => {
   return (
     <Box>
       <Card variant="outlined" sx={{ position: 'relative' }}>

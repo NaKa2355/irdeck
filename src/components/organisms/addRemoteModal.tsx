@@ -1,6 +1,6 @@
 // types
 import { RemoteType } from '../../type/remote'
-import { type ReactNode, type FormEventHandler } from 'react'
+import React, { type ReactNode, type FormEventHandler } from 'react'
 
 // conmponents
 import { FormControl, FormLabel, Stack, Select, MenuItem, Grid, Alert, TextField, FormHelperText, Dialog, DialogTitle, DialogContent, Box } from '@mui/material'
@@ -41,7 +41,7 @@ const initialFormData: FormData = {
   heatTempRange: [0, 25]
 }
 
-const AddRemoteForm = (): ReactNode => {
+const AddRemoteForm: React.FC = () => {
   const { t } = useTranslation()
   const dispatch = useDispatch()
   const postStatus = useSelector(postRemoteStatusSelector)
@@ -188,7 +188,7 @@ const AddRemoteForm = (): ReactNode => {
   )
 }
 
-export const AddRemoteModal = (): ReactNode => {
+export const AddRemoteModal: React.FC = () => {
   const isOpen = useSelector(addRemoteModalStateSelector)
   const dispatch = useDispatch()
   const { t } = useTranslation()
