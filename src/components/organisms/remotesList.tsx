@@ -73,8 +73,7 @@ export const RemotesList = (): JSX.Element => {
         {remotes.map((remote) => (
           <ListItem
             sx={{
-              padding: '5px',
-              paddingLeft: 0
+              padding: '5px'
             }}
             key={remote.id}
             disablePadding

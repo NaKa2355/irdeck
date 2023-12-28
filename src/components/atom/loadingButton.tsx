@@ -1,16 +1,15 @@
-import { Button, CircularProgress, type ButtonProps as MuiButtonProps } from '@mui/material'
+import { Box, Button, CircularProgress, type ButtonProps as MuiButtonProps } from '@mui/material'
 
-type LoadingButtonProps = MuiButtonProps & {
+interface LoadingButtonProps extends MuiButtonProps {
   loading?: boolean
-  children: string
 }
 
 export const LoadingButton = (props: LoadingButtonProps): JSX.Element => {
   return (
-    <Button {...props} disabled={props.loading}>
-      <div style={{ position: 'relative', width: 'fit-content' }}>
-        {(Boolean((props.loading ?? false))) &&
-          <div style={{
+    <Button {...props as MuiButtonProps} disabled={props.loading}>
+      <Box sx={{ position: 'relative', width: 'fit-content' }}>
+        {(props.loading ?? false) &&
+          <Box sx={{
             position: 'absolute',
             height: '100%',
             width: '100%',
@@ -19,10 +18,10 @@ export const LoadingButton = (props: LoadingButtonProps): JSX.Element => {
             alignItems: 'center'
           }}>
             <CircularProgress size='1em' />
-          </div>
+          </Box>
         }
         {props.children}
-      </div>
+      </Box>
     </Button>
   )
 }

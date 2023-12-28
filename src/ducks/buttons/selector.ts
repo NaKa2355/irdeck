@@ -3,19 +3,26 @@ import { type RootStore } from '../../app/store'
 import { type ApiError } from '../../interfaces/api'
 import { type ButtonId, type Button } from '../../type/button'
 import { type FetchStatus, type RequestStatus } from '../../utils/reqStatus'
-import { selectedRemoteSelector } from '../remotes/selector'
 import { type RemoteId } from '../../type/remote'
 
 const selectSelf = (state: RootStore): RootStore => state
 
-export const buttonsSelector = createSelector(selectSelf, (state): (Button[] | undefined) => {
-  const selectedRemote = selectedRemoteSelector(state)?.id
-  if (selectedRemote === undefined) {
-    return undefined
+export const buttonsSelector = (remoteId: RemoteId | undefined): (state: RootStore) => Button[] | undefined => {
+  return (state) => {
+    if (remoteId === undefined) {
+      return undefined
+    }
+    const buttonIds = state.buttons.domain.ids[remoteId]
+    if (buttonIds === undefined) {
+      return undefined
+    }
+    const buttons = new Array<Button>(buttonIds.length)
+    for (let i = 0; i < buttonIds.length; i++) {
+      buttons[i] = state.buttons.domain.byId[buttonIds[i]]
+    }
+    return buttons
   }
-  const buttonIds = state.buttons.domain.ids[selectedRemote]
-  return buttonIds?.map((id) => state.buttons.domain.byId[id])
-})
+}
 
 export const fetchButtonsStatusSelector = (remoteId: RemoteId): (state: RootStore) => FetchStatus<ApiError> | undefined => {
   return createSelector(selectSelf, (state) => {

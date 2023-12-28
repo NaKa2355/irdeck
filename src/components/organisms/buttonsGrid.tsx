@@ -8,6 +8,7 @@ import { pushButtonRequested } from '../../ducks/buttons'
 import { type Button } from '../../type/button'
 import { AvatarTextCard } from '../monecules/avatarTextCard'
 import { IconWifi, IconWifiOff } from '@tabler/icons-react'
+import { selectedRemoteSelector } from '../../ducks/remotes'
 
 interface ButtonCardProps {
   button: Button
@@ -100,7 +101,8 @@ const ButtonCard = (props: ButtonCardProps): JSX.Element => {
 export const ButtonsGrid = (): JSX.Element => {
   const { t } = useTranslation()
   const [isDeviceCanReceiveNotFound, setIsDeviceCanReceiveNotFound] = useState(false)
-  const buttons = useSelector(buttonsSelector)
+  const selectedRemote = useSelector(selectedRemoteSelector)
+  const buttons = useSelector(buttonsSelector(selectedRemote?.id))
   const cards = buttons?.map((button) => (
     <Grid item xs={1} key={button.id}>
       <ButtonCard
@@ -111,7 +113,7 @@ export const ButtonsGrid = (): JSX.Element => {
 
   return (
     <Box>
-      <Grid container spacing={2} columns={{ xs: 2, md: 3, lg: 5, xl: 5 }}>
+      <Grid container spacing={2} columns={{ xs: 2, sm: 3, md: 2, lg: 5, xl: 5 }}>
         {cards}
       </Grid>
 

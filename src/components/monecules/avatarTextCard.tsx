@@ -2,13 +2,15 @@ import { Box, Card, CardActionArea, CardContent, CardHeader, CircularProgress, G
 import { IconDots } from '@tabler/icons-react'
 import React from 'react'
 
-const LoadingLayer = (): JSX.Element => {
+const LoadingLayer = (props: { loading?: boolean }): JSX.Element => {
   return (
     <Box sx={{
       position: 'absolute',
       pointerEvents: 'none',
       width: '100%',
-      height: '100%'
+      height: '100%',
+      opacity: (props.loading ?? false) ? '1' : '0',
+      transition: 'all 0.3s ease-in-out'
     }}>
       <Box sx={{
         position: 'absolute',
@@ -46,14 +48,13 @@ export const AvatarTextCard = (props: AvatarTextCardProps): JSX.Element => {
   return (
     <Box>
       <Card variant="outlined" sx={{ position: 'relative' }}>
-        {(props.isLoading ?? false) &&
-          <LoadingLayer />
-        }
+        <LoadingLayer loading={props.isLoading} />
         <CardHeader
           avatar={props.avatar}
 
           action={
             <IconButton
+              disabled={props.isLoading}
               onMouseDown={(event) => {
                 event.stopPropagation()
               }}

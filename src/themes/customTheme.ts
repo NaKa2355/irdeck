@@ -101,8 +101,7 @@ export const customTheme = (palette: Palette): Theme => {
       MuiListItemButton: {
         styleOverrides: {
           root: {
-            borderBottomRightRadius: 20,
-            borderTopRightRadius: 20
+            borderRadius: 20
           }
         }
       },

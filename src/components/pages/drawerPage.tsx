@@ -19,6 +19,8 @@ import { useTranslation } from 'react-i18next'
 import { ReceiveIrModal } from '../organisms/receiveIrModal'
 import { drawerSelector } from '../../ducks/ui/selector'
 import { fetchButtonsStatusSelector } from '../../ducks/buttons/selector'
+import { IconDeviceRemote, IconHome } from '@tabler/icons-react'
+import { NavigatorTemplate } from '../templates/navigatorTemplate'
 
 export const DrawerPage = (): JSX.Element => {
   const dispatch = useDispatch()
@@ -46,27 +48,44 @@ export const DrawerPage = (): JSX.Element => {
 
   return (
     <div>
-      <DrawerTemplate
-        isContentLoading={isContentLoading}
-        isDrawerLoading={isRemoteLoading}
-        title={selectedRemote?.name}
-        isDrawerOpen={isDrawerOpen}
-        drawer={
-          <RemotesList />
-        }
-        onIconClick={onIconClick}
-        onDrawerClose={onDrawerClose}
-        contents={
-          <div>
-            {selectedRemote !== null &&
-              <ButtonsGrid />
-            }
-            {selectedRemote === null &&
-              <p>no remotes</p>
-            }
-          </div>
-        }
-      />
+      <NavigatorTemplate
+        value='remote'
+        items={[
+          {
+            value: 'home',
+            label: 'Home',
+            icon: <IconHome />
+          },
+          {
+            value: 'remote',
+            label: 'Remote',
+            icon: <IconDeviceRemote />
+          }
+        ]}
+      >
+        <DrawerTemplate
+          isContentLoading={isContentLoading}
+          isDrawerLoading={isRemoteLoading}
+          title={selectedRemote?.name}
+          drawerTitle={t('header.remotes')}
+          isDrawerOpen={isDrawerOpen}
+          drawer={
+            <RemotesList />
+          }
+          onIconClick={onIconClick}
+          onDrawerClose={onDrawerClose}
+          contents={
+            <div>
+              {selectedRemote !== null &&
+                <ButtonsGrid />
+              }
+              {selectedRemote === null &&
+                <p>no remotes</p>
+              }
+            </div>
+          }
+        />
+      </NavigatorTemplate>
 
       <AddRemoteModal />
       <EditRemoteModal />

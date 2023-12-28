@@ -65,6 +65,7 @@ const AddRemoteForm = (): JSX.Element => {
     }
   })
   const isUnknownError = postStatus.error?.code === 'unknown'
+  const isPosting = postStatus.status === 'pending'
 
   const onSubmit: FormEventHandler = (e): void => {
     e.preventDefault()
@@ -175,7 +176,7 @@ const AddRemoteForm = (): JSX.Element => {
             <LoadingButton
               variant="contained"
               type="submit"
-              loading={postStatus.status === 'pending'}
+              loading={isPosting}
               onClick={onSubmit}
             >
               {t('button.add')}
