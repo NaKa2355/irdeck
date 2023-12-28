@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react'
 import { type Theme } from '@emotion/react'
 import { BottomNavigation, BottomNavigationAction, Box, Drawer, List, ListItem, ListItemButton, Toolbar, type SxProps, Tooltip, Typography } from '@mui/material'
 
@@ -22,17 +23,17 @@ const drawerStyle: SxProps<Theme> = {
 interface NavigationItems {
   label: string
   value: string
-  icon: JSX.Element
+  icon: ReactNode
 }
 
 interface NavigatorTemplateProps {
   items?: NavigationItems[]
   value?: string
   onChange?: (e: any, value: string) => void
-  children?: JSX.Element
+  children?: ReactNode
 }
 
-export const NavigatorTemplate = (props: NavigatorTemplateProps): JSX.Element => {
+export const NavigatorTemplate = (props: NavigatorTemplateProps): ReactNode => {
   const navItems = props.items?.map((item) => {
     return (
       <BottomNavigationAction key={item.value} value={item.value} label={item.label} icon={item.icon} />

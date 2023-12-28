@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
 import CssBaseline from '@mui/material/CssBaseline'
@@ -6,21 +7,21 @@ import IconButton from '@mui/material/IconButton'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import { Add, ArrowBackIos } from '@mui/icons-material'
-import { Grid, List, SpeedDial } from '@mui/material'
+import { List, SpeedDial } from '@mui/material'
 
 const drawerWidth = '240px'
 
 interface NavigationItems {
   label: string
   value: string
-  icon: JSX.Element
+  icon: ReactNode
 }
 
 interface Props {
   title?: string
   drawerTitle?: string
-  buttonsCards?: JSX.Element[]
-  remotesListItems?: JSX.Element[]
+  buttonsCards?: ReactNode
+  remotesListItems?: ReactNode[]
   isDrawerOpen?: boolean
   isDrawerLoading?: boolean
   isContentLoading?: boolean
@@ -33,7 +34,7 @@ interface Props {
   window?: () => Window
 }
 
-export const LearnRemotesTemplate = (props: Props): JSX.Element => {
+export const LearnRemotesTemplate = (props: Props): ReactNode => {
   const { window } = props
   const drawer = (
     <div>
@@ -122,9 +123,7 @@ export const LearnRemotesTemplate = (props: Props): JSX.Element => {
         sx={{ flexGrow: 1, p: 3, width: { md: `calc(100% - ${drawerWidth}px)` } }}
       >
         <Toolbar />
-        <Grid container spacing={2} columns={{ xs: 2, sm: 3, md: 2, lg: 5, xl: 5 }}>
-          {props.buttonsCards}
-        </Grid>
+        {props.buttonsCards}
       </Box>
     </Box>
   )

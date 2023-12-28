@@ -1,9 +1,10 @@
+import { type ReactNode } from 'react'
+
 // templates
 import { LearnRemotesTemplate } from '../templates/learnRemotesTemplate'
 
 // organisms
 import { RemotesListItem } from '../organisms/remotesListItem'
-import { ButtonCard } from '../organisms/buttonsCard'
 
 // hooks
 import { useDispatch, useSelector } from 'react-redux'
@@ -12,11 +13,11 @@ import { useTranslation } from 'react-i18next'
 // redux
 import { clearPostRemoteStatus, fetchRemoteStatusSelector, remotesSelector, selectedRemoteSelector } from '../../ducks/remotes'
 import { addRemoteModalOpened, drawerClosed, drawerOpened } from '../../ducks/ui'
-import { Grid } from '@mui/material'
 import { drawerSelector } from '../../ducks/ui/selector'
 import { buttonsSelector, fetchButtonsStatusSelector } from '../../ducks/buttons/selector'
+import { ButtonsGrid } from '../organisms/buttonsGrid'
 
-export const LearnRemotesPage = (): JSX.Element => {
+export const LearnRemotesPage = (): ReactNode => {
   const dispatch = useDispatch()
   const selectedRemote = useSelector(selectedRemoteSelector)
   const { t } = useTranslation()
@@ -33,13 +34,6 @@ export const LearnRemotesPage = (): JSX.Element => {
   const remotesListItems = remotes.map(remote => {
     return (<RemotesListItem selectedRemoteId={selectedRemote?.id} key={remote.id} remote={remote} />)
   })
-  const cards = buttons?.map((button) => (
-    <Grid item xs={1} key={button.id}>
-      <ButtonCard
-        button={button}
-      />
-    </Grid>
-  ))
 
   const onAddButtonClick = (): void => {
     dispatch(clearPostRemoteStatus())
@@ -64,7 +58,9 @@ export const LearnRemotesPage = (): JSX.Element => {
       remotesListItems={remotesListItems}
       onIconClick={onIconClick}
       onDrawerClose={onDrawerClose}
-      buttonsCards={cards}
+      buttonsCards={
+        <ButtonsGrid buttons={buttons}></ButtonsGrid>
+      }
       onAddButtonClick={onAddButtonClick}
     />
   )

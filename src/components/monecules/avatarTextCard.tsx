@@ -1,8 +1,9 @@
 import { Box, Card, CardActionArea, CardContent, CardHeader, CircularProgress, Grid, IconButton, Typography } from '@mui/material'
 import { IconDots } from '@tabler/icons-react'
 import React from 'react'
+import { type ReactNode } from 'react'
 
-const LoadingLayer = (props: { loading?: boolean }): JSX.Element => {
+const LoadingLayer = (props: { loading?: boolean }): ReactNode => {
   return (
     <Box sx={{
       position: 'absolute',

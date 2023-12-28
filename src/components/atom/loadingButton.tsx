@@ -1,10 +1,11 @@
 import { Box, Button, CircularProgress, type ButtonProps as MuiButtonProps } from '@mui/material'
+import { type ReactNode } from 'react'
 
 interface LoadingButtonProps extends MuiButtonProps {
   loading?: boolean
 }
 
-export const LoadingButton = (props: LoadingButtonProps): JSX.Element => {
+export const LoadingButton = (props: LoadingButtonProps): ReactNode => {
   return (
     <Button {...props as MuiButtonProps} disabled={props.loading}>
       <Box sx={{ position: 'relative', width: 'fit-content' }}>

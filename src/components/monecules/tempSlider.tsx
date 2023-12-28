@@ -1,5 +1,6 @@
 import { Box, Grid, Slider, Typography } from '@mui/material'
 import { useState } from 'react'
+import { type ReactNode } from 'react'
 
 interface TempSliderProps {
   name?: string
@@ -8,7 +9,7 @@ interface TempSliderProps {
   onChangeCommitted?: (value: [number, number]) => void
 }
 
-export function TempSlider (props: TempSliderProps): JSX.Element {
+export function TempSlider (props: TempSliderProps): ReactNode {
   const [tempRange, setTemp] = useState<number[]>(props.tempRange)
 
   return (
