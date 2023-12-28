@@ -1,20 +1,19 @@
-import { Alert, Avatar, Box, Grid, Menu, MenuItem, Snackbar } from '@mui/material'
+import { Avatar, Menu, MenuItem } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { buttonsSelector, pushButtonStateSelector } from '../../ducks/buttons/selector'
+import { pushButtonStateSelector } from '../../ducks/buttons/selector'
 import { learnIrModalOpened } from '../../ducks/ui/leanIrModal'
 import { pushButtonRequested } from '../../ducks/buttons'
 import { type Button } from '../../type/button'
 import { AvatarTextCard } from '../monecules/avatarTextCard'
 import { IconWifi, IconWifiOff } from '@tabler/icons-react'
-import { selectedRemoteSelector } from '../../ducks/remotes'
 
 interface ButtonCardProps {
   button: Button
 }
 
-const ButtonCard = (props: ButtonCardProps): JSX.Element => {
+export const ButtonCard = (props: ButtonCardProps): JSX.Element => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const menuOpend = Boolean(anchorEl)
   const dispatch = useDispatch()
@@ -95,36 +94,5 @@ const ButtonCard = (props: ButtonCardProps): JSX.Element => {
       onCardClicked={onClick}
       onKebabMenuClicked={handleMenuClick}
     />
-  )
-}
-
-export const ButtonsGrid = (): JSX.Element => {
-  const { t } = useTranslation()
-  const [isDeviceCanReceiveNotFound, setIsDeviceCanReceiveNotFound] = useState(false)
-  const selectedRemote = useSelector(selectedRemoteSelector)
-  const buttons = useSelector(buttonsSelector(selectedRemote?.id))
-  const cards = buttons?.map((button) => (
-    <Grid item xs={1} key={button.id}>
-      <ButtonCard
-        button={button}
-      />
-    </Grid>
-  ))
-
-  return (
-    <Box>
-      <Grid container spacing={2} columns={{ xs: 2, sm: 3, md: 2, lg: 5, xl: 5 }}>
-        {cards}
-      </Grid>
-
-      <Snackbar
-        open={isDeviceCanReceiveNotFound}
-        autoHideDuration={6000}
-        security="error"
-        onClose={() => { setIsDeviceCanReceiveNotFound(false) }}
-      >
-        <Alert severity="error">{t('error.devices_can_receive_not_found')}</Alert>
-      </Snackbar>
-    </Box>
   )
 }

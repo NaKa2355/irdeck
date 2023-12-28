@@ -48,10 +48,6 @@ export class Api implements IApi {
       const heatTempRange = req.heatTempRange
       const scale = req.scale
       buttons.push({
-        buttonName: 'on',
-        tag: type
-      })
-      buttons.push({
         buttonName: 'off',
         tag: type
       })
@@ -346,8 +342,7 @@ export class Api implements IApi {
             id: remoteId,
             name: req.remoteName,
             deviceId: req.deviceId,
-            tag: req.remoteType,
-            buttonIds: []
+            tag: req.remoteType
           }
         })
       })

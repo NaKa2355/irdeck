@@ -5,7 +5,8 @@ import Drawer from '@mui/material/Drawer'
 import IconButton from '@mui/material/IconButton'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
-import { ArrowBackIos } from '@mui/icons-material'
+import { Add, ArrowBackIos } from '@mui/icons-material'
+import { Grid, List, SpeedDial } from '@mui/material'
 
 const drawerWidth = '240px'
 
@@ -18,8 +19,8 @@ interface NavigationItems {
 interface Props {
   title?: string
   drawerTitle?: string
-  contents?: JSX.Element
-  drawer?: JSX.Element
+  buttonsCards?: JSX.Element[]
+  remotesListItems?: JSX.Element[]
   isDrawerOpen?: boolean
   isDrawerLoading?: boolean
   isContentLoading?: boolean
@@ -27,11 +28,12 @@ interface Props {
   items?: NavigationItems[]
   onNavigationChange?: (e: any, value: string) => void
   onIconClick?: () => void
+  onAddButtonClick?: () => void
   onDrawerClose?: () => void
   window?: () => Window
 }
 
-export const DrawerTemplate = (props: Props): JSX.Element => {
+export const LearnRemotesTemplate = (props: Props): JSX.Element => {
   const { window } = props
   const drawer = (
     <div>
@@ -40,11 +42,19 @@ export const DrawerTemplate = (props: Props): JSX.Element => {
           {props.drawerTitle}
         </Typography>
       </Toolbar>
+      <SpeedDial
+        onClick={props.onAddButtonClick}
+        ariaLabel="add remote"
+        sx={{ position: 'absolute', bottom: 16, left: 16 }}
+        icon={<Add />}
+      />
       {(props.isDrawerLoading ?? false) &&
         <p>Loading</p>
       }
       {!(props.isDrawerLoading ?? false) &&
-        props.drawer
+        <List>
+          {props.remotesListItems}
+        </List>
       }
     </div>
   )
@@ -70,8 +80,8 @@ export const DrawerTemplate = (props: Props): JSX.Element => {
           >
             <ArrowBackIos></ArrowBackIos>
             <Typography variant='h6' noWrap component='div'>
-            {props.title}
-          </Typography>
+              {props.title}
+            </Typography>
           </IconButton>
         </Toolbar>
       </AppBar>
@@ -112,7 +122,9 @@ export const DrawerTemplate = (props: Props): JSX.Element => {
         sx={{ flexGrow: 1, p: 3, width: { md: `calc(100% - ${drawerWidth}px)` } }}
       >
         <Toolbar />
-        {props.contents}
+        <Grid container spacing={2} columns={{ xs: 2, sm: 3, md: 2, lg: 5, xl: 5 }}>
+          {props.buttonsCards}
+        </Grid>
       </Box>
     </Box>
   )

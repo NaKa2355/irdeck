@@ -43,7 +43,10 @@ export const NavigatorTemplate = (props: NavigatorTemplateProps): JSX.Element =>
     return (
       <ListItem key={item.value} value={item.value}>
         <Tooltip title={item.value}>
-          <ListItemButton selected={item.value === props.value} sx={{ justifyContent: 'center' }}>
+          <ListItemButton
+            onClick={(e) => { props.onChange?.(e, item.value) }}
+            selected={item.value === props.value}
+            sx={{ justifyContent: 'center' }}>
             <Typography color='text.secondary'>
               {item.icon}
             </Typography>
