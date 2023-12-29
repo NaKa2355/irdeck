@@ -8,12 +8,15 @@ import { AppSnackbar } from './components/organisms/appSnackbar'
 import React, { useState } from 'react'
 import { NavigatorTemplate } from './components/templates/navigatorTemplate'
 import { IconDeviceRemote, IconHome } from '@tabler/icons-react'
+import { RemoteUsagePage } from './components/pages/remoteUsagePage'
 
 const PageSwitcher: React.FC = () => {
   const [selectedTab, selectTab] = useState('home')
   return (
     <NavigatorTemplate
-      onChange={(_, value) => { selectTab(value) }}
+      onChange={(_, value) => {
+        selectTab(value)
+      }}
       value={selectedTab}
       items={[
         {
@@ -33,7 +36,7 @@ const PageSwitcher: React.FC = () => {
           <LearnRemotesPage />
         </Box>
         <Box sx={{ display: selectedTab === 'home' ? 'block' : 'none' }}>
-          <h1>Home Tab</h1>
+          <RemoteUsagePage />
         </Box>
       </>
     </NavigatorTemplate>

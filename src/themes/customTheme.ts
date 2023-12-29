@@ -40,12 +40,6 @@ export const customTheme = (palette: Palette): Theme => {
         }
       },
 
-      MuiButtonBase: {
-        defaultProps: {
-          disableRipple: true
-        }
-      },
-
       MuiButton: {
         styleOverrides: {
           disableElevation: true,

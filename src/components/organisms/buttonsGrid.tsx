@@ -115,7 +115,7 @@ const ButtonsGridById = React.memo(function ButtonsGridById (props: { remoteId: 
   })
 
   return (
-    <Grid container spacing={2} columns={{ xs: 2, sm: 3, md: 2, lg: 5, xl: 5 }}>
+    <Grid container spacing={2} columns={{ xs: 2, sm: 3, md: 2, lg: 3, xl: 4 }}>
       {cards}
     </Grid>
   )
