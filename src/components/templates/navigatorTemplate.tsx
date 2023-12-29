@@ -43,7 +43,7 @@ export const NavigatorTemplate: React.FC<NavigatorTemplateProps> = (props) => {
   const drawerItems = props.items?.map((item) => {
     return (
       <ListItem key={item.value} value={item.value}>
-        <Tooltip title={item.value}>
+        <Tooltip title={item.value} placement='right'>
           <ListItemButton
             onClick={(e) => { props.onChange?.(e, item.value) }}
             selected={item.value === props.value}

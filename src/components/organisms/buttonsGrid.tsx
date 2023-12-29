@@ -9,6 +9,8 @@ import { type Button } from '../../type/button'
 import { AvatarTextCard } from '../monecules/avatarTextCard'
 import { IconWifi, IconWifiOff } from '@tabler/icons-react'
 import { selectedRemoteIdSelector } from '../../ducks/remotes'
+import { RemoteType } from '../../type/remote'
+import { ComponentSwitcher } from '../../utils/memoComponentWithId'
 
 interface ButtonCardProps {
   button: Button
@@ -22,15 +24,17 @@ const ButtonCard: React.FC<ButtonCardProps> = (props) => {
   const isLoading = pushButtonStatus?.status === 'pending'
   const { t } = useTranslation()
 
-  const translateButtonName = (name: string): string => {
-    const tempRegex = /^(?<type>h|c)(?<temp>[0-9]+\.?[0-9]?)/
+  const translateButtonName = (name: string, tag: string): string => {
     if (name === 'push' || name === 'on' || name === 'off') {
       return t('button.' + name)
     }
-    if (tempRegex.test(name)) {
-      const result = tempRegex.exec(name)
-      const type = result?.groups?.type
-      const temp = result?.groups?.temp
+    if (tag === RemoteType.Thermostat) {
+      // get tmep type (h: heating, c: cooling)
+      const type = name.slice(0, 1)
+      if (type !== 'h' && type !== 'c') {
+        return name
+      }
+      const temp = name.slice(1)
       return t('button.' + type, { temp })
     }
     return name
@@ -77,7 +81,7 @@ const ButtonCard: React.FC<ButtonCardProps> = (props) => {
 
   return (
     <AvatarTextCard
-      title={translateButtonName(props.button.name)}
+      title={translateButtonName(props.button.name, props.button.tag)}
       isLoading={isLoading}
       menu={menu}
       avatar={
@@ -98,9 +102,10 @@ const ButtonCard: React.FC<ButtonCardProps> = (props) => {
   )
 }
 
-export const ButtonsGrid: React.FC = React.memo(function ButtonsGrid () {
-  const selectedRemote = useSelector(selectedRemoteIdSelector)
-  const buttons = useSelector(buttonsSelector(selectedRemote))
+const buttonsGridSwitcher = ComponentSwitcher()
+
+const ButtonsGridById = React.memo(function ButtonsGridById (props: { remoteId: string }) {
+  const buttons = useSelector(buttonsSelector(props.remoteId))
   const cards = buttons?.map((button: Button) => {
     return (
       <Grid item xs={1} key={button.id} >
@@ -113,5 +118,13 @@ export const ButtonsGrid: React.FC = React.memo(function ButtonsGrid () {
     <Grid container spacing={2} columns={{ xs: 2, sm: 3, md: 2, lg: 5, xl: 5 }}>
       {cards}
     </Grid>
+  )
+})
+
+export const ButtonsGrid = React.memo(function ButtonsGrid () {
+  const selectedRemote = useSelector(selectedRemoteIdSelector)
+  return buttonsGridSwitcher(
+    selectedRemote ?? '',
+    <ButtonsGridById remoteId={selectedRemote ?? ''} />
   )
 })

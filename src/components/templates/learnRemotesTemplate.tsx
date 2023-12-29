@@ -122,7 +122,10 @@ export const LearnRemotesTemplate: React.FC<Props> = (props) => {
         component='main'
         sx={{ flexGrow: 1, p: 3, width: { md: `calc(100% - ${drawerWidth}px)` } }}
       >
-        <Toolbar />
+        <Toolbar sx={{ display: { xs: 'block', md: 'none' } }}/>
+        <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+          <h2 style={{ marginBottom: '10px' }}>{props.title}</h2>
+        </Box>
         {props.buttonsCards}
       </Box>
     </Box>

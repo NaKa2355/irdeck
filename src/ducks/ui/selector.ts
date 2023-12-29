@@ -1,58 +1,53 @@
 import { createSelector } from '@reduxjs/toolkit'
 import { type RootStore } from '../../app'
-import { remoteSelector } from '../remotes'
-
-const selectSelf = (state: RootStore): RootStore => state
 
 export const addRemoteModalStateSelector = createSelector(
-  selectSelf,
-  (state) => {
-    const modalState = state.ui.addRemoteModal
+  (state: RootStore) => state.ui.addRemoteModal,
+  (modalState) => {
     return modalState.isOpen
   }
 )
 
 export const editRemoteModalStateSelector = createSelector(
-  selectSelf,
-  (state) => {
-    const { isOpen, editingRemote } = state.ui.editRemoteModal
+  (state: RootStore) => state.ui.editRemoteModal,
+  (state: RootStore) => state.remotes.domain.byId,
+  (modalState, remotes) => {
+    const { isOpen, editingRemote } = modalState
     return {
       isOpen,
-      editingRemote: remoteSelector(editingRemote)(state)
+      editingRemote: remotes[editingRemote]
     }
   }
 )
 
 export const learnIrModalStateSelector = createSelector(
-  selectSelf,
-  (state) => {
-    const buttonId = state.ui.leanIrModal.buttonId
-    const remoteId = state.ui.leanIrModal.remoteId
+  (state: RootStore) => state.ui.leanIrModal,
+  (state: RootStore) => state.buttons.domain.byId,
+  (state: RootStore) => state.remotes.domain.byId,
+  (modalState, buttons, remotes) => {
+    const buttonId = modalState.buttonId
+    const remoteId = modalState.remoteId
     if (buttonId === null || remoteId === null) {
       return {
-        isOpen: state.ui.leanIrModal.isOpen,
+        isOpen: modalState.isOpen,
         button: null,
         remote: null
       }
     }
     return {
-      isOpen: state.ui.leanIrModal.isOpen,
-      button: state.buttons.domain.byId[buttonId],
-      remote: state.remotes.domain.byId[remoteId]
+      isOpen: modalState.isOpen,
+      button: buttons[buttonId],
+      remote: remotes[remoteId]
     }
   }
 )
 
 export const snackbarSelector = createSelector(
-  selectSelf,
-  (state) => {
-    return state.ui.snackBar.snackBar
-  }
+  (state: RootStore) => state.ui.snackBar.snackBar,
+  (snackbarState) => snackbarState
 )
 
 export const drawerSelector = createSelector(
-  selectSelf,
-  (state) => {
-    return state.ui.drawer.isOpen
-  }
+  (state: RootStore) => state.ui.drawer,
+  (drawerState) => drawerState.isOpen
 )

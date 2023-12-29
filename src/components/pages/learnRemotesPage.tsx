@@ -15,7 +15,7 @@ import { RemotesList } from '../organisms/remoteList'
 import { ButtonsGrid } from '../organisms/buttonsGrid'
 import { remoteSelector, selectedRemoteIdSelector } from '../../ducks/remotes/selector'
 
-export const LearnRemotesPage: React.FC = () => {
+export const LearnRemotesPage: React.FC = React.memo(function LearnRemotesPage () {
   const dispatch = useDispatch()
   const selectedRemoteId = useSelector(selectedRemoteIdSelector)
   const selectedRemote = useSelector(remoteSelector(selectedRemoteId))
@@ -52,4 +52,4 @@ export const LearnRemotesPage: React.FC = () => {
       onAddButtonClick={onAddButtonClick}
     />
   )
-}
+})
