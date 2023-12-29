@@ -5,33 +5,35 @@ import { type ButtonId, type Button } from '../../type/button'
 import { type FetchStatus, type RequestStatus } from '../../utils/reqStatus'
 import { type RemoteId } from '../../type/remote'
 
-const selectSelf = (state: RootStore): RootStore => state
-
-export const buttonsSelector = (remoteId: RemoteId | undefined): (state: RootStore) => Button[] | undefined => {
-  return createSelector(selectSelf, (state) => {
-    if (remoteId === undefined) {
-      return undefined
-    }
-    const buttonIds = state.buttons.domain.ids[remoteId]
-    if (buttonIds === undefined) {
-      return undefined
-    }
-    const buttons = new Array<Button>(buttonIds.length)
-    for (let i = 0; i < buttonIds.length; i++) {
-      buttons[i] = state.buttons.domain.byId[buttonIds[i]]
-    }
-    return buttons
-  })
+export const buttonsSelector = (remoteId: RemoteId | null): (state: RootStore) => Button[] | undefined => {
+  return createSelector(
+    (state: RootStore) => state.buttons.domain,
+    (buttons) => {
+      if (remoteId === null) {
+        return undefined
+      }
+      const buttonIds = buttons.ids[remoteId]
+      if (buttonIds === undefined) {
+        return undefined
+      }
+      const buttonsArray = new Array<Button>(buttonIds.length)
+      for (let i = 0; i < buttonIds.length; i++) {
+        buttonsArray[i] = buttons.byId[buttonIds[i]]
+      }
+      return buttonsArray
+    })
 }
 
 export const fetchButtonsStatusSelector = (remoteId: RemoteId): (state: RootStore) => FetchStatus<ApiError> | undefined => {
-  return createSelector(selectSelf, (state) => {
-    return state.buttons.fetchState.fetchStatus[remoteId]
-  })
+  return createSelector(
+    (state: RootStore) => state.buttons.fetchState.fetchStatus[remoteId],
+    (status) => status
+  )
 }
 
 export const pushButtonStateSelector = (buttonId: ButtonId): (state: RootStore) => RequestStatus<ApiError> | undefined => {
-  return createSelector(selectSelf, (state) => {
-    return state.buttons.requestState.pushButtonStatus[buttonId]
-  })
+  return createSelector(
+    (state: RootStore) => state.buttons.requestState.pushButtonStatus[buttonId],
+    (status) => status
+  )
 }

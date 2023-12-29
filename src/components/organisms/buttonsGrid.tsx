@@ -2,12 +2,13 @@ import { Avatar, Grid, Menu, MenuItem } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { pushButtonStateSelector } from '../../ducks/buttons/selector'
+import { buttonsSelector, pushButtonStateSelector } from '../../ducks/buttons/selector'
 import { learnIrModalOpened } from '../../ducks/ui/leanIrModal'
 import { pushButtonRequested } from '../../ducks/buttons'
 import { type Button } from '../../type/button'
 import { AvatarTextCard } from '../monecules/avatarTextCard'
 import { IconWifi, IconWifiOff } from '@tabler/icons-react'
+import { selectedRemoteIdSelector } from '../../ducks/remotes'
 
 interface ButtonCardProps {
   button: Button
@@ -97,12 +98,10 @@ const ButtonCard: React.FC<ButtonCardProps> = (props) => {
   )
 }
 
-interface ButtonsGridProps {
-  buttons?: Button[]
-}
-
-export const ButtonsGrid: React.FC<ButtonsGridProps> = (props) => {
-  const cards = props.buttons?.map((button) => {
+export const ButtonsGrid: React.FC = React.memo(function ButtonsGrid () {
+  const selectedRemote = useSelector(selectedRemoteIdSelector)
+  const buttons = useSelector(buttonsSelector(selectedRemote))
+  const cards = buttons?.map((button: Button) => {
     return (
       <Grid item xs={1} key={button.id} >
         <ButtonCard button={button} />
@@ -115,4 +114,4 @@ export const ButtonsGrid: React.FC<ButtonsGridProps> = (props) => {
       {cards}
     </Grid>
   )
-}
+})

@@ -21,7 +21,7 @@ interface Props {
   title?: string
   drawerTitle?: string
   buttonsCards?: ReactNode
-  remotesListItems?: ReactNode[]
+  remotesListItems?: ReactNode
   isDrawerOpen?: boolean
   isDrawerLoading?: boolean
   isContentLoading?: boolean

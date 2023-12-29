@@ -18,7 +18,7 @@ export { remoteAdded, remoteEdited, remoteDeleted } from './domainSlice'
 
 // selector
 export {
-  selectedRemoteSelector,
+  selectedRemoteIdSelector,
   remotesSelector,
   remoteSelector,
   fetchRemoteStatusSelector,

@@ -5,41 +5,18 @@ import { AddRemoteModal } from './components/organisms/addRemoteModal'
 import { EditRemoteModal } from './components/organisms/editRemoteModal'
 import { ReceiveIrModal } from './components/organisms/receiveIrModal'
 import { AppSnackbar } from './components/organisms/appSnackbar'
-import { useState } from 'react'
-import { NavigatorTemplate } from './components/templates/navigatorTemplate'
-import { IconDeviceRemote, IconHome } from '@tabler/icons-react'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 function App (): JSX.Element {
-  const [selectedTab, selectTab] = useState('home')
-
   return (
     <ThemeProvider theme={customTheme(lightThemePalette)}>
       <CssBaseline />
-      <NavigatorTemplate
-        onChange={(_, value) => { selectTab(value) }}
-        value={selectedTab}
-        items={[
-          {
-            value: 'home',
-            label: 'Home',
-            icon: <IconHome />
-          },
-          {
-            value: 'remote',
-            label: 'Remote',
-            icon: <IconDeviceRemote />
-          }
-        ]}
-      >
-        <>
-          {selectedTab === 'remote' &&
-            <LearnRemotesPage />
-          }
-          {selectedTab === 'home' &&
-            <h1>Welcome Back!</h1>
-          }
-        </>
-      </NavigatorTemplate>
+      <BrowserRouter>
+        <Routes>
+            <Route path={'/remote/'} element={<LearnRemotesPage></LearnRemotesPage>} />
+            <Route path={'/home'} element={<h1>Welcome Back!</h1>} />
+        </Routes>
+      </BrowserRouter>
       <AppSnackbar />
       <AddRemoteModal />
       <EditRemoteModal />

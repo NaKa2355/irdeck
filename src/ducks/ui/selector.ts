@@ -18,7 +18,7 @@ export const editRemoteModalStateSelector = createSelector(
     const { isOpen, editingRemote } = state.ui.editRemoteModal
     return {
       isOpen,
-      editingRemote: remoteSelector(state, editingRemote)
+      editingRemote: remoteSelector(editingRemote)(state)
     }
   }
 )
