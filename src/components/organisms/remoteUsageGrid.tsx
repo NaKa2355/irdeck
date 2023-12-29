@@ -14,13 +14,13 @@ export const RemoteUsageGrid: React.FC = React.memo(function RemoteUsageGrid () 
       case RemoteType.Button:
         return (
           <Grid xs={1} item key={remote.id}>
-            <ButtonRemoteCard title={remote.name} />
+            <ButtonRemoteCard remoteId={remote.id} title={remote.name} />
           </Grid>
         )
       case RemoteType.Toggle:
         return (
           <Grid xs={1} item key={remote.id}>
-            <ToggleRemoteCard title={remote.name} />
+            <ToggleRemoteCard remoteId={remote.id} title={remote.name} />
           </Grid>
         )
       case RemoteType.Thermostat:
