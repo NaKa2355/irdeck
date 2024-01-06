@@ -1,28 +1,30 @@
 import { type AppStartListening } from '../../app'
+import { buttonsAdded, buttonsFetched } from '../buttons/domainSlice'
 import { remoteAdded, remoteDeleted, remoteEdited, remotesFetched } from './domainSlice'
-import { fetchRemoteFailure, fetchRemoteRequested, fetchRemoteSuccess } from './fetchStateSlice'
+import { fetchRemotesFailure, fetchRemotesRequested, fetchRemotesSuccess } from './fetchStateSlice'
 import { deleteRemoteFailure, deleteRemoteRequested, deleteRemoteSuccess, patchRemoteFailure, patchRemoteRequested, patchRemoteSuccess, postRemoteFailure, postRemoteRequested, postRemoteSuccess } from './requestStateSlice'
 import { remoteSelected } from './selectedRemoteSlice'
 import { remotesSelector, selectedRemoteIdSelector } from './selector'
 
-const addFetchRemoteListener = (startListening: AppStartListening): void => {
+const addFetchRemotesListener = (startListening: AppStartListening): void => {
   startListening({
-    actionCreator: fetchRemoteRequested,
+    actionCreator: fetchRemotesRequested,
     effect: async (_, listenerApi) => {
       const selectedRemote = selectedRemoteIdSelector(listenerApi.getState())
       const result = await listenerApi.extra.api.fetchRemotes()
       if (result.isError) {
-        listenerApi.dispatch(fetchRemoteFailure({
+        listenerApi.dispatch(fetchRemotesFailure({
           error: result.error
         }))
         return
       }
-      const remotes = result.data
-      listenerApi.dispatch(fetchRemoteSuccess())
-      listenerApi.dispatch(remotesFetched({ remotes }))
-      if (selectedRemote === null || !remotes.some(remotes => remotes.id === (selectedRemote))) {
+      listenerApi.dispatch(fetchRemotesSuccess())
+      listenerApi.dispatch(remotesFetched({ remotes: result.data.remotes }))
+      console.log(result.data.buttons)
+      listenerApi.dispatch(buttonsFetched({ buttons: result.data.buttons}))
+      if (selectedRemote === null || !result.data.remotes.some(remotes => remotes.id === (selectedRemote))) {
         listenerApi.dispatch(remoteSelected({
-          remoteId: result.data.at(0)?.id ?? null
+          remoteId: result.data.remotes.at(0)?.id
         }))
       }
     }
@@ -42,14 +44,10 @@ const addPostRemoteListener = (startListening: AppStartListening): void => {
       }
       listenerApi.dispatch(postRemoteSuccess())
       listenerApi.dispatch(remoteSelected({
-        remoteId: result.data.id
+        remoteId: result.data.remote.id
       }))
-      listenerApi.dispatch(remoteAdded({
-        remoteId: result.data.id,
-        remoteName: result.data.name,
-        tag: result.data.tag,
-        deviceId: result.data.deviceId
-      }))
+      listenerApi.dispatch(remoteAdded({remote: result.data.remote}))
+      listenerApi.dispatch(buttonsAdded({buttons: result.data.buttons}))
     }
   })
 }
@@ -97,7 +95,7 @@ const addDeleteRemoteListener = (startListening: AppStartListening): void => {
       const selectedRemote = selectedRemoteIdSelector(listenerApi.getState())
       if (selectedRemote === remoteId) {
         listenerApi.dispatch(remoteSelected({
-          remoteId: remotes.at(0)?.id ?? null
+          remoteId: remotes.at(0)?.id
         }))
       }
     }
@@ -105,7 +103,7 @@ const addDeleteRemoteListener = (startListening: AppStartListening): void => {
 }
 
 export const addRemoteListener = (startListening: AppStartListening): void => {
-  addFetchRemoteListener(startListening)
+  addFetchRemotesListener(startListening)
   addPostRemoteListener(startListening)
   addPatchRemoteListener(startListening)
   addDeleteRemoteListener(startListening)

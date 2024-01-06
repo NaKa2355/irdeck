@@ -16,14 +16,22 @@ export type ErrorCode =
 'timeout' |
 'unknown'
 
+export interface RemotesRes {
+  remotes: Remote[]
+  buttons: Button[]
+}
+
+export interface RemoteRes {
+  remote: Remote
+  buttons: Button[]
+}
+
 export interface ReceiveIrReq {
   deviceId: string
 }
 
 export interface PushButtonReq {
-  remoteId: string
   buttonId: string
-  deviceId: string
 }
 
 export type CreateRemoteReq = {
@@ -49,7 +57,7 @@ export interface DeleteRemoteReq {
   remoteId: string
 }
 
-export interface GetButtonsReq {
+export interface FetchRemoteReq {
   remoteId: string
 }
 
@@ -81,9 +89,9 @@ export interface IApi {
   pushButton: (req: PushButtonReq) => Promise<Result<void, ApiError>>
   sendIr: (req: SendIrReq) => Promise<Result<void, ApiError>>
   learnIrData: (req: LearnIrDataReq) => Promise<Result<void, ApiError>>
-  fetchRemotes: () => Promise<Result<Remote[], ApiError>>
-  createRemote: (req: CreateRemoteReq) => Promise<Result<Remote, ApiError>>
+  fetchRemotes: () => Promise<Result<RemotesRes, ApiError>>
+  fetchRemote: (req: FetchRemoteReq) => Promise<Result<RemoteRes, ApiError>>
+  createRemote: (req: CreateRemoteReq) => Promise<Result<RemoteRes, ApiError>>
   updateRemotes: (req: UpdateRemoteReq) => Promise<Result<void, ApiError>>
   deleteRemotes: (req: DeleteRemoteReq) => Promise<Result<void, ApiError>>
-  fetchButtons: (req: GetButtonsReq) => Promise<Result<Button[], ApiError>>
 }

@@ -1,18 +1,18 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 interface SelectedRemote {
-  id: string | null
+  id: string | undefined
 }
 
 const initialState: SelectedRemote = {
-  id: null
+  id: undefined
 }
 
 const selectedRemoteSlice = createSlice({
   name: 'appdata.selectedRemote',
   initialState,
   reducers: {
-    remoteSelected: (state, action: PayloadAction<{ remoteId: string | null }>) => {
+    remoteSelected: (state, action: PayloadAction<{ remoteId: string | undefined }>) => {
       const { remoteId } = action.payload
       state.id = remoteId
     }

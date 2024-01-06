@@ -6,10 +6,13 @@ import { type FetchStatus, type RequestStatus } from '../../utils/reqStatus'
 import { type RemoteId } from '../../type/remote'
 import memoize from 'lodash.memoize'
 
-export const buttonsSelector = memoize((remoteId: string) => {
+export const buttonsSelector = memoize((remoteId: string | undefined) => {
   return createSelector(
     (state: RootStore) => {
-      return state.buttons.domain.ids[remoteId]
+      if (remoteId === undefined) {
+        return undefined
+      }
+      return state.remotes.domain.byId[remoteId]?.buttonIds
     },
     (state: RootStore) => state.buttons.domain.byId,
     (ids, byId) => {

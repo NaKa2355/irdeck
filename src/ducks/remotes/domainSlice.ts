@@ -36,15 +36,10 @@ const remotesSlice = createSlice({
       })
     },
 
-    remoteAdded: (state, action: PayloadAction<RemoteAddedActionPayload>) => {
-      const { remoteId, remoteName, deviceId, tag } = action.payload
-      state.byId[remoteId] = {
-        id: remoteId,
-        name: remoteName,
-        deviceId,
-        tag
-      }
-      state.ids.push(remoteId)
+    remoteAdded: (state, action: PayloadAction<{remote: Remote}>) => {
+      const remote = action.payload.remote
+      state.byId[remote.id] = remote 
+      state.ids.push(remote.id)
     },
 
     remoteEdited: (state, action: PayloadAction<RemoteEditedActionPayload>) => {
