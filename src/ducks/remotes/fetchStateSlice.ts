@@ -1,17 +1,24 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { type FetchStatus } from '../../utils/reqStatus'
 import { type ApiError } from '../../interfaces/api'
+import { type RemoteId } from '../../type/remote'
 
 interface FetchState {
-  fetchStatus: FetchStatus<ApiError>
+  fetchStatus: {
+    remotes: FetchStatus<ApiError>
+    remote: Record<RemoteId, FetchStatus<ApiError>>
+  }
 }
 
 const initialState: FetchState = {
   fetchStatus: {
-    isCached: false,
-    isFetchFailed: false,
-    fetchError: undefined,
-    isFetching: false
+    remotes: {
+      isCached: false,
+      isFetchFailed: false,
+      fetchError: undefined,
+      isFetching: false
+    },
+    remote: {}
   }
 }
 
@@ -20,18 +27,18 @@ const fetchStateSlice = createSlice({
   initialState,
   reducers: {
     fetchRemotesRequested: (state) => {
-      state.fetchStatus.isFetching = true
+      state.fetchStatus.remotes.isFetching = true
     },
     fetchRemotesFailure: (state, action: PayloadAction<{ error: ApiError }>) => {
       const error = action.payload.error
-      state.fetchStatus.fetchError = error
-      state.fetchStatus.isFetchFailed = false
-      state.fetchStatus.isFetching = false
+      state.fetchStatus.remotes.fetchError = error
+      state.fetchStatus.remotes.isFetchFailed = false
+      state.fetchStatus.remotes.isFetching = false
     },
     fetchRemotesSuccess: (state) => {
-      state.fetchStatus.isFetchFailed = false
-      state.fetchStatus.isCached = true
-      state.fetchStatus.isFetching = false
+      state.fetchStatus.remotes.isFetchFailed = false
+      state.fetchStatus.remotes.isCached = true
+      state.fetchStatus.remotes.isFetching = false
     }
   }
 })

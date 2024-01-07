@@ -1,14 +1,13 @@
-import { type CreateRemoteReq, ApiError, type DeleteRemoteReq, type UpdateRemoteReq, type ErrorCode, type IApi, type ReceiveIrReq, type SendIrReq, type LearnIrDataReq, type PushButtonReq, RemoteRes, FetchRemoteReq, RemotesRes } from '../interfaces/api'
+import { type CreateRemoteReq, ApiError, type DeleteRemoteReq, type UpdateRemoteReq, type ErrorCode, type IApi, type ReceiveIrReq, type SendIrReq, type LearnIrDataReq, type PushButtonReq, type RemoteRes, type FetchRemoteReq, type RemotesRes } from '../interfaces/api'
 import { type Device } from '../type/device.type'
 import { type Result } from '../type/result'
 import * as pirem from 'pirem-proto/gen/js/api/v1/irdata_pb'
 import { PiRemServiceClient } from 'pirem-proto/gen/js/api/v1/pirem_service_grpc_web_pb'
-import { CreateRemoteRequest, DeleteRemoteRequest, GetRemoteRequest, LearnIrDataRequest, ListDevicesRequest, ReceiveIrRequest, SendIrRequest, UpdateRemoteRequest } from 'pirem-proto/gen/js/api/v1/pirem_service_pb'
+import { CreateRemoteRequest, DeleteRemoteRequest, GetRemoteRequest, LearnIrDataRequest, ListDevicesRequest, ReceiveIrRequest, SendIrRequest, UpdateRemoteRequest, PushButtonRequest } from 'pirem-proto/gen/js/api/v1/pirem_service_pb'
 import { Any } from 'google-protobuf/google/protobuf/any_pb'
 import { StatusCode } from 'grpc-web'
-import { PushButtonRequest } from 'pirem-proto/gen/js/api/v1/pirem_service_pb'
-import { Remote } from '../type/remote'
-import { Button } from '../type/button'
+import { type Remote } from '../type/remote'
+import { type Button } from '../type/button'
 
 interface PostButtonRequest {
   buttonName: string
@@ -18,11 +17,11 @@ interface PostButtonRequest {
 export class Api implements IApi {
   private readonly piremClient: PiRemServiceClient
 
-  constructor(url: string) {
+  constructor (url: string) {
     this.piremClient = new PiRemServiceClient(url)
   }
 
-  private computeButtons(req: CreateRemoteReq): PostButtonRequest[] {
+  private computeButtons (req: CreateRemoteReq): PostButtonRequest[] {
     const type = req.remoteType
     const buttons = new Array<PostButtonRequest>()
     if (type === 'button') {
@@ -49,7 +48,7 @@ export class Api implements IApi {
       })
       for (let temp = coolTempRange[0]; temp <= coolTempRange[1]; temp += scale) {
         buttons.push({
-          buttonName: 'h' + temp.toFixed(1).toString(),
+          buttonName: 'c' + temp.toFixed(1).toString(),
           tag: type
         })
       }
@@ -63,7 +62,7 @@ export class Api implements IApi {
     return buttons
   }
 
-  private async sendIrData(irData: Uint8Array, deviceId: string): Promise<Result<void, ApiError>> {
+  private async sendIrData (irData: Uint8Array, deviceId: string): Promise<Result<void, ApiError>> {
     return await new Promise((resolve) => {
       const req = new SendIrRequest()
       req.setDeviceId(deviceId)
@@ -98,7 +97,7 @@ export class Api implements IApi {
     })
   }
 
-  async fetchDevices(): Promise<Result<Device[], ApiError>> {
+  async fetchDevices (): Promise<Result<Device[], ApiError>> {
     return await new Promise((resolve) => {
       this.piremClient.listDevices(new ListDevicesRequest(), {}, (err, res) => {
         if (err !== null) {
@@ -132,7 +131,7 @@ export class Api implements IApi {
     })
   }
 
-  async receiveIr(req: ReceiveIrReq): Promise<Result<Uint8Array, ApiError>> {
+  async receiveIr (req: ReceiveIrReq): Promise<Result<Uint8Array, ApiError>> {
     return await new Promise((resolve) => {
       const apiReq = new ReceiveIrRequest()
       let errCode: ErrorCode
@@ -171,7 +170,7 @@ export class Api implements IApi {
     })
   }
 
-  async pushButton(req: PushButtonReq): Promise<Result<void, ApiError>> {
+  async pushButton (req: PushButtonReq): Promise<Result<void, ApiError>> {
     return await new Promise((resolve) => {
       const apiReq = new PushButtonRequest()
       apiReq.setButtonId(req.buttonId)
@@ -193,14 +192,13 @@ export class Api implements IApi {
     })
   }
 
-  async sendIr(req: SendIrReq): Promise<Result<void, ApiError>> {
+  async sendIr (req: SendIrReq): Promise<Result<void, ApiError>> {
     return await this.sendIrData(req.irData, req.deviceId)
   }
 
-  async learnIrData(req: LearnIrDataReq): Promise<Result<void, ApiError>> {
+  async learnIrData (req: LearnIrDataReq): Promise<Result<void, ApiError>> {
     return await new Promise((resolve) => {
       const apiReq = new LearnIrDataRequest()
-      const any = new Any()
       let errCode: ErrorCode = 'unknown'
 
       apiReq.setButtonId(req.buttonId)
@@ -234,7 +232,7 @@ export class Api implements IApi {
     })
   }
 
-  async fetchRemotes(): Promise<Result<RemotesRes, ApiError>> {
+  async fetchRemotes (): Promise<Result<RemotesRes, ApiError>> {
     return await new Promise((resolve) => {
       this.piremClient.listRemotes(new Any(), {}, (err, apiRes) => {
         if (err !== null) {
@@ -280,8 +278,8 @@ export class Api implements IApi {
     })
   }
 
-  async fetchRemote(req: FetchRemoteReq): Promise<Result<RemoteRes, ApiError>> {
-    return new Promise((resolve) => {
+  async fetchRemote (req: FetchRemoteReq): Promise<Result<RemoteRes, ApiError>> {
+    return await new Promise((resolve) => {
       const apiReq = new GetRemoteRequest()
       let errCode: ErrorCode = 'unknown'
 
@@ -302,7 +300,6 @@ export class Api implements IApi {
           })
           return
         }
-
 
         const remote: Remote = {
           id: apiRes.getId(),
@@ -327,14 +324,14 @@ export class Api implements IApi {
           data: {
             remote,
             buttons
-          },
+          }
         })
       })
     })
   }
 
-  async createRemote(req: CreateRemoteReq): Promise<Result<RemoteRes, ApiError>> {
-    return new Promise((resolve) => {
+  async createRemote (req: CreateRemoteReq): Promise<Result<RemoteRes, ApiError>> {
+    return await new Promise((resolve) => {
       const grpcReq = new CreateRemoteRequest()
       const buttonsList = new Array<CreateRemoteRequest.CreateButtonRequest>()
       const postButtonsReq = this.computeButtons(req)
@@ -390,14 +387,14 @@ export class Api implements IApi {
           isError: false,
           data: {
             remote,
-            buttons,
+            buttons
           }
         })
       })
     })
   }
 
-  async updateRemotes(req: UpdateRemoteReq): Promise<Result<void, ApiError>> {
+  async updateRemotes (req: UpdateRemoteReq): Promise<Result<void, ApiError>> {
     return await new Promise((resolve) => {
       const apiReq = new UpdateRemoteRequest()
       let errCode: ErrorCode = 'unknown'
@@ -437,7 +434,7 @@ export class Api implements IApi {
     })
   }
 
-  async deleteRemotes(req: DeleteRemoteReq): Promise<Result<void, ApiError>> {
+  async deleteRemotes (req: DeleteRemoteReq): Promise<Result<void, ApiError>> {
     return await new Promise((resolve) => {
       const apiReq = new DeleteRemoteRequest()
       let errCode: ErrorCode = 'unknown'

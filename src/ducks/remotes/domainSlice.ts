@@ -12,13 +12,6 @@ const initialState: RemotesState = {
   byId: {}
 }
 
-interface RemoteAddedActionPayload {
-  remoteId: string
-  remoteName: string
-  deviceId: string
-  tag: string
-}
-
 interface RemoteEditedActionPayload {
   remoteId: string
   remoteName: string
@@ -36,9 +29,9 @@ const remotesSlice = createSlice({
       })
     },
 
-    remoteAdded: (state, action: PayloadAction<{remote: Remote}>) => {
+    remoteAdded: (state, action: PayloadAction<{ remote: Remote }>) => {
       const remote = action.payload.remote
-      state.byId[remote.id] = remote 
+      state.byId[remote.id] = remote
       state.ids.push(remote.id)
     },
 

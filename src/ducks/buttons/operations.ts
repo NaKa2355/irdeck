@@ -1,8 +1,6 @@
 import { type AppStartListening } from '../../app'
-import { buttonsFetched, irDataLearned } from './domainSlice'
-import { fetchButtonsFailure, fetchButtonsRequested, fetchButtonsSuccess } from './fetchStateSlice'
+import { irDataLearned } from './domainSlice'
 import { learnIrDataFailure, learnIrDataRequested, learnIrDataSuccess, pushButtonFailure, pushButtonRequested, pushButtonSuccess } from './requestStateSlice'
-import { fetchButtonsStatusSelector } from './selector'
 
 const addPushButtonListener = (startListening: AppStartListening): void => {
   startListening({
@@ -10,7 +8,7 @@ const addPushButtonListener = (startListening: AppStartListening): void => {
     effect: async (action, listenerApi) => {
       const { buttonId } = action.payload
       const result = await listenerApi.extra.api.pushButton({
-        buttonId,
+        buttonId
       })
       if (result.isError) {
         listenerApi.dispatch(pushButtonFailure({

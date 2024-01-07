@@ -13,7 +13,7 @@ export const remotesSelector = createSelector(
 )
 
 export const fetchRemoteStatusSelector = createSelector(
-  (state: RootStore) => state.remotes.fetch.fetchStatus,
+  (state: RootStore) => state.remotes.fetch.fetchStatus.remotes,
   (status: FetchStatus<ApiError>) => status
 )
 
@@ -24,10 +24,10 @@ export const selectedRemoteIdSelector = createSelector(
   }
 )
 
-export const remoteSelector = (remoteId: string | null): (state: RootStore) => Remote | null => {
+export const remoteSelector = (remoteId: string | undefined): (state: RootStore) => Remote | undefined => {
   return (state) => {
-    if (remoteId === null) {
-      return null
+    if (remoteId === undefined) {
+      return undefined
     }
     return state.remotes.domain.byId[remoteId]
   }

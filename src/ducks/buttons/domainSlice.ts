@@ -1,13 +1,12 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { type ButtonId, type Button } from '../../type/button'
-import { type RemoteId } from '../../type/remote'
 
 interface ButtonsState {
   byId: Record<ButtonId, Button>
 }
 
 const initialState: ButtonsState = {
-  byId: {},
+  byId: {}
 }
 
 const buttonsSlice = createSlice({

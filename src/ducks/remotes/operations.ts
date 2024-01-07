@@ -21,7 +21,7 @@ const addFetchRemotesListener = (startListening: AppStartListening): void => {
       listenerApi.dispatch(fetchRemotesSuccess())
       listenerApi.dispatch(remotesFetched({ remotes: result.data.remotes }))
       console.log(result.data.buttons)
-      listenerApi.dispatch(buttonsFetched({ buttons: result.data.buttons}))
+      listenerApi.dispatch(buttonsFetched({ buttons: result.data.buttons }))
       if (selectedRemote === null || !result.data.remotes.some(remotes => remotes.id === (selectedRemote))) {
         listenerApi.dispatch(remoteSelected({
           remoteId: result.data.remotes.at(0)?.id
@@ -46,8 +46,8 @@ const addPostRemoteListener = (startListening: AppStartListening): void => {
       listenerApi.dispatch(remoteSelected({
         remoteId: result.data.remote.id
       }))
-      listenerApi.dispatch(remoteAdded({remote: result.data.remote}))
-      listenerApi.dispatch(buttonsAdded({buttons: result.data.buttons}))
+      listenerApi.dispatch(remoteAdded({ remote: result.data.remote }))
+      listenerApi.dispatch(buttonsAdded({ buttons: result.data.buttons }))
     }
   })
 }

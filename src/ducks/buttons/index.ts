@@ -1,10 +1,8 @@
 import { combineReducers } from 'redux'
 import { domainButtonsReducer } from './domainSlice'
 import { requestStateReducer } from './requestStateSlice'
-import { fetchStateReducer } from './fetchStateSlice'
 
 // actions
-export { fetchButtonsRequested } from './fetchStateSlice'
 export {
   pushButtonRequested,
   clearPushButtonStatus
@@ -17,8 +15,7 @@ export { buttonsSelector } from './selector'
 // reducer
 export const buttonsReducer = combineReducers({
   domain: domainButtonsReducer,
-  requestState: requestStateReducer,
-  fetchState: fetchStateReducer
+  requestState: requestStateReducer
 })
 
 export {

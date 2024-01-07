@@ -1,4 +1,4 @@
-import { ButtonId } from './button'
+import { type ButtonId } from './button'
 import { type DeviceId } from './device.type'
 
 export enum RemoteType {

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { RemoteUsageGrid } from '../organisms/remoteUsageGrid'
 import React from 'react'
 
-export const RemoteUsagePage: React.FC = () => {
+export const RemoteUsagePage: React.FC = React.memo(function RemoteUsagePage () {
   const { t } = useTranslation()
   return (
     <Box margin='15px'>
@@ -11,4 +11,4 @@ export const RemoteUsagePage: React.FC = () => {
       <RemoteUsageGrid></RemoteUsageGrid>
     </Box>
   )
-}
+})
