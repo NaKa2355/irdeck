@@ -16,7 +16,11 @@ import { Add, ArrowBackIos } from '@mui/icons-material'
 
 const drawerWidth = '240px'
 
-export const LearnRemotesPage: React.FC<{ window?: () => Window }> = React.memo(function LearnRemotesPage (props) {
+interface Props {
+  window?: () => Window
+}
+
+export const LearnRemotesPage: React.FC = React.memo((props: Props) => {
   const { window } = props
   const dispatch = useDispatch()
   const selectedRemoteId = useSelector(selectedRemoteIdSelector)

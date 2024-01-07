@@ -1,16 +1,23 @@
+// types
+import { type Button } from '../../type/button'
+import { RemoteType } from '../../type/remote'
+
+// components
 import { Avatar, Grid, Menu, MenuItem } from '@mui/material'
+import { AvatarTextCard } from '../monecules/avatarTextCard'
+import { IconWifi, IconWifiOff } from '@tabler/icons-react'
+import { ComponentSwitcher } from '../../utils/memoComponentWithId'
+
+// hooks
 import { useTranslation } from 'react-i18next'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { selectedRemoteIdSelector } from '../../ducks/remotes'
+
+// redux
 import { buttonsSelector, pushButtonStateSelector } from '../../ducks/buttons/selector'
 import { learnIrModalOpened } from '../../ducks/ui/leanIrModal'
 import { pushButtonRequested } from '../../ducks/buttons'
-import { type Button } from '../../type/button'
-import { AvatarTextCard } from '../monecules/avatarTextCard'
-import { IconWifi, IconWifiOff } from '@tabler/icons-react'
-import { selectedRemoteIdSelector } from '../../ducks/remotes'
-import { RemoteType } from '../../type/remote'
-import { ComponentSwitcher } from '../../utils/memoComponentWithId'
 
 interface ButtonCardProps {
   button: Button
@@ -104,7 +111,7 @@ const ButtonCard: React.FC<ButtonCardProps> = (props) => {
 
 const buttonsGridSwitcher = ComponentSwitcher()
 
-const ButtonsGridById = React.memo(function ButtonsGridById (props: { remoteId: string }) {
+const ButtonsGridById = React.memo((props: { remoteId: string }) => {
   const buttons = useSelector(buttonsSelector(props.remoteId))
   const cards = buttons?.map((button: Button) => {
     return (
@@ -121,7 +128,7 @@ const ButtonsGridById = React.memo(function ButtonsGridById (props: { remoteId: 
   )
 })
 
-export const ButtonsGrid = React.memo(function ButtonsGrid () {
+export const ButtonsGrid = React.memo(() => {
   const selectedRemote = useSelector(selectedRemoteIdSelector)
   return buttonsGridSwitcher(
     selectedRemote ?? '',

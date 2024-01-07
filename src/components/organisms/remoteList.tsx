@@ -89,7 +89,7 @@ export const RemotesListItem: React.FC<RemotesListItemProps> = (props) => {
     </ListItem>)
 }
 
-export const RemotesList: React.FC = React.memo(function RemoteList () {
+export const RemotesList: React.FC = React.memo(() => {
   const remotes = useSelector(remotesSelector)
   const selectedRemote = useSelector(selectedRemoteIdSelector) ?? undefined
   const remotesListItems = remotes.map(remote => {

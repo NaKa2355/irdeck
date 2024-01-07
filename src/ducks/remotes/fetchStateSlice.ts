@@ -1,12 +1,10 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { type FetchStatus } from '../../utils/reqStatus'
 import { type ApiError } from '../../interfaces/api'
-import { type RemoteId } from '../../type/remote'
 
 interface FetchState {
   fetchStatus: {
     remotes: FetchStatus<ApiError>
-    remote: Record<RemoteId, FetchStatus<ApiError>>
   }
 }
 
@@ -17,8 +15,7 @@ const initialState: FetchState = {
       isFetchFailed: false,
       fetchError: undefined,
       isFetching: false
-    },
-    remote: {}
+    }
   }
 }
 

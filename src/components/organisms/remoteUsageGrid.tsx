@@ -7,7 +7,7 @@ import { Grid } from '@mui/material'
 import { ToggleRemoteCard } from './toggleRemoteCard'
 import { ThermostatRemoteCard } from './thermostatRemoteCard'
 
-export const RemoteUsageGrid: React.FC = React.memo(function RemoteUsageGrid () {
+export const RemoteUsageGrid: React.FC = React.memo(() => {
   const remotes = useSelector(remotesSelector)
   const cards = remotes.map((remote) => {
     switch (remote.tag) {

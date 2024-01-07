@@ -4,7 +4,6 @@ import { addButtonsListener, buttonsReducer } from '../ducks/buttons'
 import { addDeviceListener, devicesReducer, fetchDevicesRequested } from '../ducks/devices'
 import { UiReducer, addUiListener } from '../ducks/ui'
 import { listenerMiddleware } from './listener'
-import { addLogicalListener } from '../ducks/logic/operations'
 import { fetchRemotesRequested } from '../ducks/remotes/fetchStateSlice'
 
 const rootReducer = combineReducers({
@@ -24,7 +23,6 @@ export const store = configureStore({
 addRemoteListener(listenerMiddleware.startListening)
 addButtonsListener(listenerMiddleware.startListening)
 addDeviceListener(listenerMiddleware.startListening)
-addLogicalListener(listenerMiddleware.startListening)
 addUiListener(listenerMiddleware.startListening)
 
 store.dispatch(fetchRemotesRequested())
