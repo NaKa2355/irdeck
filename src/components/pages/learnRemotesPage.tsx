@@ -1,5 +1,3 @@
-import React from 'react'
-
 // hooks
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -10,9 +8,12 @@ import { addRemoteModalOpened, drawerClosed, drawerOpened } from '../../ducks/ui
 import { drawerSelector } from '../../ducks/ui/selector'
 import { RemotesList } from '../organisms/remoteList'
 import { ButtonsGrid } from '../organisms/buttonsGrid'
-import { remoteSelector, selectedRemoteIdSelector } from '../../ducks/remotes/selector'
+import { fetchRemotesStatusSelector, remoteSelector, selectedRemoteIdSelector } from '../../ducks/remotes/selector'
 import { AppBar, Box, Drawer, IconButton, SpeedDial, Toolbar, Typography } from '@mui/material'
 import { Add, ArrowBackIos } from '@mui/icons-material'
+import React from 'react'
+import { NoRemotes } from '../organisms/no_remotes'
+import { LoadingRemotes } from '../organisms/loading_remotes'
 
 const drawerWidth = '240px'
 
@@ -25,6 +26,7 @@ export const LearnRemotesPage: React.FC = React.memo((props: Props) => {
   const dispatch = useDispatch()
   const selectedRemoteId = useSelector(selectedRemoteIdSelector)
   const selectedRemote = useSelector(remoteSelector(selectedRemoteId))
+  const fetchRemotesStatus = useSelector(fetchRemotesStatusSelector)
   const { t } = useTranslation()
   const isDrawerOpen = useSelector(drawerSelector)
   const drawerListTitle = t('header.remotes')
@@ -54,7 +56,7 @@ export const LearnRemotesPage: React.FC = React.memo((props: Props) => {
         sx={{ position: 'absolute', bottom: 16, left: 16 }}
         icon={<Add />}
       />
-        <RemotesList></RemotesList>
+      <RemotesList></RemotesList>
     </div>
   )
 
@@ -121,8 +123,14 @@ export const LearnRemotesPage: React.FC = React.memo((props: Props) => {
       >
         <Toolbar sx={{ display: { xs: 'block', md: 'none' } }} />
         <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-          <h2 style={{ marginBottom: '10px' }}>{selectedRemote?.name}</h2>
+          <h2 style={{ marginBottom: '10px' }}>{selectedRemote?.name ?? ''}</h2>
         </Box>
+        {!fetchRemotesStatus.isCached &&
+          <LoadingRemotes />
+        }
+        {fetchRemotesStatus.isCached && selectedRemoteId === undefined &&
+          <NoRemotes />
+        }
         <ButtonsGrid></ButtonsGrid>
       </Box>
     </Box>

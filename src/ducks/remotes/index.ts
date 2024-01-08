@@ -21,7 +21,7 @@ export {
   selectedRemoteIdSelector,
   remotesSelector,
   remoteSelector,
-  fetchRemoteStatusSelector,
+  fetchRemotesStatusSelector,
   postRemoteStatusSelector,
   patchRemoteStatusSelector,
   deleteRemoteStatusSelector

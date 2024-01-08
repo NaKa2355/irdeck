@@ -12,7 +12,7 @@ export const remotesSelector = createSelector(
   }
 )
 
-export const fetchRemoteStatusSelector = createSelector(
+export const fetchRemotesStatusSelector = createSelector(
   (state: RootStore) => state.remotes.fetch.fetchStatus.remotes,
   (status: FetchStatus<ApiError>) => status
 )
