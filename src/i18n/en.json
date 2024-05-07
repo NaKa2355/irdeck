@@ -52,6 +52,7 @@
         "unknown": "unknown error occored!",
         "remote_not_found": "remote is already deleted or not exists",
         "devices_can_send_not_found": "device which can send infrared not found",
-        "devices_can_receive_not_found": "device which can receive infrared not found"
+        "devices_can_receive_not_found": "device which can receive infrared not found",
+        "network": "Oops, something wrong with the network"
     }
 }

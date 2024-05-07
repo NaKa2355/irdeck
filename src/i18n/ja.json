@@ -54,6 +54,7 @@
         "unknown": "不明なエラーが発生しました",
         "remote_not_found": "リモコンは既に削除されたか存在していません",
         "devices_can_send_not_found": "赤外線送信デバイスが見つかりません",
-        "devices_can_receive_not_found": "赤外線受信デバイスが見つかりません"
+        "devices_can_receive_not_found": "赤外線受信デバイスが見つかりません",
+        "network": "通信エラーが発生しました。"
     }
 }

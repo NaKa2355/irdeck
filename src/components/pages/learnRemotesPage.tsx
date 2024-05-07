@@ -14,6 +14,8 @@ import { Add, ArrowBackIos } from '@mui/icons-material'
 import React from 'react'
 import { NoRemotes } from '../organisms/no_remotes'
 import { LoadingRemotes } from '../organisms/loading_remotes'
+import { FetchRemoteFailed } from '../organisms/fetchRemoteFailed'
+import { fetchRemotesRequested } from '../../ducks/remotes/fetchStateSlice'
 
 const drawerWidth = '240px'
 
@@ -127,6 +129,9 @@ export const LearnRemotesPage: React.FC = React.memo((props: Props) => {
         </Box>
         {!fetchRemotesStatus.isCached &&
           <LoadingRemotes />
+        }
+        {fetchRemotesStatus.isFetchFailed &&
+          <FetchRemoteFailed onRetry={() => dispatch(fetchRemotesRequested())} />
         }
         {fetchRemotesStatus.isCached && selectedRemoteId === undefined &&
           <NoRemotes />

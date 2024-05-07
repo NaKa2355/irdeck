@@ -25,11 +25,12 @@ const fetchStateSlice = createSlice({
   reducers: {
     fetchRemotesRequested: (state) => {
       state.fetchStatus.remotes.isFetching = true
+      state.fetchStatus.remotes.isFetchFailed = false
     },
     fetchRemotesFailure: (state, action: PayloadAction<{ error: ApiError }>) => {
       const error = action.payload.error
       state.fetchStatus.remotes.fetchError = error
-      state.fetchStatus.remotes.isFetchFailed = false
+      state.fetchStatus.remotes.isFetchFailed = true
       state.fetchStatus.remotes.isFetching = false
     },
     fetchRemotesSuccess: (state) => {
