@@ -25,7 +25,7 @@ const addEditRemoteModalCloseListener = (startListening: AppStartListening): voi
   })
 }
 
-const addLearnIrModalCliseListener = (starListening: AppStartListening): void => {
+const addLearnIrModalCloseListener = (starListening: AppStartListening): void => {
   starListening({
     actionCreator: learnIrDataSuccess,
     effect: (_, listenerApi) => {
@@ -49,6 +49,6 @@ const addPushButtonFailureListener = (startListening: AppStartListening): void =
 export const addUiListener = (startListening: AppStartListening): void => {
   addAddRemoteModalCloseListener(startListening)
   addEditRemoteModalCloseListener(startListening)
-  addLearnIrModalCliseListener(startListening)
+  addLearnIrModalCloseListener(startListening)
   addPushButtonFailureListener(startListening)
 }
