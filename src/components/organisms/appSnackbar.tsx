@@ -15,7 +15,7 @@ export const AppSnackbar: React.FC = () => {
     <Snackbar
       open={snackbar.isShown}
       onClose={onSnackbarClose}
-      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       autoHideDuration={6000}>
       <Alert onClose={onSnackbarClose}
         severity={snackbar.severity}
