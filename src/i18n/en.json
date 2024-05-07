@@ -42,7 +42,8 @@
         "success": "Success!",
         "no_remotes": "There are no remotes",
         "no_buttons": "There are no buttons",
-        "confirm_delete": "Are you sure to delete?"
+        "confirm_delete": "Are you sure to delete?",
+        "no_irdata": "You didn't let device learn IR data"
     },
 
     "error": {
@@ -53,6 +54,7 @@
         "remote_not_found": "remote is already deleted or not exists",
         "devices_can_send_not_found": "device which can send infrared not found",
         "devices_can_receive_not_found": "device which can receive infrared not found",
-        "network": "Oops, something wrong with the network"
+        "network": "Oops, something wrong with the network",
+        "push_button": "Faild to Send Request"
     }
 }

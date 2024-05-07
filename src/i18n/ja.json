@@ -44,7 +44,8 @@
         "success": "成功!",
         "no_remotes": "リモコンが追加されていません",
         "no_buttons": "コマンドが追加されていません",
-        "confirm_delete": "本当に削除しますか?"
+        "confirm_delete": "本当に削除しますか?",
+        "no_irdata": "赤外線データが学習されていません"
     },
 
     "error": {
@@ -55,6 +56,7 @@
         "remote_not_found": "リモコンは既に削除されたか存在していません",
         "devices_can_send_not_found": "赤外線送信デバイスが見つかりません",
         "devices_can_receive_not_found": "赤外線受信デバイスが見つかりません",
-        "network": "通信エラーが発生しました。"
+        "network": "通信エラーが発生しました。",
+        "request": "リクエストの送信に失敗しました"
     }
 }

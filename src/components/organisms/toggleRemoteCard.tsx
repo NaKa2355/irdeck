@@ -6,6 +6,7 @@ import { type RemoteId } from '../../type/remote'
 import { useDispatch, useSelector } from 'react-redux'
 import { buttonsSelector, pushButtonRequested } from '../../ducks/buttons'
 import { pushButtonStateSelector } from '../../ducks/buttons/selector'
+import { snackBarShown } from '../../ducks/ui'
 
 interface ToggleRemoteCardPorps {
   title?: string
@@ -15,30 +16,44 @@ interface ToggleRemoteCardPorps {
 export const ToggleRemoteCard: React.FC<ToggleRemoteCardPorps> = (props) => {
   const buttons = useSelector(buttonsSelector(props.remoteId))
   const dispatch = useDispatch()
-  const onButtonId = buttons?.find((button) => button.name === 'on')?.id
-  const offButtonId = buttons?.find((button) => button.name === 'off')?.id
-  const pushingOn = useSelector(pushButtonStateSelector(onButtonId ?? ''))?.status === 'pending'
-  const pushingOff = useSelector(pushButtonStateSelector(offButtonId ?? ''))?.status === 'pending'
+  const onButton = buttons?.find((button) => button.name === 'on')
+  const offButton = buttons?.find((button) => button.name === 'off')
+  const pushingOn = useSelector(pushButtonStateSelector(onButton?.id ?? ''))?.status === 'pending'
+  const pushingOff = useSelector(pushButtonStateSelector(offButton?.id ?? ''))?.status === 'pending'
 
+  const showNoIrDataWarning = (): void => {
+    dispatch(snackBarShown({
+      message: 'label.no_irdata',
+      severity: 'warning'
+    }))
+  }
   const onOnPush = (): void => {
-    if (onButtonId === undefined) {
+    if (onButton?.id === undefined) {
       return
     }
-    dispatch(pushButtonRequested({ buttonId: onButtonId }))
+    if (!onButton?.hasIrData) {
+      showNoIrDataWarning()
+      return
+    }
+    dispatch(pushButtonRequested({ buttonId: onButton.id }))
   }
 
   const onOffPush = (): void => {
-    if (offButtonId === undefined) {
+    if (offButton?.id === undefined) {
       return
     }
-    dispatch(pushButtonRequested({ buttonId: offButtonId }))
+    if (!offButton?.hasIrData) {
+      showNoIrDataWarning()
+      return
+    }
+    dispatch(pushButtonRequested({ buttonId: offButton.id }))
   }
 
   return (
     <Card sx={{ padding: '16px', height: '130px' }}>
       <Box sx={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
         <Typography color='text.secondary'>
-          <IconToggleLeft/>
+          <IconToggleLeft />
         </Typography>
         <Box sx={{ display: 'flex', border: 'solid', borderWidth: 1, borderColor: 'divider', borderRadius: '10px' }}>
           <LoadingButton loading={pushingOn} onClick={onOnPush} sx={{ flexGrow: 1 }}>

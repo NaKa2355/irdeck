@@ -18,6 +18,7 @@ import { selectedRemoteIdSelector } from '../../ducks/remotes'
 import { buttonsSelector, pushButtonStateSelector } from '../../ducks/buttons/selector'
 import { learnIrModalOpened } from '../../ducks/ui/leanIrModal'
 import { pushButtonRequested } from '../../ducks/buttons'
+import { snackBarShown } from '../../ducks/ui'
 
 interface ButtonCardProps {
   button: Button
@@ -59,6 +60,11 @@ const ButtonCard: React.FC<ButtonCardProps> = (props) => {
     if (props.button.hasIrData) {
       void dispatch(pushButtonRequested({
         buttonId: props.button.id
+      }))
+    } else {
+      dispatch(snackBarShown({
+        message: 'label.no_irdata',
+        severity: 'warning'
       }))
     }
   }

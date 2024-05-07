@@ -6,6 +6,7 @@ import { type RemoteId } from '../../type/remote'
 import { useDispatch, useSelector } from 'react-redux'
 import { buttonsSelector, pushButtonRequested } from '../../ducks/buttons'
 import { pushButtonStateSelector } from '../../ducks/buttons/selector'
+import { snackBarShown } from '../../ducks/ui'
 
 interface ButtonRemoteCardPorps {
   title?: string
@@ -15,14 +16,21 @@ interface ButtonRemoteCardPorps {
 export const ButtonRemoteCard: React.FC<ButtonRemoteCardPorps> = (props) => {
   const buttons = useSelector(buttonsSelector(props.remoteId))
   const dispatch = useDispatch()
-  const pushButtonId = buttons?.find(button => button.name === 'push')?.id
-  const isPushing = useSelector(pushButtonStateSelector(pushButtonId ?? ''))?.status === 'pending'
+  const pushButton = buttons?.find(button => button.name === 'push')
+  const isPushing = useSelector(pushButtonStateSelector(pushButton?.id ?? ''))?.status === 'pending'
 
   const onPush = (): void => {
-    if (pushButtonId === undefined) {
+    if (pushButton?.id === undefined) {
       return
     }
-    dispatch(pushButtonRequested({ buttonId: pushButtonId }))
+    if (!pushButton?.hasIrData) {
+      dispatch(snackBarShown({
+        message: 'label.no_irdata',
+        severity: 'warning'
+      }))
+      return
+    }
+    dispatch(pushButtonRequested({ buttonId: pushButton?.id }))
   }
 
   return (
