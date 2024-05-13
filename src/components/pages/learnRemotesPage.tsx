@@ -127,7 +127,7 @@ export const LearnRemotesPage: React.FC = React.memo((props: Props) => {
         <Box sx={{ display: { xs: 'none', md: 'block' } }}>
           <h2 style={{ marginBottom: '10px' }}>{selectedRemote?.name ?? ''}</h2>
         </Box>
-        {!fetchRemotesStatus.isCached &&
+        {!fetchRemotesStatus.isCached && fetchRemotesStatus.isFetching &&
           <LoadingRemotes />
         }
         {fetchRemotesStatus.isFetchFailed &&
