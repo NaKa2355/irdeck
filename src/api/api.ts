@@ -16,9 +16,16 @@ interface PostButtonRequest {
 
 export class Api implements IApi {
   private readonly piremClient: PiRemServiceClient
+  private readonly requestTermSec: number
 
   constructor (url: string) {
     this.piremClient = new PiRemServiceClient(url)
+    this.requestTermSec = 5
+  }
+
+  private getDeadline (): string {
+    const deadline = new Date()
+    return (deadline.getSeconds() + this.requestTermSec).toString()
   }
 
   private computeButtons (req: CreateRemoteReq): PostButtonRequest[] {
@@ -69,7 +76,7 @@ export class Api implements IApi {
       req.setIrData(pirem.IrData.deserializeBinary(irData))
       let errCode: ErrorCode = 'unknown'
 
-      this.piremClient.sendIr(req, {}, (err, _) => {
+      this.piremClient.sendIr(req, { deadline: this.getDeadline() }, (err, _) => {
         if (err !== null) {
           switch (err.code) {
             case StatusCode.NOT_FOUND:
@@ -99,7 +106,7 @@ export class Api implements IApi {
 
   async fetchDevices (): Promise<Result<Device[], ApiError>> {
     return await new Promise((resolve) => {
-      this.piremClient.listDevices(new ListDevicesRequest(), {}, (err, res) => {
+      this.piremClient.listDevices(new ListDevicesRequest(), { deadline: this.getDeadline() }, (err, res) => {
         if (err !== null) {
           resolve({
             isError: true,
@@ -137,7 +144,7 @@ export class Api implements IApi {
       let errCode: ErrorCode
 
       apiReq.setDeviceId(req.deviceId)
-      this.piremClient.receiveIr(apiReq, {}, (err, res) => {
+      this.piremClient.receiveIr(apiReq, { deadline: this.getDeadline() }, (err, res) => {
         if (err === null) {
           resolve({
             isError: false,
@@ -174,7 +181,7 @@ export class Api implements IApi {
     return await new Promise((resolve) => {
       const apiReq = new PushButtonRequest()
       apiReq.setButtonId(req.buttonId)
-      this.piremClient.pushButton(apiReq, {}, (err, _) => {
+      this.piremClient.pushButton(apiReq, { deadline: this.getDeadline() }, (err, _) => {
         if (err !== null) {
           resolve({
             isError: true,
@@ -204,7 +211,7 @@ export class Api implements IApi {
       apiReq.setButtonId(req.buttonId)
       apiReq.setIrData(pirem.IrData.deserializeBinary(req.irData))
 
-      this.piremClient.learnIrData(apiReq, {}, (err, _) => {
+      this.piremClient.learnIrData(apiReq, { deadline: this.getDeadline() }, (err, _) => {
         if (err !== null) {
           switch (err.code) {
             case StatusCode.NOT_FOUND:
@@ -234,7 +241,7 @@ export class Api implements IApi {
 
   async fetchRemotes (): Promise<Result<RemotesRes, ApiError>> {
     return await new Promise((resolve) => {
-      this.piremClient.listRemotes(new Any(), {}, (err, apiRes) => {
+      this.piremClient.listRemotes(new Any(), { deadline: this.getDeadline() }, (err, apiRes) => {
         if (err !== null) {
           resolve({
             isError: true,
@@ -284,7 +291,7 @@ export class Api implements IApi {
       let errCode: ErrorCode = 'unknown'
 
       apiReq.setRemoteId(req.remoteId)
-      this.piremClient.getRemote(apiReq, {}, (err, apiRes) => {
+      this.piremClient.getRemote(apiReq, { deadline: this.getDeadline() }, (err, apiRes) => {
         if (err != null) {
           switch (err.code) {
             case StatusCode.NOT_FOUND:
@@ -348,7 +355,7 @@ export class Api implements IApi {
       grpcReq.setTag(req.remoteType)
       grpcReq.setButtonsList(buttonsList)
 
-      this.piremClient.createRemote(grpcReq, {}, (err, apiRes) => {
+      this.piremClient.createRemote(grpcReq, { deadline: this.getDeadline() }, (err, apiRes) => {
         if (err !== null) {
           switch (err.code) {
             case StatusCode.ALREADY_EXISTS:
@@ -402,7 +409,7 @@ export class Api implements IApi {
       apiReq.setRemoteId(req.remoteId)
       apiReq.setName(req.remoteName)
       apiReq.setDeviceId(req.deviceId)
-      this.piremClient.updateRemote(apiReq, {}, (err) => {
+      this.piremClient.updateRemote(apiReq, { deadline: this.getDeadline() }, (err) => {
         if (err !== null) {
           switch (err.code) {
             case StatusCode.ALREADY_EXISTS:
@@ -440,7 +447,7 @@ export class Api implements IApi {
       let errCode: ErrorCode = 'unknown'
 
       apiReq.setRemoteId(req.remoteId)
-      this.piremClient.deleteRemote(apiReq, {}, (err) => {
+      this.piremClient.deleteRemote(apiReq, { deadline: this.getDeadline() }, (err) => {
         if (err !== null) {
           switch (err.code) {
             case StatusCode.NOT_FOUND:
