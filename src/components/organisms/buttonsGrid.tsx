@@ -86,19 +86,6 @@ const ButtonCard: React.FC<ButtonCardProps> = (props) => {
       message: t('label.copied_rest_api_url'),
       severity: 'info'
     }))
-    // navigator.clipboard.writeText(url + 'pirem-rest-api/push_button/' + props.button.id)
-    //   .then(() => {
-    //     dispatch(snackBarShown({
-    //       message: t('label.copied_rest_api_url'),
-    //       severity: 'info'
-    //     }))
-    //   })
-    //   .catch(() => {
-    //     dispatch(snackBarShown({
-    //       message: t('label.filed_to_copy_rest_api_url'),
-    //       severity: 'error'
-    //     }))
-    //   })
   }
 
   const menu = (
