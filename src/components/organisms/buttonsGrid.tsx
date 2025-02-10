@@ -20,6 +20,7 @@ import { learnIrModalOpened } from '../../ducks/ui/leanIrModal'
 import { pushButtonRequested } from '../../ducks/buttons'
 import { snackBarShown } from '../../ducks/ui'
 import { url } from '../../constatnts'
+import { copyText } from '../../utils/clipboard'
 
 interface ButtonCardProps {
   button: Button
@@ -80,19 +81,24 @@ const ButtonCard: React.FC<ButtonCardProps> = (props) => {
 
   const handleOnCopyRestApiUrl = (): void => {
     handleClose()
-    navigator.clipboard.writeText(url + 'pirem-rest-api/push_button/' + props.button.id)
-      .then(() => {
-        dispatch(snackBarShown({
-          message: t('label.copied_rest_api_url'),
-          severity: 'info'
-        }))
-      })
-      .catch(() => {
-        dispatch(snackBarShown({
-          message: t('label.filed_to_copy_rest_api_url'),
-          severity: 'error'
-        }))
-      })
+    copyText(url + 'pirem-rest-api/push_button/' + props.button.id)
+    dispatch(snackBarShown({
+      message: t('label.copied_rest_api_url'),
+      severity: 'info'
+    }))
+    // navigator.clipboard.writeText(url + 'pirem-rest-api/push_button/' + props.button.id)
+    //   .then(() => {
+    //     dispatch(snackBarShown({
+    //       message: t('label.copied_rest_api_url'),
+    //       severity: 'info'
+    //     }))
+    //   })
+    //   .catch(() => {
+    //     dispatch(snackBarShown({
+    //       message: t('label.filed_to_copy_rest_api_url'),
+    //       severity: 'error'
+    //     }))
+    //   })
   }
 
   const menu = (
