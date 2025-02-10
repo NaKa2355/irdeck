@@ -28,7 +28,8 @@
         "off": "オフ",
         "h": "暖房 {{temp}}℃",
         "c": "冷房 {{temp}}℃",
-        "learn": "学習"
+        "learn": "学習",
+        "copy_rest_api_url": "REST APIのURLをクリップボードにコピー"
     },
 
     "label": {
@@ -45,7 +46,9 @@
         "no_remotes": "リモコンが追加されていません",
         "no_buttons": "コマンドが追加されていません",
         "confirm_delete": "本当に削除しますか?",
-        "no_irdata": "赤外線データが学習されていません"
+        "no_irdata": "赤外線データが学習されていません",
+        "copied_rest_api_url": "REST APIのURLをクリップボードにコピーしました",
+        "filed_to_copy_rest_api_url": "REST APIのURLをクリップボードにコピーできませんでした"
     },
 
     "error": {

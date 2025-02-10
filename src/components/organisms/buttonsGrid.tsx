@@ -19,6 +19,7 @@ import { buttonsSelector, pushButtonStateSelector } from '../../ducks/buttons/se
 import { learnIrModalOpened } from '../../ducks/ui/leanIrModal'
 import { pushButtonRequested } from '../../ducks/buttons'
 import { snackBarShown } from '../../ducks/ui'
+import { url } from '../../constatnts'
 
 interface ButtonCardProps {
   button: Button
@@ -69,12 +70,29 @@ const ButtonCard: React.FC<ButtonCardProps> = (props) => {
     }
   }
 
-  const onReceive = (): void => {
+  const handleOnReceive = (): void => {
     handleClose()
     dispatch(learnIrModalOpened({
       remoteId: props.button.remoteId,
       buttonId: props.button.id
     }))
+  }
+
+  const handleOnCopyRestApiUrl = (): void => {
+    handleClose()
+    navigator.clipboard.writeText(url + 'pirem-rest-api/push_button/' + props.button.id)
+      .then(() => {
+        dispatch(snackBarShown({
+          message: t('label.copied_rest_api_url'),
+          severity: 'info'
+        }))
+      })
+      .catch(() => {
+        dispatch(snackBarShown({
+          message: t('label.filed_to_copy_rest_api_url'),
+          severity: 'error'
+        }))
+      })
   }
 
   const menu = (
@@ -86,9 +104,14 @@ const ButtonCard: React.FC<ButtonCardProps> = (props) => {
         'aria-labelledby': 'basic-button'
       }}
     >
-      <MenuItem onClick={onReceive}>
+      <MenuItem onClick={handleOnReceive}>
         {t('button.learn')}
       </MenuItem>
+      {props.button.hasIrData &&
+        <MenuItem onClick={handleOnCopyRestApiUrl}>
+          {t('button.copy_rest_api_url')}
+        </MenuItem>
+      }
     </Menu>
   )
 

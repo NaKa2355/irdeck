@@ -28,7 +28,8 @@
         "h": "Heating {{temp}}℃",
         "c": "Cooling {{temp}}℃",
         "off": "OFF",
-        "learn": "Lean"
+        "learn": "Lean",
+        "copy_rest_api_url": "Copy Rest API URL to the Clipboard"
     },
 
     "label": {
@@ -43,7 +44,9 @@
         "no_remotes": "There are no remotes",
         "no_buttons": "There are no buttons",
         "confirm_delete": "Are you sure to delete?",
-        "no_irdata": "You didn't let device learn IR data"
+        "no_irdata": "You didn't let device learn IR data",
+        "copied_rest_api_url": "Copied REST API URL to the Clipboard",
+        "filed_to_copy_rest_api_url": "Failed to Copy REST API URL to the Clipboard"
     },
 
     "error": {
